@@ -1,10 +1,10 @@
 package naem.server.service;
 
-import naem.server.domain.Member;
+import naem.server.domain.User;
 
 public interface AuthService {
 
-    void signUpUser(Member member);
+    void signUpUser(User user);
 
-    Member loginUser(String id, String password) throws Exception;
+    User loginUser(String id, String password) throws Exception;
 }

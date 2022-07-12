@@ -1,15 +1,16 @@
 package naem.server.domain;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 public class Salt {
 
     @Id

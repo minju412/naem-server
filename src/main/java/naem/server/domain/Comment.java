@@ -1,12 +1,19 @@
 package naem.server.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
-
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 public class Comment {
 
     @Id
@@ -19,8 +26,8 @@ public class Comment {
     private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY) // 여러 댓글이 한 명의 회원에 속한다.
-    @JoinColumn(name = "member_id") // FK의 이름이 member_id가 된다.
-    private Member member;
+    @JoinColumn(name = "user_id") // FK의 이름이 user_id가 된다.
+    private User user;
 
     private String content;
 }

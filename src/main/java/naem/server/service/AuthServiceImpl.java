@@ -1,53 +1,55 @@
 package naem.server.service;
 
-import lombok.extern.slf4j.Slf4j;
-import naem.server.domain.Member;
-import naem.server.domain.Salt;
-import naem.server.repository.MemberRepository;
-import naem.server.service.util.SaltUtil;
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+import naem.server.domain.Salt;
+import naem.server.domain.User;
+import naem.server.repository.UserRepository;
+import naem.server.service.util.SaltUtil;
 
 @Service
 @Slf4j
-public class AuthServiceImpl implements AuthService{
+public class AuthServiceImpl implements AuthService {
 
     @Autowired
-    private MemberRepository memberRepository;
+    private UserRepository userRepository;
 
-//    @Autowired
-//    private RedisUtil redisUtil;
+    //    @Autowired
+    //    private RedisUtil redisUtil;
 
     @Autowired
     private SaltUtil saltUtil;
 
     @Override
     @Transactional
-    public void signUpUser(Member member) {
+    public void signUpUser(User user) {
 
-        String password = member.getPassword();
+        String password = user.getPassword();
         String salt = saltUtil.genSalt();
         log.info(salt);
 
-        member.setSalt(new Salt(salt));
-        member.setPassword(saltUtil.encodePassword(salt,password));
-        memberRepository.save(member);
+        user.setSalt(new Salt(salt));
+        user.setPassword(saltUtil.encodePassword(salt, password));
+        userRepository.save(user);
     }
 
     @Override
-    public Member loginUser(String id, String password) throws Exception{
+    public User loginUser(String id, String password) throws Exception {
 
-        Member member = memberRepository.findByUsername(id);
-        if(member==null) throw new Exception ("멤버가 조회되지 않음");
+        User user = userRepository.findByUsername(id);
+        if (user == null)
+            throw new Exception("멤버가 조회되지 않음");
 
-        String salt = member.getSalt().getSalt();
-        password = saltUtil.encodePassword(salt,password);
-        if(!member.getPassword().equals(password))
-            throw new Exception ("비밀번호가 틀립니다.");
+        String salt = user.getSalt().getSalt();
+        password = saltUtil.encodePassword(salt, password);
+        if (!user.getPassword().equals(password))
+            throw new Exception("비밀번호가 틀립니다.");
 
-        return member;
+        return user;
     }
 
 }

@@ -1,7 +1,7 @@
 package naem.server;
 
 import lombok.extern.slf4j.Slf4j;
-import naem.server.domain.Member;
+import naem.server.domain.User;
 import naem.server.service.AuthService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +16,12 @@ public class AuthServiceTest {
 
     @Test
     public void signUp(){
-        Member member = new Member();
-        member.setUsername("user333");
-        member.setPassword("a12345");
-        member.setName("유저이름");
-        member.setEmail("kk@kakao.com");
-        authService.signUpUser(member);
+        User user = new User();
+        user.setUsername("user333");
+        user.setPassword("a12345");
+        user.setName("유저이름");
+        user.setEmail("kk@kakao.com");
+        authService.signUpUser(user);
     }
 
 }
