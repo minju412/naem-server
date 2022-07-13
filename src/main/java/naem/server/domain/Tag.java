@@ -1,0 +1,23 @@
+package naem.server.domain;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.*;
+
+@Entity
+@Getter @Setter
+public class Tag {
+
+    @Id
+    @GeneratedValue
+    @Column(name = "tag_id")
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY) // 여러 태그가 하나의 게시글에 속한다.
+    @JoinColumn(name = "post_id") // FK의 이름이 post_id 된다.
+    private Post post;
+
+    @Enumerated(EnumType.STRING) // 반드시 STRING으로 사용해야 한다.
+    private TagType type;
+}
