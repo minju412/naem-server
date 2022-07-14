@@ -46,3 +46,7 @@ out/
 .env.production.local
 .env.local
 application-secret.yml
+sec.yml
+
+## docker-data ##
+docker-data/

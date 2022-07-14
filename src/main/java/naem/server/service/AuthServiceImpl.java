@@ -6,7 +6,9 @@ import naem.server.domain.Salt;
 import naem.server.repository.MemberRepository;
 import naem.server.service.util.SaltUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 
@@ -29,7 +31,6 @@ public class AuthServiceImpl implements AuthService{
 
         String password = member.getPassword();
         String salt = saltUtil.genSalt();
-        log.info(salt);
 
         member.setSalt(new Salt(salt));
         member.setPassword(saltUtil.encodePassword(salt,password));
@@ -37,15 +38,15 @@ public class AuthServiceImpl implements AuthService{
     }
 
     @Override
-    public Member loginUser(String id, String password) throws Exception{
+    public Member loginUser(String id, String password) throws ResponseStatusException {
 
         Member member = memberRepository.findByUsername(id);
-        if(member==null) throw new Exception ("멤버가 조회되지 않음");
+        if(member==null) throw new ResponseStatusException (HttpStatus.NOT_FOUND, "멤버가 조회되지 않음");
 
         String salt = member.getSalt().getSalt();
         password = saltUtil.encodePassword(salt,password);
         if(!member.getPassword().equals(password))
-            throw new Exception ("비밀번호가 틀립니다.");
+            throw new ResponseStatusException (HttpStatus.UNAUTHORIZED, "비밀번호가 틀립니다.");
 
         return member;
     }
