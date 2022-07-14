@@ -1,6 +1,10 @@
 spring:
-  profiles:
-    include: secret
+  config:
+#    location: classpath:sec.yml
+    import: classpath:sec.yml
+
+  #  profiles:
+#    include: secret
 
   jpa:
     hibernate:
@@ -10,6 +14,11 @@ spring:
         globally_quoted_identifiers: true
         format_sql: true
         dialect: org.hibernate.dialect.MySQL8Dialect
+
+  cache:
+    type: redis
+    redis:
+      cache-null-values: true
 
   mvc:
     pathmatch:

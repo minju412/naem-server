@@ -4,6 +4,7 @@ services:
   db-mysql:
     container_name: naem_database
     image: mysql
+    platform: linux/amd64
     env_file: ./.env
     environment:
       - MYSQL_ROOT_PASSWORD=$MYSQLDB_ROOT_PASSWORD
@@ -11,9 +12,21 @@ services:
     ports:
       - ${MYSQLDB_LOCAL_PORT}:${MYSQLDB_DOCKER_PORT}
     volumes:
-      - ./docker/data:/var/lib/mysql
+      - ./docker-data/mysql:/var/lib/mysql
     networks:
       - springboot-mysql-net
+
+  redis-docker:
+    image: redis:alpine
+    command: redis-server --port ${REDIS_LOCAL_PORT}
+    container_name: "docker-redis"
+    volumes:
+      - ./docker-data/redis:/data
+    labels:
+      - "name=redis"
+      - "mode=standalone"
+    ports:
+      - ${REDIS_LOCAL_PORT}:${REDIS_DOCKER_PORT}
 
   application:
     container_name: naem_application
