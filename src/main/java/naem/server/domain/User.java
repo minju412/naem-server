@@ -36,7 +36,7 @@ public class User {
 
     @Column(unique = true)
     @NotBlank
-    private String username;  // id
+    private String loginId;  // id
 
     @NotBlank
     private String name; // 사용자 이름
