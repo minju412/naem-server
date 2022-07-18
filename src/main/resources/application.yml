@@ -1,15 +1,8 @@
 spring:
-  profiles:
-    include: secret
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        globally_quoted_identifiers: true
-        format_sql: true
-        dialect: org.hibernate.dialect.MySQL8Dialect
+  cache:
+    type: redis
+    redis:
+      cache-null-values: true
 
   mvc:
     pathmatch:

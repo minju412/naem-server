@@ -12,29 +12,40 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import lombok.extern.slf4j.Slf4j;
+import naem.server.domain.Salt;
+import naem.server.domain.User;
+import naem.server.repository.UserRepository;
+import naem.server.service.util.SaltUtil;
+
 @Service
 @Slf4j
-public class AuthServiceImpl implements AuthService{
+public class AuthServiceImpl implements AuthService {
 
     @Autowired
-    private MemberRepository memberRepository;
+    private UserRepository userRepository;
 
-//    @Autowired
-//    private RedisUtil redisUtil;
+    //    @Autowired
+    //    private RedisUtil redisUtil;
 
     @Autowired
     private SaltUtil saltUtil;
 
     @Override
     @Transactional
-    public void signUpUser(Member member) {
+    public void signUpUser(User user) {
 
-        String password = member.getPassword();
+        String password = user.getPassword();
         String salt = saltUtil.genSalt();
 
-        member.setSalt(new Salt(salt));
-        member.setPassword(saltUtil.encodePassword(salt,password));
-        memberRepository.save(member);
+        user.setSalt(new Salt(salt));
+        user.setPassword(saltUtil.encodePassword(salt, password));
+        userRepository.save(user);
     }
 
     @Override
@@ -48,7 +59,7 @@ public class AuthServiceImpl implements AuthService{
         if(!member.getPassword().equals(password))
             throw new ResponseStatusException (HttpStatus.UNAUTHORIZED, "비밀번호가 틀립니다.");
 
-        return member;
+        return user;
     }
 
 }

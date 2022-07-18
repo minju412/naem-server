@@ -14,20 +14,20 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http.csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests()
-                .antMatchers("/").permitAll()
-                .antMatchers("/user/signup").permitAll()
-                .antMatchers("/user/login").permitAll()
-                .antMatchers("/user/verify/**").permitAll()
-                .antMatchers("/oauth/**").permitAll()
-                .antMatchers("/test/user").hasRole("USER")
-                .antMatchers("/test/admin").hasRole("ADMIN")
-                .antMatchers("/v3/api-docs", "/swagger*/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .httpBasic();
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()
+            .authorizeRequests()
+            .antMatchers("/").permitAll()
+            .antMatchers("/user/signup").permitAll()
+            .antMatchers("/user/login").permitAll()
+            .antMatchers("/user/verify/**").permitAll()
+            .antMatchers("/oauth/**").permitAll()
+            .antMatchers("/test/user").hasRole("USER")
+            .antMatchers("/test/admin").hasRole("ADMIN")
+            .antMatchers("/v3/api-docs", "/swagger*/**").permitAll()
+            .anyRequest().authenticated()
+            .and()
+            .httpBasic();
 
     }
 }

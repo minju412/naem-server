@@ -1,7 +1,6 @@
 package naem.server.domain;
 
 public enum TagType {
-
     MENTAL, INTELLECTUAL, RETARDED,
     VISUAL, DEAFNESS, AUTISTIC,
     SPEECH, BRAIN_LESION, KIDNEY,
