@@ -10,18 +10,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 @EnableWebSecurity
 public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    //    @Autowired
-    //    private MyUserDetailsService myUserDetailsService;
-    //
-    //    @Autowired
-    //    private JwtRequestFilter jwtRequestFilter;
-    //
-    //    @Autowired
-    //    private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
-    //
-    //    @Autowired
-    //    private CustomAccessDeniedHandler customAccessDeniedHandler;
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
@@ -41,20 +29,5 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
             .and()
             .httpBasic();
 
-        //        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
-
 }
-
-//@Configuration
-//public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
-//
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//        http.authorizeRequests()
-//                .antMatchers(
-//                        "/v3/api-docs",
-//                        "/swagger*/**").permitAll()
-//                .anyRequest().authenticated();
-//    }
-//}

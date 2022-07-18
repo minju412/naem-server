@@ -1,6 +1,7 @@
 package naem.server.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,7 +13,8 @@ import naem.server.domain.User;
 import naem.server.service.AuthService;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping
+    ("/user")
 @Slf4j
 public class UserController {
 
@@ -23,10 +25,10 @@ public class UserController {
     public Response signUpUser(@RequestBody User user) {
         log.info("signUpUser Start");
         try {
-            authService.signUpUser(user);
-            return new Response("success", "회원가입을 성공적으로 완료했습니다.", null);
+            authService.signUpUser(member);
+            return new Response(HttpStatus.OK, "success", "회원가입을 성공적으로 완료했습니다.", null);
         } catch (Exception e) {
-            return new Response("error", "회원가입을 하는 도중 오류가 발생했습니다.", null);
+            return new Response(HttpStatus.BAD_GATEWAY, "error", "회원가입을 하는 도중 오류가 발생했습니다.", null);
         }
     }
 

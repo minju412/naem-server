@@ -1,5 +1,15 @@
 package naem.server.service;
 
+import lombok.extern.slf4j.Slf4j;
+import naem.server.domain.Member;
+import naem.server.domain.Salt;
+import naem.server.repository.MemberRepository;
+import naem.server.service.util.SaltUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +42,6 @@ public class AuthServiceImpl implements AuthService {
 
         String password = user.getPassword();
         String salt = saltUtil.genSalt();
-        log.info(salt);
 
         user.setSalt(new Salt(salt));
         user.setPassword(saltUtil.encodePassword(salt, password));
@@ -40,18 +49,15 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public User loginUser(String id, String password) throws ResponseStatusException {
+    public Member loginUser(String id, String password) throws ResponseStatusException {
 
-        User user = userRepository.findByUsername(id);
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "멤버가 조회되지 않음");
-        }
+        Member member = memberRepository.findByUsername(id);
+        if(member==null) throw new ResponseStatusException (HttpStatus.NOT_FOUND, "멤버가 조회되지 않음");
 
-        String salt = user.getSalt().getSalt();
-        password = saltUtil.encodePassword(salt, password);
-        if (!user.getPassword().equals(password)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 틀립니다.");
-        }
+        String salt = member.getSalt().getSalt();
+        password = saltUtil.encodePassword(salt,password);
+        if(!member.getPassword().equals(password))
+            throw new ResponseStatusException (HttpStatus.UNAUTHORIZED, "비밀번호가 틀립니다.");
 
         return user;
     }
