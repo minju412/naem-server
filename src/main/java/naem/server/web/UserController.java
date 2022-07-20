@@ -25,7 +25,7 @@ public class UserController {
     public Response signUpUser(@RequestBody User user) {
         log.info("signUpUser Start");
         try {
-            authService.signUpUser(member);
+            authService.signUpUser(user);
             return new Response(HttpStatus.OK, "success", "회원가입을 성공적으로 완료했습니다.", null);
         } catch (Exception e) {
             return new Response(HttpStatus.BAD_GATEWAY, "error", "회원가입을 하는 도중 오류가 발생했습니다.", null);

@@ -18,7 +18,7 @@ public class AuthServiceTest {
     @Test
     public void signUp() {
         User user = new User();
-        user.setUsername("user333");
+        user.setLoginId("user333");
         user.setPassword("a12345");
         user.setName("유저이름");
         user.setEmail("kk@kakao.com");
