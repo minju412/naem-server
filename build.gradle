@@ -26,6 +26,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-devtools'
     implementation 'org.projectlombok:lombok:1.18.20'
 
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+
 //	implementation 'org.javassist:javassist:3.29.0-GA'
 
     compileOnly 'org.projectlombok:lombok'
