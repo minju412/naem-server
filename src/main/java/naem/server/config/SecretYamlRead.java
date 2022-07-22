@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Configuration
-@PropertySource(value = "classpath:sec.yml", factory = YamlPropertySourceFactory.class)
+@PropertySource(value = "classpath:secret.yml", factory = YamlPropertySourceFactory.class)
 @ConfigurationProperties(prefix = "redis")
 @Getter
 @Setter

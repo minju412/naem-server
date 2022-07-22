@@ -51,7 +51,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public User loginUser(String id, String password) throws ResponseStatusException {
 
-        User user = userRepository.findByUsername(id);
+        User user = userRepository.findByLoginId(id);
         if(user==null) throw new ResponseStatusException (HttpStatus.NOT_FOUND, "멤버가 조회되지 않음");
 
         String salt = user.getSalt().getSalt();

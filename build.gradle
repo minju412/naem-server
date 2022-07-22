@@ -28,10 +28,11 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 
-//	implementation 'org.javassist:javassist:3.29.0-GA'
-
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'mysql:mysql-connector-java'
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'redis.clients:jedis:3.3.0'
 
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -48,8 +49,6 @@ dependencies {
     // Spring Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
     testImplementation 'org.springframework.security:spring-security-test'
-
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 }
