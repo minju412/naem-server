@@ -25,9 +25,9 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
             .antMatchers("/test/user").hasRole("USER")
             .antMatchers("/test/admin").hasRole("ADMIN")
             .antMatchers("/v3/api-docs", "/swagger*/**").permitAll()
-            .anyRequest().authenticated()
-            .and()
-            .httpBasic();
+            .anyRequest().authenticated();
+            //.and()
+            //.httpBasic();
 
     }
 }
