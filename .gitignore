@@ -45,8 +45,4 @@ out/
 .env.test.local
 .env.production.local
 .env.local
-application-secret.yml
-sec.yml
-
-## docker-data ##
-docker-data/
+application.yml
