@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import lombok.extern.slf4j.Slf4j;
 import naem.server.domain.User;
+import naem.server.domain.UserType;
 import naem.server.service.AuthService;
 
 @SpringBootTest
@@ -18,10 +19,11 @@ public class AuthServiceTest {
     @Test
     public void signUp() {
         User user = new User();
+        user.setUserType(UserType.IN_PERSON);
+        user.setPhoneNumber("01012341234");
         user.setLoginId("user333");
         user.setPassword("a12345");
-        user.setName("유저이름");
-        user.setEmail("kk@kakao.com");
+        user.setNickname("유저닉네임");
         authService.signUpUser(user);
     }
 

@@ -34,26 +34,27 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(unique = true)
-    @NotBlank
-    private String loginId;  // id
+    @Enumerated(EnumType.STRING)
+    private UserType userType;
 
     @NotBlank
-    private String name; // 사용자 이름
+    private String phoneNumber;
+
+    @Column(unique = true)
+    @NotBlank
+    private String loginId;
 
     @NotBlank
     private String password;
 
     @NotBlank
-    private String email;
+    private String nickname;
 
     @OneToMany(mappedBy = "user")
-    // 한 명의 회원이 여러 게시글 작성 // Post 테이블에 있는 user가 연관관계 주인이고, 나는 거울이다. (여기에 값을 넣어도 FK가 변경되지 않는다.)
     private List<Post> posts = new ArrayList<>();
 
-    @Column(name = "role")
-    @Enumerated(EnumType.STRING)
-    private UserRole role = UserRole.ROLE_NOT_PERMITTED;
+    @OneToMany(mappedBy = "user")
+    private List<Comment> comments = new ArrayList<>();
 
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
