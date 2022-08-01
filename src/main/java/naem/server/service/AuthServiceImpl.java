@@ -10,8 +10,10 @@ import org.springframework.web.server.ResponseStatusException;
 import lombok.extern.slf4j.Slf4j;
 import naem.server.domain.member.Member;
 import naem.server.domain.member.Salt;
+import naem.server.domain.member.dto.ResponseMemberDto;
 import naem.server.repository.MemberRepository;
 import naem.server.service.util.SaltUtil;
+import naem.server.service.util.SecurityUtil;
 
 @Service
 @Slf4j
@@ -49,6 +51,18 @@ public class AuthServiceImpl implements AuthService {
         }
 
         return member;
+    }
+
+    // @Transactional
+    // public ResponseMemberDto getUserWithAuthorities(String username) {
+    //     return MemberDto.from(memberRepository.findOneWithAuthoritiesByUsername(username).orElse(null));
+    // }
+
+    @Override
+    @Transactional
+    public ResponseMemberDto getMyUserWithAuthorities() {
+        return ResponseMemberDto.from(
+            SecurityUtil.getCurrentUsername().flatMap(memberRepository::findOneWithAuthoritiesByUsername).orElse(null));
     }
 
 }

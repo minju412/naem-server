@@ -17,6 +17,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -45,11 +46,14 @@ public class Member {
     @NotBlank
     private String phoneNumber;
 
-    @Column(unique = true)
     @NotBlank
+    @Column(unique = true)
+    @Size(min = 3, max = 50)
     private String username;
 
+    // @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @NotBlank
+    @Size(min = 3, max = 100)
     private String password;
 
     @NotBlank

@@ -73,7 +73,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 refreshJwt = refreshToken.getValue();
             }
         } catch (Exception e) {
-
+            log.info(e.getMessage());
         }
 
         try {
@@ -97,7 +97,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 }
             }
         } catch (ExpiredJwtException e) {
-
+            log.info(e.getMessage());
         }
 
         filterChain.doFilter(httpServletRequest, httpServletResponse);
