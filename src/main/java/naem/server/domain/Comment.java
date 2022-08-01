@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 
 import lombok.Getter;
 import lombok.Setter;
+import naem.server.domain.member.Member;
 
 @Entity
 @Getter
@@ -26,8 +27,8 @@ public class Comment {
     private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY) // 여러 댓글이 한 명의 회원에 속한다.
-    @JoinColumn(name = "user_id") // FK의 이름이 user_id가 된다.
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     private String content;
 }

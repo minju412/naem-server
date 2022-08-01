@@ -16,6 +16,7 @@ import javax.persistence.Table;
 
 import lombok.Getter;
 import lombok.Setter;
+import naem.server.domain.member.Member;
 
 @Entity
 @Table(name = "posts")
@@ -29,8 +30,8 @@ public class Post {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY) // 여러 게시글이 한 명의 회원에 속한다.
-    @JoinColumn(name = "user_id") // FK의 이름이 user_id가 된다.
-    private User user; // 외래키가 있는 곳을 연관관계의 주인으로 정한다.
+    @JoinColumn(name = "member_id")
+    private Member member; // 외래키가 있는 곳을 연관관계의 주인으로 정한다.
 
     private String title;
     private String content;

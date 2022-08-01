@@ -1,4 +1,4 @@
-package naem.server.domain;
+package naem.server.domain.member;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

@@ -1,4 +1,4 @@
-package naem.server.domain;
+package naem.server.domain.member;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,26 +23,31 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import lombok.Getter;
 import lombok.Setter;
+import naem.server.domain.Comment;
+import naem.server.domain.Post;
 
 @Entity
 @Getter
 @Setter
-public class User {
+public class Member {
 
     @Id
     @GeneratedValue
-    @Column(name = "user_id")
+    @Column(name = "member_id")
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private UserType userType;
+    private MemberType memberType;
+
+    @Enumerated(EnumType.STRING)
+    private MemberRole role = MemberRole.ROLE_NOT_PERMITTED;
 
     @NotBlank
     private String phoneNumber;
 
     @Column(unique = true)
     @NotBlank
-    private String loginId;
+    private String username;
 
     @NotBlank
     private String password;
@@ -50,10 +55,10 @@ public class User {
     @NotBlank
     private String nickname;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "member")
     private List<Post> posts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "member")
     private List<Comment> comments = new ArrayList<>();
 
     @Temporal(TemporalType.TIMESTAMP)

@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import lombok.extern.slf4j.Slf4j;
-import naem.server.domain.User;
-import naem.server.domain.UserType;
+import naem.server.domain.member.Member;
+import naem.server.domain.member.MemberType;
 import naem.server.service.AuthService;
 
 @SpringBootTest
@@ -18,13 +18,13 @@ public class AuthServiceTest {
 
     @Test
     public void signUp() {
-        User user = new User();
-        user.setUserType(UserType.IN_PERSON);
-        user.setPhoneNumber("01012341234");
-        user.setLoginId("user333");
-        user.setPassword("a12345");
-        user.setNickname("유저닉네임");
-        authService.signUpUser(user);
+        Member member = new Member();
+        member.setMemberType(MemberType.IN_PERSON);
+        member.setPhoneNumber("01012341234");
+        member.setUsername("userId123");
+        member.setPassword("a12345");
+        member.setNickname("유저닉네임");
+        authService.signUpMember(member);
     }
 
 }
