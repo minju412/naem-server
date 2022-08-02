@@ -25,9 +25,9 @@ public class AuthServiceTest {
         this.member = new Member();
         this.member.setMemberType(MemberType.IN_PERSON);
         this.member.setPhoneNumber("01012341234");
-        this.member.setUsername("userId22");
+        this.member.setUsername("333");
         this.member.setPassword("q2w3");
-        this.member.setNickname("유저닉네임22");
+        this.member.setNickname("333");
     }
 
     @Test

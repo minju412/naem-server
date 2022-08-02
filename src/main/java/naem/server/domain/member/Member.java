@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -30,10 +31,11 @@ import naem.server.domain.Post;
 @Entity
 @Getter
 @Setter
+// @Table(uniqueConstraints = username)
 public class Member {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     private Long id;
 
@@ -59,11 +61,19 @@ public class Member {
     @NotBlank
     private String nickname;
 
+    private String introduction;
+
     @OneToMany(mappedBy = "member")
     private List<Post> posts = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "salt_id")
+    private Salt salt;
+
+    private String filePath;
 
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
@@ -72,9 +82,5 @@ public class Member {
     @Temporal(TemporalType.TIMESTAMP)
     @UpdateTimestamp
     private Date updateAt;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "salt_id")
-    private Salt salt;
 
 }
