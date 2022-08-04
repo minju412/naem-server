@@ -8,20 +8,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import naem.server.domain.Response;
 import naem.server.domain.member.Member;
-import naem.server.domain.member.dto.RequestMemberDto;
+import naem.server.domain.member.dto.LoginMemberDto;
+import naem.server.domain.member.dto.PatchMemberDto;
 import naem.server.service.AuthService;
+import naem.server.service.MemberService;
 import naem.server.service.util.CookieUtil;
 import naem.server.service.util.JwtUtil;
 import naem.server.service.util.RedisUtil;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping
     ("/member")
@@ -39,6 +45,8 @@ public class MemberController {
     @Autowired
     private RedisUtil redisUtil;
 
+    private final MemberService memberService;
+
     @PostMapping("/signup")
     public Response signUpUser(@RequestBody Member member) {
         try {
@@ -50,12 +58,12 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public Response login(@RequestBody RequestMemberDto requestMemberDto,
+    public Response login(@RequestBody LoginMemberDto loginMemberDto,
         HttpServletRequest req,
         HttpServletResponse res) {
         try {
-            final Member member = authService.loginMember(requestMemberDto.getUsername(),
-                requestMemberDto.getPassword());
+            final Member member = authService.loginMember(loginMemberDto.getUsername(),
+                loginMemberDto.getPassword());
             final String token = jwtUtil.generateToken(member);
             final String refreshJwt = jwtUtil.generateRefreshToken(member);
 
@@ -75,8 +83,22 @@ public class MemberController {
 
     @GetMapping("/info")
     // @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public Response memberInfo(HttpServletRequest request) {
+    public Response memberInfo() {
         return new Response(HttpStatus.OK, "success", "정보 조회에 성공했습니다.", authService.getMyUserWithAuthorities());
     }
+
+    @PatchMapping("/{id}")
+    public Response memberPatch(@PathVariable("id") long id, @RequestBody PatchMemberDto patchMemberDto) {
+
+        if (memberService.patch(id, patchMemberDto) > 0) {
+            return new Response(HttpStatus.OK, "success", "정보 수정에 성공했습니다.", null);
+        } else {
+            return new Response(HttpStatus.OK, "success", "일치하는 회원 정보가 없습니다. 사용자 id를 확인해주세요.", null);
+        }
+    }
+
+
+
+
 
 }

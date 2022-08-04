@@ -14,7 +14,7 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RequestMemberDto {
+public class LoginMemberDto {
 
     @NotBlank
     @Size(min = 3, max = 50)

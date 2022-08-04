@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import lombok.extern.slf4j.Slf4j;
 import naem.server.domain.member.Member;
 import naem.server.domain.member.MemberType;
-import naem.server.domain.member.dto.RequestMemberDto;
+import naem.server.domain.member.dto.LoginMemberDto;
 import naem.server.service.AuthService;
 
 @SpringBootTest
@@ -37,7 +37,7 @@ public class AuthServiceTest {
 
     @Test
     public void login() {
-        RequestMemberDto requestMemberDto = new RequestMemberDto(member.getUsername(), member.getPassword());
+        LoginMemberDto requestMemberDto = new LoginMemberDto(member.getUsername(), member.getPassword());
         try {
             authService.loginMember(requestMemberDto.getUsername(), requestMemberDto.getPassword());
             log.info("로그인 성공");

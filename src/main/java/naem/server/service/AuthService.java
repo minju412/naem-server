@@ -9,7 +9,5 @@ public interface AuthService {
 
     Member loginMember(String id, String password) throws Exception;
 
-    // ResponseMemberDto getUserWithAuthorities(String username);
-
     ResponseMemberDto getMyUserWithAuthorities();
 }

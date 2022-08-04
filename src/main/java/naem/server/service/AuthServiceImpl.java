@@ -53,11 +53,6 @@ public class AuthServiceImpl implements AuthService {
         return member;
     }
 
-    // @Transactional
-    // public ResponseMemberDto getUserWithAuthorities(String username) {
-    //     return MemberDto.from(memberRepository.findOneWithAuthoritiesByUsername(username).orElse(null));
-    // }
-
     @Override
     @Transactional
     public ResponseMemberDto getMyUserWithAuthorities() {

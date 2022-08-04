@@ -51,6 +51,9 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
 
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+    // StringUtils
+    implementation 'org.apache.commons:commons-lang3:3.0'
 }
 
 tasks.named('test') {
