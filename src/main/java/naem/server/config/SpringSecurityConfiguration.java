@@ -17,6 +17,12 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
 
+    @Autowired
+    private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
+    @Autowired
+    private CustomAccessDeniedHandler customAccessDeniedHandler;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
@@ -26,6 +32,10 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
             .and()
             .httpBasic()
+            .authenticationEntryPoint(customAuthenticationEntryPoint)
+
+            .and()
+            .exceptionHandling().accessDeniedHandler(customAccessDeniedHandler)
 
             .and()
             .authorizeRequests()
