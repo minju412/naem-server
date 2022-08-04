@@ -9,8 +9,12 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ErrorCode {
 
-    /* 401 UNAUTHORIZED : Resource 를 찾을 수 없음 */
+    /* 401 UNAUTHORIZED : 인증되지 않음 */
     WRONG_PASSWORD(HttpStatus.UNAUTHORIZED, "잘못된 비밀번호입니다"),
+    UNAUTHORIZED_USER(HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자입니다"),
+
+    /* 403 FORBIDDEN : 권한이 없음 */
+    ACCESS_DENIED(HttpStatus.FORBIDDEN, "접근 권한이 없습니다"),
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저 정보를 찾을 수 없습니다"),

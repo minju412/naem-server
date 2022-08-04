@@ -8,7 +8,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,6 +26,7 @@ import naem.server.domain.member.SecurityMember;
 @Component
 @Slf4j
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
+
     @Override
     public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
         AccessDeniedException e) throws
@@ -35,7 +35,8 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
         httpServletResponse.setStatus(200);
         httpServletResponse.setContentType("application/json;charset=utf-8");
-        Response response = new Response(HttpStatus.FORBIDDEN, "error", "접근가능한 권한을 가지고 있지 않습니다.", null);
+
+        Response response = new Response("error", "접근가능한 권한을 가지고 있지 않습니다.", null);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         SecurityMember member = (SecurityMember)authentication.getPrincipal();
@@ -43,6 +44,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
         if (hasRole(authorities, MemberRole.ROLE_NOT_PERMITTED.name())) {
             response.setMessage("인증되지 않은 사용자입니다.");
+            // throw new CustomException(UNAUTHORIZED_USER);
             // response.setMessage("사용자 인증메일을 받지 않았습니다.");
         }
 

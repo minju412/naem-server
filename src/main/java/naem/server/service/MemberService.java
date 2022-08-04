@@ -1,5 +1,7 @@
 package naem.server.service;
 
+import static naem.server.exception.ErrorCode.*;
+
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import naem.server.domain.member.Member;
 import naem.server.domain.member.dto.PatchMemberDto;
+import naem.server.exception.CustomException;
 import naem.server.repository.MemberRepository;
 
 @RequiredArgsConstructor
@@ -20,7 +23,7 @@ public class MemberService {
 
     // 회원 정보 수정
     @Transactional
-    public int patch(long id, PatchMemberDto patchMemberDto) {
+    public void patch(long id, PatchMemberDto patchMemberDto) {
 
         Optional<Member> oMember = memberRepository.findById(id);
 
@@ -36,9 +39,9 @@ public class MemberService {
 
             memberRepository.save(member);
 
-            return 1;
+        } else {
+            throw new CustomException(MEMBER_NOT_FOUND);
         }
-        return 0;
     }
 
 }

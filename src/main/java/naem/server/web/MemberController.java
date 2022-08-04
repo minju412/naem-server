@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -49,10 +48,9 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/signup")
-    @ResponseStatus(HttpStatus.OK)
     public Response signUpUser(@RequestBody Member member) {
         authService.signUpMember(member);
-        return new Response(HttpStatus.OK, "success", "로그인에 성공했습니다.", null);
+        return new Response("OK", "회원가입에 성공했습니다", null);
     }
 
     @PostMapping("/login")
@@ -72,23 +70,20 @@ public class MemberController {
         res.addCookie(accessToken);
         res.addCookie(refreshToken);
 
-        return new Response(HttpStatus.OK, "success", "로그인에 성공했습니다.", token);
+        return new Response("OK", "로그인에 성공했습니다", token);
     }
 
     @GetMapping("/info")
     // @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public Response memberInfo() {
-        return new Response(HttpStatus.OK, "success", "정보 조회에 성공했습니다.", authService.getMyUserWithAuthorities());
+        return new Response("OK", "정보 조회에 성공했습니다", authService.getMyUserWithAuthorities());
     }
 
     @PatchMapping("/{id}")
     public Response memberPatch(@PathVariable("id") long id, @RequestBody PatchMemberDto patchMemberDto) {
 
-        if (memberService.patch(id, patchMemberDto) > 0) {
-            return new Response(HttpStatus.OK, "success", "정보 수정에 성공했습니다.", null);
-        } else {
-            return new Response(HttpStatus.OK, "success", "일치하는 회원 정보가 없습니다. 사용자 id를 확인해주세요.", null);
-        }
+        memberService.patch(id, patchMemberDto);
+        return new Response("OK", "정보 수정에 성공했습니다", null);
     }
 
 }
