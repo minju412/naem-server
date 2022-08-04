@@ -1,21 +1,19 @@
 package naem.server.service;
 
-import static naem.server.exhandler.ErrorCode.*;
+import static naem.server.exception.ErrorCode.*;
 
 import java.util.Optional;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import lombok.extern.slf4j.Slf4j;
 import naem.server.domain.member.Member;
 import naem.server.domain.member.Salt;
 import naem.server.domain.member.dto.ResponseMemberDto;
-import naem.server.exhandler.CustomException;
+import naem.server.exception.CustomException;
 import naem.server.repository.MemberRepository;
 import naem.server.service.util.SaltUtil;
 import naem.server.service.util.SecurityUtil;

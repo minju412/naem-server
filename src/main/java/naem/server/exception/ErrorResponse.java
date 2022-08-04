@@ -1,6 +1,4 @@
-package naem.server.exhandler;
-
-import java.time.LocalDateTime;
+package naem.server.exception;
 
 import org.springframework.http.ResponseEntity;
 

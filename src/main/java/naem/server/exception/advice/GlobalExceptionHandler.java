@@ -1,4 +1,4 @@
-package naem.server.exhandler.advice;
+package naem.server.exception.advice;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import lombok.extern.slf4j.Slf4j;
-import naem.server.exhandler.CustomException;
-import naem.server.exhandler.ErrorResponse;
+import naem.server.exception.CustomException;
+import naem.server.exception.ErrorResponse;
 
 @Slf4j
 @RestControllerAdvice

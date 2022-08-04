@@ -1,4 +1,4 @@
-package naem.server.exhandler;
+package naem.server.exception;
 
 import org.springframework.http.HttpStatus;
 
