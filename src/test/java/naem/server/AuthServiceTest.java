@@ -32,7 +32,11 @@ public class AuthServiceTest {
 
     @Test
     public void signUp() {
-        authService.signUpMember(member);
+        try {
+            authService.signUpMember(member);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Test

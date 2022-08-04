@@ -59,6 +59,7 @@ public class Member {
     private String password;
 
     @NotBlank
+    @Column(unique = true)
     private String nickname;
 
     private String introduction;

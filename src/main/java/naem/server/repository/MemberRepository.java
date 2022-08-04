@@ -10,6 +10,10 @@ public interface MemberRepository extends CrudRepository<Member, Long> {
 
     Member findByUsername(String username);
 
+    Member findByNickname(String nickname);
+
+    Member findByPhoneNumber(String phoneNumber);
+
     // @EntityGraph(attributePaths = "authorities")
     Optional<Member> findOneWithAuthoritiesByUsername(String username);
 }

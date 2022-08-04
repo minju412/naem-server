@@ -1,5 +1,7 @@
 package naem.server.service;
 
+import java.util.Optional;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +28,22 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public void signUpMember(Member member) {
+    public void signUpMember(Member member) throws IllegalStateException {
+
+        Optional<Member> result = Optional.ofNullable(memberRepository.findByPhoneNumber(member.getPhoneNumber()));
+        result.ifPresent(m -> {
+            throw new IllegalStateException("이미 가입된 회원입니다.");
+        });
+
+        result = Optional.ofNullable(memberRepository.findByUsername(member.getUsername()));
+        result.ifPresent(m -> {
+            throw new IllegalStateException("이미 사용중인 아이디입니다.");
+        });
+
+        result = Optional.ofNullable(memberRepository.findByNickname(member.getNickname()));
+        result.ifPresent(m -> {
+            throw new IllegalStateException("이미 사용중인 nickname 입니다.");
+        });
 
         String password = member.getPassword();
         String salt = saltUtil.genSalt();
