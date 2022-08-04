@@ -1,5 +1,7 @@
 package naem.server.service;
 
+import static naem.server.exhandler.ErrorCode.*;
+
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -13,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import naem.server.domain.member.Member;
 import naem.server.domain.member.Salt;
 import naem.server.domain.member.dto.ResponseMemberDto;
+import naem.server.exhandler.CustomException;
 import naem.server.repository.MemberRepository;
 import naem.server.service.util.SaltUtil;
 import naem.server.service.util.SecurityUtil;
@@ -28,21 +31,21 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public void signUpMember(Member member) throws IllegalStateException {
+    public void signUpMember(Member member) {
 
         Optional<Member> result = Optional.ofNullable(memberRepository.findByPhoneNumber(member.getPhoneNumber()));
         result.ifPresent(m -> {
-            throw new IllegalStateException("이미 가입된 회원입니다.");
+            throw new CustomException(DUPLICATE_USER);
         });
 
         result = Optional.ofNullable(memberRepository.findByUsername(member.getUsername()));
         result.ifPresent(m -> {
-            throw new IllegalStateException("이미 사용중인 아이디입니다.");
+            throw new CustomException(CONFLICT_ID);
         });
 
         result = Optional.ofNullable(memberRepository.findByNickname(member.getNickname()));
         result.ifPresent(m -> {
-            throw new IllegalStateException("이미 사용중인 nickname 입니다.");
+            throw new CustomException(CONFLICT_NICKNAME);
         });
 
         String password = member.getPassword();
@@ -54,17 +57,17 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public Member loginMember(String id, String password) throws ResponseStatusException {
+    public Member loginMember(String id, String password) {
 
         Member member = memberRepository.findByUsername(id);
         if (member == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "멤버가 조회되지 않음");
+            throw new CustomException(MEMBER_NOT_FOUND);
         }
 
         String salt = member.getSalt().getSalt();
         password = saltUtil.encodePassword(salt, password);
         if (!member.getPassword().equals(password)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 틀립니다.");
+            throw new CustomException(WRONG_PASSWORD);
         }
 
         return member;

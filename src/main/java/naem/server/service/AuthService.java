@@ -5,9 +5,9 @@ import naem.server.domain.member.dto.ResponseMemberDto;
 
 public interface AuthService {
 
-    void signUpMember(Member member) throws Exception;
+    void signUpMember(Member member);
 
-    Member loginMember(String id, String password) throws Exception;
+    Member loginMember(String id, String password);
 
     ResponseMemberDto getMyUserWithAuthorities();
 }
