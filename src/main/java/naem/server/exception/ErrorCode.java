@@ -20,6 +20,7 @@ public enum ErrorCode {
     DUPLICATE_USER(HttpStatus.CONFLICT, "이미 가입한 회원입니다"),
     CONFLICT_ID(HttpStatus.CONFLICT, "이미 사용중인 id 입니다"),
     CONFLICT_NICKNAME(HttpStatus.CONFLICT, "이미 사용중인 nickname 입니다"),
+    DUPLICATE_RESOURCE(HttpStatus.CONFLICT, "데이터가 이미 존재합니다"),
     ;
 
     private final HttpStatus httpStatus;

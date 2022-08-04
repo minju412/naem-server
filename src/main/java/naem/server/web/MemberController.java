@@ -75,40 +75,6 @@ public class MemberController {
         return new Response(HttpStatus.OK, "success", "로그인에 성공했습니다.", token);
     }
 
-    // @PostMapping("/signup")
-    // public Response signUpUser(@RequestBody Member member) {
-    //     try {
-    //         authService.signUpMember(member);
-    //         return new Response(HttpStatus.OK, "success", "회원가입을 성공적으로 완료했습니다.", null);
-    //     } catch (Exception e) {
-    //         return new Response(HttpStatus.BAD_GATEWAY, "error", "회원가입을 하는 도중 오류가 발생했습니다.", e.getMessage());
-    //     }
-    // }
-
-    // @PostMapping("/login")
-    // public Response login(@RequestBody LoginMemberDto loginMemberDto,
-    //     HttpServletRequest req,
-    //     HttpServletResponse res) {
-    //     try {
-    //         final Member member = authService.loginMember(loginMemberDto.getUsername(),
-    //             loginMemberDto.getPassword());
-    //         final String token = jwtUtil.generateToken(member);
-    //         final String refreshJwt = jwtUtil.generateRefreshToken(member);
-    //
-    //         Cookie accessToken = cookieUtil.createCookie(JwtUtil.ACCESS_TOKEN_NAME, token);
-    //         Cookie refreshToken = cookieUtil.createCookie(JwtUtil.REFRESH_TOKEN_NAME, refreshJwt);
-    //
-    //         redisUtil.setDataExpire(refreshJwt, member.getUsername(), JwtUtil.REFRESH_TOKEN_VALIDATION_SECOND);
-    //         res.addCookie(accessToken);
-    //         res.addCookie(refreshToken);
-    //
-    //         return new Response(HttpStatus.OK, "success", "로그인에 성공했습니다.", token);
-    //
-    //     } catch (Exception e) {
-    //         return new Response(HttpStatus.BAD_GATEWAY, "error", "로그인에 실패했습니다.", e.getMessage());
-    //     }
-    // }
-
     @GetMapping("/info")
     // @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public Response memberInfo() {

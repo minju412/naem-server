@@ -1,5 +1,10 @@
 package naem.server.exception.advice;
 
+import static naem.server.exception.ErrorCode.*;
+
+import javax.validation.ConstraintViolationException;
+
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -13,11 +18,11 @@ import naem.server.exception.ErrorResponse;
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    // @ExceptionHandler(value = { ConstraintViolationException.class, DataIntegrityViolationException.class})
-    // protected ResponseEntity<ErrorResponse> handleDataException() {
-    //     log.error("handleDataException throw Exception : {}", DUPLICATE_RESOURCE);
-    //     return ErrorResponse.toResponseEntity(DUPLICATE_RESOURCE);
-    // }
+    @ExceptionHandler(value = { ConstraintViolationException.class, DataIntegrityViolationException.class})
+    protected ResponseEntity<ErrorResponse> handleDataException() {
+        log.error("handleDataException throw Exception : {}", DUPLICATE_RESOURCE);
+        return ErrorResponse.toResponseEntity(DUPLICATE_RESOURCE);
+    }
 
     @ExceptionHandler(value = { CustomException.class })
     protected ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
