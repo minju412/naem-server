@@ -22,11 +22,12 @@ public class ResponseMemberDto {
 
     private MemberType memberType;
     private MemberRole role;
-    private String phoneNumber;
     private String username;
     private String nickname;
+    private String introduction;
     private List<Post> posts;
     private List<Comment> comments;
+    private String filePath;
 
     public static ResponseMemberDto from(Member member) {
 
@@ -37,9 +38,10 @@ public class ResponseMemberDto {
         return ResponseMemberDto.builder()
             .memberType(member.getMemberType())
             .role(member.getRole())
-            .phoneNumber(member.getPhoneNumber())
             .username(member.getUsername())
             .nickname(member.getNickname())
+            .introduction(member.getIntroduction())
+            .filePath(member.getFilePath())
             // .authorityDtoSet(member.getAuthorities().stream()
             //     .map(authority -> AuthorityDto.builder().authorityName(authority.getAuthorityName()).build())
             //     .collect(Collectors.toSet()))

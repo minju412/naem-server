@@ -83,4 +83,9 @@ public class Member {
     @UpdateTimestamp
     private Date updateAt;
 
+    private Boolean isDeleted;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date deleteAt;
+
 }
