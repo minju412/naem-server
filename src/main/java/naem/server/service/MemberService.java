@@ -36,6 +36,9 @@ public class MemberService {
             if (StringUtils.isNotBlank(patchMemberDto.getIntroduction())) {
                 member.setIntroduction(patchMemberDto.getIntroduction());
             }
+            if (StringUtils.isNotBlank(patchMemberDto.getFilePath())) {
+                member.setFilePath(patchMemberDto.getFilePath());
+            }
 
             memberRepository.save(member);
 

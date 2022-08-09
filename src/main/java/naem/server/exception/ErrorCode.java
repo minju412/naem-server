@@ -9,6 +9,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ErrorCode {
 
+    /* 400 BAD_REQUEST : 잘못된 요청 */
+    CONSTRAINT_VIOLATION(HttpStatus.BAD_REQUEST, "제약 조건을 위배한 요청입니다 (constraint violation)"),
+    METHOD_ARG_NOT_VALID(HttpStatus.BAD_REQUEST, "제약 조건을 위배한 요청입니다 (method argument not valid)"),
+
     /* 401 UNAUTHORIZED : 인증되지 않음 */
     WRONG_PASSWORD(HttpStatus.UNAUTHORIZED, "잘못된 비밀번호입니다"),
     UNAUTHORIZED_USER(HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자입니다"),
@@ -21,7 +25,7 @@ public enum ErrorCode {
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "로그아웃 된 사용자입니다"),
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
-    DUPLICATE_USER(HttpStatus.CONFLICT, "이미 가입한 회원입니다"),
+    DUPLICATE_MEMBER(HttpStatus.CONFLICT, "이미 가입한 회원입니다"),
     CONFLICT_ID(HttpStatus.CONFLICT, "이미 사용중인 id 입니다"),
     CONFLICT_NICKNAME(HttpStatus.CONFLICT, "이미 사용중인 nickname 입니다"),
     DUPLICATE_RESOURCE(HttpStatus.CONFLICT, "데이터가 이미 존재합니다"),

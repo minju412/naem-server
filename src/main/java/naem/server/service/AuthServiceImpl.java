@@ -33,7 +33,7 @@ public class AuthServiceImpl implements AuthService {
 
         Optional<Member> result = Optional.ofNullable(memberRepository.findByPhoneNumber(member.getPhoneNumber()));
         result.ifPresent(m -> {
-            throw new CustomException(DUPLICATE_USER);
+            throw new CustomException(DUPLICATE_MEMBER);
         });
 
         result = Optional.ofNullable(memberRepository.findByUsername(member.getUsername()));

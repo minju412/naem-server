@@ -17,6 +17,7 @@ import javax.persistence.OneToMany;
 
 import lombok.Getter;
 import lombok.Setter;
+import naem.server.domain.member.MemberTag;
 
 @Entity
 @Getter
@@ -33,4 +34,7 @@ public class Tag {
 
     @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL)
     private List<PostTag> postTags = new ArrayList<>();
+
+    @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL)
+    private List<MemberTag> memberTags = new ArrayList<>();
 }

@@ -47,4 +47,9 @@ public class Comment {
     @Temporal(TemporalType.TIMESTAMP)
     @UpdateTimestamp
     private Date updateAt;
+
+    private Boolean isDeleted;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date deleteAt;
 }

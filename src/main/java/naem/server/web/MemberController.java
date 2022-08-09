@@ -3,10 +3,11 @@ package naem.server.web;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,7 +49,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/signup")
-    public Response signUpUser(@RequestBody Member member) {
+    public Response signUpUser(@Valid @RequestBody Member member) {
         authService.signUpMember(member);
         return new Response("OK", "회원가입에 성공했습니다", null);
     }

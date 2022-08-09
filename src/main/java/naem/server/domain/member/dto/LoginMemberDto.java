@@ -1,7 +1,6 @@
 package naem.server.domain.member.dto;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,11 +15,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class LoginMemberDto {
 
-    @NotBlank
-    @Size(min = 3, max = 50)
+    @NotBlank(message = "아이디는 필수 입력 값입니다.")
     private String username;
 
-    @NotBlank
-    @Size(min = 3, max = 100)
+    @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
     private String password;
 }
