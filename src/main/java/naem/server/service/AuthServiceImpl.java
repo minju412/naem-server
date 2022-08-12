@@ -2,10 +2,8 @@ package naem.server.service;
 
 import static naem.server.exception.ErrorCode.*;
 
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,7 +23,6 @@ import naem.server.domain.member.Member;
 import naem.server.domain.member.dto.RegenerateTokenDto;
 import naem.server.domain.member.dto.SignInReq;
 import naem.server.domain.member.dto.SignUpReq;
-import naem.server.domain.member.dto.SignUpRes;
 import naem.server.domain.member.dto.TokenDto;
 import naem.server.exception.CustomException;
 import naem.server.repository.MemberRepository;
@@ -44,20 +41,21 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public SignUpRes signUp(SignUpReq signUpReq) {
-        System.out.println("signUpReq = " + signUpReq.toString());
+    public void signUp(SignUpReq signUpReq) {
 
+        if (userRepository.existsByPhoneNumber(signUpReq.getPhoneNumber())) {
+            throw new CustomException(DUPLICATE_MEMBER);
+        }
         if (userRepository.existsByUsername(signUpReq.getUsername())) {
-            return new SignUpRes(false, "Your Mail already Exist.");
+            throw new CustomException(CONFLICT_ID);
+        }
+        if (userRepository.existsByNickname(signUpReq.getNickname())) {
+            throw new CustomException(CONFLICT_NICKNAME);
         }
         Member newUser = signUpReq.toUserEntity();
         newUser.hashPassword(bCryptPasswordEncoder);
 
-        Member user = userRepository.save(newUser);
-        if (!Objects.isNull(user)) {
-            return new SignUpRes(true, null);
-        }
-        return new SignUpRes(false, "Fail to Sign Up");
+        userRepository.save(newUser);
     }
 
     @Override
@@ -70,17 +68,17 @@ public class AuthServiceImpl implements AuthService {
                 )
             );
 
-            String refresh_token = jwtTokenProvider.generateRefreshToken(authentication);
+            String refreshToken = jwtTokenProvider.generateRefreshToken(authentication);
 
             TokenDto tokenDto = new TokenDto(
                 jwtTokenProvider.generateAccessToken(authentication),
-                refresh_token
+                refreshToken
             );
 
             // Redis에 저장 - 만료 시간 설정을 통해 자동 삭제 처리
             redisTemplate.opsForValue().set(
                 authentication.getName(),
-                refresh_token,
+                refreshToken,
                 REFRESH_TOKEN_EXPIRE_TIME,
                 TimeUnit.MILLISECONDS
             );
@@ -89,41 +87,42 @@ public class AuthServiceImpl implements AuthService {
             httpHeaders.add("Authorization", "Bearer " + tokenDto.getAccess_token());
 
             return new ResponseEntity<>(tokenDto, httpHeaders, HttpStatus.OK);
+
         } catch (AuthenticationException e) {
-            log.info("log --- {}", e.getMessage());
             throw new CustomException(INVALID_CREDENTIAL);
         }
     }
 
     @Override
     public ResponseEntity<TokenDto> regenerateToken(RegenerateTokenDto refreshTokenDto) {
-        String refresh_token = refreshTokenDto.getRefresh_token();
+
+        String refreshToken = refreshTokenDto.getRefresh_token();
         try {
             // Refresh Token 검증
-            if (!jwtTokenProvider.validateRefreshToken(refresh_token)) {
+            if (!jwtTokenProvider.validateRefreshToken(refreshToken)) {
                 throw new CustomException(INVALID_REFRESH_TOKEN);
             }
 
             // Access Token 에서 Username을 가져온다.
-            Authentication authentication = jwtTokenProvider.getAuthenticationByRefreshToken(refresh_token);
+            Authentication authentication = jwtTokenProvider.getAuthenticationByRefreshToken(refreshToken);
 
             // Redis에서 저장된 Refresh Token 값을 가져온다.
-            String refreshToken = redisTemplate.opsForValue().get(authentication.getName());
-            if (!refreshToken.equals(refresh_token)) {
+            String redisRefreshToken = redisTemplate.opsForValue().get(authentication.getName());
+            if (!redisRefreshToken.equals(refreshToken)) {
                 throw new CustomException(REFRESH_TOKEN_NOT_MATCH);
             }
 
             // 토큰 재발행
-            String new_refresh_token = jwtTokenProvider.generateRefreshToken(authentication);
+            String newRefreshToken = jwtTokenProvider.generateRefreshToken(authentication);
             TokenDto tokenDto = new TokenDto(
                 jwtTokenProvider.generateAccessToken(authentication),
-                new_refresh_token
+                newRefreshToken
             );
 
             // RefreshToken Redis에 업데이트
             redisTemplate.opsForValue().set(
                 authentication.getName(),
-                new_refresh_token,
+                newRefreshToken,
                 REFRESH_TOKEN_EXPIRE_TIME,
                 TimeUnit.MILLISECONDS
             );
@@ -131,8 +130,8 @@ public class AuthServiceImpl implements AuthService {
             HttpHeaders httpHeaders = new HttpHeaders();
 
             return new ResponseEntity<>(tokenDto, httpHeaders, HttpStatus.OK);
+
         } catch (AuthenticationException e) {
-            log.info("log --- {}", e.getMessage());
             throw new CustomException(INVALID_REFRESH_TOKEN);
         }
     }

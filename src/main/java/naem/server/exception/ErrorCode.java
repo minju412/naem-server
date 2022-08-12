@@ -35,7 +35,7 @@ public enum ErrorCode {
 
     /* 500 INTERNAL_SERVER_ERROR : 서버 에러 */
     ACCESS_TOKEN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "엑세스 토큰 오류입니다"),
-    REFRESH_TOKEN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "엑세스 토큰 오류입니다"),
+    REFRESH_TOKEN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "리프레시 토큰 오류입니다"),
 
     ;
 

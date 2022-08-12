@@ -10,12 +10,13 @@ import javax.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import naem.server.domain.member.Member;
-import naem.server.domain.member.MemberRole;
 import naem.server.domain.member.MemberType;
 
 @Getter
+@Setter
 @ToString
 @NoArgsConstructor
 public class SignUpReq {

@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import naem.server.domain.Response;
 import naem.server.domain.member.dto.RegenerateTokenDto;
 import naem.server.domain.member.dto.SignInReq;
 import naem.server.domain.member.dto.SignUpReq;
-import naem.server.domain.member.dto.SignUpRes;
 import naem.server.domain.member.dto.TokenDto;
 import naem.server.service.AuthService;
 
@@ -27,8 +27,9 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signUp")
-    public SignUpRes signUp(@Valid @RequestBody SignUpReq signUpReq) {
-        return authService.signUp(signUpReq);
+    public Response signUp(@Valid @RequestBody SignUpReq signUpReq) {
+        authService.signUp(signUpReq);
+        return new Response("OK", "회원가입에 성공했습니다");
     }
 
     @PostMapping("/signIn")

@@ -11,6 +11,5 @@ public class Response {
 
     private String response;
     private String message;
-    private Object data;
 
 }
