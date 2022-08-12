@@ -8,7 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import lombok.extern.slf4j.Slf4j;
 import naem.server.domain.member.Member;
 import naem.server.domain.member.MemberType;
-import naem.server.domain.member.dto.LoginMemberDto;
 import naem.server.service.AuthService;
 
 @SpringBootTest

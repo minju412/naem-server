@@ -23,8 +23,11 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import naem.server.domain.Comment;
 import naem.server.domain.Post;
@@ -32,6 +35,7 @@ import naem.server.domain.Post;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class Member {
 
     @Id
@@ -45,23 +49,23 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private MemberRole role = MemberRole.ROLE_NOT_PERMITTED;
 
-    @NotBlank(message = "휴대폰 번호는 필수 입력 값입니다.")
-    @Pattern(regexp = "^01([0|1|6|7|8|9])-\\d{3,4}-\\d{4}$", message = "휴대폰 번호는 xxx-xxx-xxxx 혹은 xxx-xxxx-xxxx 형식을 사용하세요.")
+    // @NotBlank(message = "휴대폰 번호는 필수 입력 값입니다.")
+    // @Pattern(regexp = "^01([0|1|6|7|8|9])-\\d{3,4}-\\d{4}$", message = "휴대폰 번호는 xxx-xxx-xxxx 혹은 xxx-xxxx-xxxx 형식을 사용하세요.")
     private String phoneNumber;
 
-    @NotBlank(message = "아이디는 필수 입력 값입니다.")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[0-9]).{5,20}$", message = "아이디는 5~20자의 영문 소문자 및 숫자를 사용하세요.")
+    // @NotBlank(message = "아이디는 필수 입력 값입니다.")
+    // @Pattern(regexp = "^(?=.*[a-z])(?=.*[0-9]).{5,20}$", message = "아이디는 5~20자의 영문 소문자 및 숫자를 사용하세요.")
     @Size(min = 5, max = 20)
     @Column(unique = true)
     private String username;
 
-    @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%?&])[A-Za-z\\d@$!%*?&].{8,}$", message = "비밀번호는 8자 이상의 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
+    // @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
+    // @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%?&])[A-Za-z\\d@$!%*?&].{8,}$", message = "비밀번호는 8자 이상의 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
     // @Size(min = 8, max = 16) // 암호화
     private String password;
 
-    @NotBlank(message = "닉네임은 필수 입력 값입니다.")
-    @Pattern(regexp = "^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$", message = "닉네임은 10자 이내의 한글, 영문, 숫자를 사용하세요.")
+    // @NotBlank(message = "닉네임은 필수 입력 값입니다.")
+    // @Pattern(regexp = "^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$", message = "닉네임은 10자 이내의 한글, 영문, 숫자를 사용하세요.")
     @Size(min = 1, max = 10)
     @Column(unique = true)
     private String nickname;
@@ -77,10 +81,6 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "salt_id")
-    private Salt salt;
-
     private String filePath;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -95,5 +95,25 @@ public class Member {
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date deleteAt;
+
+    @Builder
+    public Member(MemberType memberType, String phoneNumber, String username, String password, String nickname /*UserRole role*/) {
+        this.memberType = memberType;
+        this.phoneNumber = phoneNumber;
+        this.username = username;
+        this.password = password;
+        this.nickname = nickname;
+        //    this.role = role;
+    }
+
+    /**
+     * 비밀번호를 암호화
+     * @param passwordEncoder 암호화 할 인코더 클래스
+     * @return 변경된 유저 Entity
+     */
+    public Member hashPassword(PasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(this.password);
+        return this;
+    }
 
 }

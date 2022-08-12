@@ -2,18 +2,20 @@ package naem.server.repository;
 
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 
 import naem.server.domain.member.Member;
 
-public interface MemberRepository extends CrudRepository<Member, Long> {
+public interface MemberRepository extends JpaRepository<Member, Long> {
 
-    Member findByUsername(String username);
+    Optional<Member> findByUsername(String username);
 
-    Member findByNickname(String nickname);
-
-    Member findByPhoneNumber(String phoneNumber);
-
-    // @EntityGraph(attributePaths = "authorities")
-    Optional<Member> findOneWithAuthoritiesByUsername(String username);
+    /**
+     * 이메일 중복 여부를 확인
+     *
+     * @param username
+     * @return true | false
+     */
+    boolean existsByUsername(String username);
 }
