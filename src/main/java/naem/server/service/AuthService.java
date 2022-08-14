@@ -1,10 +1,18 @@
 package naem.server.service;
 
-import naem.server.domain.User;
+import org.springframework.http.ResponseEntity;
+
+import naem.server.domain.member.dto.RegenerateTokenDto;
+import naem.server.domain.member.dto.SignInReq;
+import naem.server.domain.member.dto.SignUpReq;
+import naem.server.domain.member.dto.TokenDto;
 
 public interface AuthService {
 
-    void signUpUser(User user);
+    void signUp(SignUpReq signUpReq);
 
-    User loginUser(String id, String password) throws Exception;
+    ResponseEntity<TokenDto> signIn(SignInReq signInReq);
+
+    ResponseEntity<TokenDto> regenerateToken(RegenerateTokenDto refreshTokenDto);
+
 }
