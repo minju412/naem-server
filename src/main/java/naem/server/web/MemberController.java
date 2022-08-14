@@ -29,13 +29,9 @@ public class MemberController {
             .orElseThrow(UserNotFoundException::new);
 
         return ProfileRes.builder()
-            .memberType(userDetail.getMemberType().toString())
-            .role(userDetail.getRole().toString())
-            .phoneNumber(userDetail.getPhoneNumber())
             .username(userDetail.getUsername())
             .nickname(userDetail.getNickname())
             .introduction(userDetail.getIntroduction())
-            // .posts(userDetail.getPosts())
             .build();
     }
 }
