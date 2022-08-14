@@ -20,7 +20,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         HttpServletResponse response,
         AuthenticationException ex
     ) throws IOException {
-        // System.out.println(request.getRequestURI());
         log.error("UnAuthorized -- message : " + ex.getMessage());
         response.sendRedirect("/auth/signIn"); // 로그인 페이지로 리다이렉트
     }

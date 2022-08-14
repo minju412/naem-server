@@ -31,7 +31,6 @@ public class MemberController {
     // 내 정보 조회
     @GetMapping("/profile")
     public ProfileRes profile(@AuthenticationPrincipal UserDetails userDetails) throws UserNotFoundException {
-        System.out.println("userDetails = " + userDetails);
         Member userDetail = memberService.findByUsername(userDetails.getUsername())
             .orElseThrow(UserNotFoundException::new);
 
