@@ -2,6 +2,8 @@ package naem.server.web;
 
 import static naem.server.exception.ErrorCode.*;
 
+import java.util.Optional;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +20,6 @@ import naem.server.domain.member.Member;
 import naem.server.domain.member.dto.PatchMemberDto;
 import naem.server.domain.member.dto.ProfileDto.ProfileRes;
 import naem.server.exception.CustomException;
-import naem.server.exception.UserNotFoundException;
 import naem.server.service.MemberServiceImpl;
 
 @RequiredArgsConstructor
@@ -32,9 +33,13 @@ public class MemberController {
 
     // 내 정보 조회
     @GetMapping("/profile")
-    public ProfileRes profile(@AuthenticationPrincipal UserDetails userDetails) throws UserNotFoundException {
-        Member userDetail = memberService.findByUsername(userDetails.getUsername())
-            .orElseThrow(UserNotFoundException::new);
+    public ProfileRes profile(@AuthenticationPrincipal UserDetails userDetails) {
+
+        Optional<Member> oUserDetail = memberService.findByUsername(userDetails.getUsername());
+        if (oUserDetail.isEmpty()) {
+            throw new CustomException(MEMBER_NOT_FOUND);
+        }
+        Member userDetail = oUserDetail.get();
 
         return ProfileRes.builder()
             .username(userDetail.getUsername())
@@ -48,8 +53,11 @@ public class MemberController {
     public Response memberPatch(@PathVariable("id") long id, @RequestBody PatchMemberDto patchMemberDto,
         @AuthenticationPrincipal UserDetails userDetails) {
 
-        Member userDetail = memberService.findByUsername(userDetails.getUsername())
-            .orElseThrow(UserNotFoundException::new);
+        Optional<Member> oUserDetail = memberService.findByUsername(userDetails.getUsername());
+        if (oUserDetail.isEmpty()) {
+            throw new CustomException(MEMBER_NOT_FOUND);
+        }
+        Member userDetail = oUserDetail.get();
 
         if (userDetail.getId() != id) {
             throw new CustomException(ACCESS_DENIED);
