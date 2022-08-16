@@ -9,5 +9,4 @@ public class PatchMemberDto {
 
     private String nickname;
     private String introduction;
-    private String filePath;
 }
