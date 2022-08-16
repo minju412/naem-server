@@ -12,4 +12,6 @@ public interface MemberService {
      * @return 조회된 유저
      */
     Optional<Member> findByUsername(String username);
+
+    void withdraw(String checkPassword) throws Exception;
 }
