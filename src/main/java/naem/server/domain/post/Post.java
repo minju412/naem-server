@@ -1,4 +1,4 @@
-package naem.server.domain;
+package naem.server.domain.post;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,6 +23,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import lombok.Getter;
 import lombok.Setter;
+import naem.server.domain.Board;
+import naem.server.domain.Comment;
 import naem.server.domain.member.Member;
 
 @Entity

@@ -1,4 +1,4 @@
-package naem.server.domain;
+package naem.server.domain.post;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 
 import lombok.Getter;
 import lombok.Setter;
+import naem.server.domain.Tag;
 
 @Entity
 @Getter
