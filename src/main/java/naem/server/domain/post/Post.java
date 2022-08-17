@@ -21,11 +21,13 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import naem.server.domain.Board;
 import naem.server.domain.Comment;
 import naem.server.domain.member.Member;
+import naem.server.domain.member.MemberType;
 
 @Entity
 @Table(name = "posts")
@@ -69,5 +71,12 @@ public class Post {
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date deleteAt;
+
+    @Builder
+    public Post(String title, String content, Member member) {
+        this.title = title;
+        this.content = content;
+        this.member = member;
+    }
 
 }
