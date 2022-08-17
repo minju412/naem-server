@@ -72,8 +72,6 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<Comment> comments = new ArrayList<>();
 
-    private String filePath;
-
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
     private Date createAt;

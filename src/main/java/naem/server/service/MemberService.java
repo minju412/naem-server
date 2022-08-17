@@ -2,16 +2,17 @@ package naem.server.service;
 
 import java.util.Optional;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import naem.server.domain.member.Member;
+import naem.server.domain.member.dto.PatchMemberDto;
 
 public interface MemberService {
 
-    /**
-     * 아이디를 통해 유저 조회
-     * @param username
-     * @return 조회된 유저
-     */
     Optional<Member> findByUsername(String username);
 
+    void patch(long id, PatchMemberDto patchMemberDto);
+    
     void withdraw(String checkPassword) throws Exception;
 }
