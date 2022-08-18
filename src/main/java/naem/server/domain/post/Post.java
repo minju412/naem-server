@@ -1,5 +1,6 @@
 package naem.server.domain.post;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,16 +24,17 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import naem.server.domain.Board;
 import naem.server.domain.Comment;
 import naem.server.domain.member.Member;
-import naem.server.domain.member.MemberType;
 
 @Entity
 @Table(name = "posts")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Post {
 
     @Id
@@ -59,9 +61,9 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
-    @Temporal(TemporalType.TIMESTAMP)
+    // @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
-    private Date createAt;
+    private LocalDateTime createAt;
 
     @Temporal(TemporalType.TIMESTAMP)
     @UpdateTimestamp
@@ -73,10 +75,33 @@ public class Post {
     private Date deleteAt;
 
     @Builder
-    public Post(String title, String content, Member member) {
+    public Post(String title, String content, Member member, List<PostTag> postTag) {
         this.title = title;
         this.content = content;
         this.member = member;
+        this.postTags = postTag;
     }
+
+    //==연관관계 메서드==//
+    public void addPostTag(PostTag postTag) {
+        postTags.add(postTag);
+        postTag.setPost(this);
+    }
+
+    //==생성 메서드==//
+    public static Post createPost(Member member, String title, String content, PostTag... postTags) {
+
+        Post post = new Post();
+        post.setMember(member);
+        for (PostTag postTag : postTags) {
+            post.addPostTag(postTag);
+        }
+        post.setTitle(title);
+        post.setContent(content);
+        post.setCreateAt(LocalDateTime.now());
+        return post;
+    }
+
+
 
 }

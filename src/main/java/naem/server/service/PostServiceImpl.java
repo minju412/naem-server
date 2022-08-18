@@ -2,6 +2,8 @@ package naem.server.service;
 
 import static naem.server.exception.ErrorCode.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -10,7 +12,10 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import naem.server.domain.Tag;
 import naem.server.domain.member.Member;
+import naem.server.domain.post.Post;
+import naem.server.domain.post.PostTag;
 import naem.server.domain.post.dto.PostSaveReqDto;
 import naem.server.exception.CustomException;
 import naem.server.repository.MemberRepository;
@@ -30,12 +35,22 @@ public class PostServiceImpl implements PostService {
     public void save(PostSaveReqDto requestDto) {
 
         Optional<Member> oMember = memberRepository.findByUsername(SecurityUtil.getLoginUsername());
+        List<Tag> tags = new ArrayList<>(requestDto.getTag());
+        PostTag postTag = null;
 
         if (oMember.isPresent()) {
 
             Member member = oMember.get();
 
-            postRepository.save(requestDto.toEntity(member));
+            for (Tag tag : tags) {
+                // 포스트태그 생성
+                postTag = PostTag.createPostTag(tag);
+            }
+            // 게시글 생성
+            Post post = Post.createPost(member, requestDto.getTitle(), requestDto.getContent(), postTag);
+
+            postRepository.save(post);
+
         } else {
             throw new CustomException(MEMBER_NOT_FOUND);
         }
