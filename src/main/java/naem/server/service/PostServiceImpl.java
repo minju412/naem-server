@@ -38,6 +38,7 @@ public class PostServiceImpl implements PostService {
         Optional<Member> oMember = memberRepository.findByUsername(SecurityUtil.getLoginUsername());
         List<Tag> tags = new ArrayList<>(requestDto.getTag());
         PostTag postTag = null;
+        List<PostTag> postTags = new ArrayList<>();
 
         if (oMember.isPresent()) {
 
@@ -46,9 +47,10 @@ public class PostServiceImpl implements PostService {
             for (Tag tag : tags) {
                 // 포스트태그 생성
                 postTag = PostTag.createPostTag(tag);
+                postTags.add(postTag);
             }
             // 게시글 생성
-            Post post = Post.createPost(member, requestDto.getTitle(), requestDto.getContent(), postTag);
+            Post post = Post.createPost(member, requestDto.getTitle(), requestDto.getContent(), postTags);
 
             postRepository.save(post);
 

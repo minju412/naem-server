@@ -91,7 +91,7 @@ public class Post {
     }
 
     //==생성 메서드==//
-    public static Post createPost(Member member, String title, String content, PostTag... postTags) {
+    public static Post createPost(Member member, String title, String content, List<PostTag> postTags) {
 
         Post post = new Post();
         post.setMember(member);
