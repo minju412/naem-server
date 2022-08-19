@@ -16,6 +16,7 @@ import naem.server.domain.Tag;
 import naem.server.domain.member.Member;
 import naem.server.domain.post.Post;
 import naem.server.domain.post.PostTag;
+import naem.server.domain.post.dto.PostResDto;
 import naem.server.domain.post.dto.PostSaveReqDto;
 import naem.server.exception.CustomException;
 import naem.server.repository.MemberRepository;
@@ -53,6 +54,23 @@ public class PostServiceImpl implements PostService {
 
         } else {
             throw new CustomException(MEMBER_NOT_FOUND);
+        }
+    }
+
+    @Override
+    @Transactional
+    public PostResDto getPost(Long id) {
+
+        Optional<Post> oPost = postRepository.findById(id);
+
+        if (oPost.isPresent()) {
+
+            Post post = oPost.get();
+
+            return new PostResDto(post);
+
+        } else {
+            throw new CustomException(POST_NOT_FOUND);
         }
     }
 }

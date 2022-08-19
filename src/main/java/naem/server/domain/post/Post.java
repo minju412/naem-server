@@ -1,6 +1,5 @@
 package naem.server.domain.post;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +21,8 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,6 +36,7 @@ import naem.server.domain.member.Member;
 @Getter
 @Setter
 @NoArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Post {
 
     @Id
@@ -61,9 +63,9 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
-    // @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
-    private LocalDateTime createAt;
+    private Date createAt;
 
     @Temporal(TemporalType.TIMESTAMP)
     @UpdateTimestamp
@@ -98,7 +100,7 @@ public class Post {
         }
         post.setTitle(title);
         post.setContent(content);
-        post.setCreateAt(LocalDateTime.now());
+        // post.setCreateAt(LocalDateTime.now());
         return post;
     }
 
