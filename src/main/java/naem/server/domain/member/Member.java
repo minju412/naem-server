@@ -105,4 +105,14 @@ public class Member {
         return this;
     }
 
+    /**
+     * 패스워드 일치하는지 확인
+     * @param passwordEncoder 패스워드 인코더
+     * @param checkPassword 검사할 비밀번호
+     * @return
+     */
+    public boolean matchPassword(PasswordEncoder passwordEncoder, String checkPassword) {
+        return passwordEncoder.matches(checkPassword, getPassword());
+    }
+
 }

@@ -13,4 +13,6 @@ public interface MemberService {
     Optional<Member> findByUsername(String username);
 
     void patch(long id, PatchMemberDto patchMemberDto);
+    
+    void withdraw(String checkPassword) throws Exception;
 }
