@@ -39,8 +39,13 @@ public class PostServiceImpl implements PostService {
         List<Tag> tags = new ArrayList<>(requestDto.getTag());
         PostTag postTag = null;
         List<PostTag> postTags = new ArrayList<>();
+        int tagListSize = 3;
 
         if (oMember.isPresent()) {
+
+            if (tags.size() > tagListSize) {
+                throw new CustomException(TAG_LIST_SIZE_ERROR);
+            }
 
             Member member = oMember.get();
 
