@@ -57,7 +57,7 @@ public class MemberServiceImpl implements MemberService {
             throw new CustomException(MEMBER_NOT_FOUND);
         }
     }
-    
+
     @Override
     public void withdraw(String checkPassword) {
 
@@ -72,5 +72,6 @@ public class MemberServiceImpl implements MemberService {
             }
 
             memberRepository.delete(member);
+        }
     }
 }
