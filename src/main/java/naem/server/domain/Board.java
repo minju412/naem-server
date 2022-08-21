@@ -14,6 +14,7 @@ import javax.persistence.OneToMany;
 
 import lombok.Getter;
 import lombok.Setter;
+import naem.server.domain.post.Post;
 
 @Entity
 @Getter

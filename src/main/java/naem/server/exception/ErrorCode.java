@@ -15,6 +15,7 @@ public enum ErrorCode {
     REFRESH_TOKEN_NOT_MATCH(HttpStatus.BAD_REQUEST, "올바르지 않은 리프레시 토큰입니다"),
     INVALID_REFRESH_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않은 리프레시 토큰입니다"),
     INVALID_CREDENTIAL(HttpStatus.BAD_REQUEST, "유효하지 않은 자격증명입니다"),
+    TAG_LIST_SIZE_ERROR(HttpStatus.BAD_REQUEST, "최대 3개의 키워드를 선택할 수 있습니다"),
 
     /* 401 UNAUTHORIZED : 인증되지 않음 */
     WRONG_PASSWORD(HttpStatus.UNAUTHORIZED, "잘못된 비밀번호입니다"),
@@ -26,6 +27,7 @@ public enum ErrorCode {
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저 정보를 찾을 수 없습니다"),
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "로그아웃 된 사용자입니다"),
+    POST_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 게시글을 찾을 수 없습니다"),
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_MEMBER(HttpStatus.CONFLICT, "이미 가입한 회원입니다"),

@@ -10,5 +10,4 @@ public class SecurityUtil {
         UserDetails user = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return user.getUsername();
     }
-
 }

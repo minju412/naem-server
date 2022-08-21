@@ -1,4 +1,4 @@
-package naem.server.domain;
+package naem.server.domain.post;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,14 +21,22 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import naem.server.domain.Board;
+import naem.server.domain.Comment;
 import naem.server.domain.member.Member;
 
 @Entity
 @Table(name = "posts")
 @Getter
 @Setter
+@NoArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Post {
 
     @Id
@@ -67,5 +75,35 @@ public class Post {
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date deleteAt;
+
+    @Builder
+    public Post(String title, String content, Member member, List<PostTag> postTag) {
+        this.title = title;
+        this.content = content;
+        this.member = member;
+        this.postTags = postTag;
+    }
+
+    //==연관관계 메서드==//
+    public void addPostTag(PostTag postTag) {
+        postTags.add(postTag);
+        postTag.setPost(this);
+    }
+
+    //==생성 메서드==//
+    public static Post createPost(Member member, String title, String content, List<PostTag> postTags) {
+
+        Post post = new Post();
+        post.setMember(member);
+        for (PostTag postTag : postTags) {
+            post.addPostTag(postTag);
+        }
+        post.setTitle(title);
+        post.setContent(content);
+        // post.setCreateAt(LocalDateTime.now());
+        return post;
+    }
+
+
 
 }

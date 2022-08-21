@@ -19,6 +19,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import lombok.Getter;
 import lombok.Setter;
 import naem.server.domain.member.Member;
+import naem.server.domain.post.Post;
 
 @Entity
 @Getter
