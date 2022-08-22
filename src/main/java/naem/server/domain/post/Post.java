@@ -80,24 +80,10 @@ public class Post {
     @Temporal(TemporalType.TIMESTAMP)
     private Date deleteAt;
 
-    // @Builder
-    // public Post(String title, String content, Member member, List<PostTag> postTag) {
-    //     this.title = title;
-    //     this.content = content;
-    //     this.member = member;
-    //     this.postTags = postTag;
-    // }
-
     //==연관관계 메서드==//
     public void addPostTag(PostTag postTag) {
         postTags.add(postTag);
         postTag.setPost(this);
-    }
-
-    public void deletePostTag(Long postId) {
-
-        boolean boo = postTags.removeIf(postTag -> postTag.getPost().getId().equals(postId));
-        System.out.println("boo = " + boo);
     }
 
     //==생성 메서드==//
