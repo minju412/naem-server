@@ -4,6 +4,8 @@ import static naem.server.exception.ErrorCode.*;
 
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +22,7 @@ import naem.server.domain.Response;
 import naem.server.domain.member.Member;
 import naem.server.domain.post.dto.PostResDto;
 import naem.server.domain.post.dto.PostSaveReqDto;
+import naem.server.domain.post.dto.PostUpdateReqDto;
 import naem.server.exception.CustomException;
 import naem.server.service.MemberService;
 import naem.server.service.PostService;
@@ -36,7 +39,7 @@ public class BoardController {
 
     // 게시글 등록
     @PostMapping("/save")
-    public Response save(@RequestBody PostSaveReqDto requestDto) {
+    public Response save(@Valid @RequestBody PostSaveReqDto requestDto) {
         postService.save(requestDto);
         return new Response("OK", "게시글 등록에 성공했습니다");
     }
@@ -49,7 +52,7 @@ public class BoardController {
 
     // 게시글 수정
     @PatchMapping("/update/{id}")
-    public Response update(@PathVariable("id") long id, @RequestBody PostSaveReqDto requestDto,
+    public Response update(@PathVariable("id") long id, @Valid @RequestBody PostUpdateReqDto updateRequestDto,
         @AuthenticationPrincipal UserDetails userDetails) {
 
         Optional<Member> oUserDetail = memberService.findByUsername(userDetails.getUsername());
@@ -62,7 +65,7 @@ public class BoardController {
             throw new CustomException(ACCESS_DENIED);
         }
 
-        postService.update(id, requestDto);
+        postService.update(id, updateRequestDto);
         return new Response("OK", "게시글 수정에 성공했습니다");
     }
 

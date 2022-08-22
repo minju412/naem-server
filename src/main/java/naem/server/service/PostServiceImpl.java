@@ -18,6 +18,7 @@ import naem.server.domain.post.Post;
 import naem.server.domain.post.PostTag;
 import naem.server.domain.post.dto.PostResDto;
 import naem.server.domain.post.dto.PostSaveReqDto;
+import naem.server.domain.post.dto.PostUpdateReqDto;
 import naem.server.exception.CustomException;
 import naem.server.repository.MemberRepository;
 import naem.server.repository.PostRepository;
@@ -88,7 +89,7 @@ public class PostServiceImpl implements PostService {
     // 게시글 수정
     @Override
     @Transactional
-    public void update(Long id, PostSaveReqDto requestDto) {
+    public void update(Long id, PostUpdateReqDto updateRequestDto) {
 
         Optional<Post> oPost = postRepository.findById(id);
 
@@ -103,7 +104,7 @@ public class PostServiceImpl implements PostService {
             // 관계가 끊어졌고, 해당 게시글의 postTags를 삭제한다
             postTagRepository.deleteAll(post.getPostTags());
 
-            List<Tag> tags = new ArrayList<>(requestDto.getTag());
+            List<Tag> tags = new ArrayList<>(updateRequestDto.getTag());
             PostTag postTag = null;
             List<PostTag> postTags = new ArrayList<>();
             int tagListSize = 3;
@@ -118,7 +119,7 @@ public class PostServiceImpl implements PostService {
             }
 
             // 게시글 수정
-            post.updatePost(requestDto.getTitle(), requestDto.getContent(), postTags);
+            post.updatePost(updateRequestDto.getTitle(), updateRequestDto.getContent(), postTags);
 
         } else {
             throw new CustomException(POST_NOT_FOUND);
