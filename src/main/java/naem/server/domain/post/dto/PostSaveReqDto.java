@@ -1,5 +1,6 @@
 package naem.server.domain.post.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
@@ -19,5 +20,5 @@ public class PostSaveReqDto {
 
     @NotBlank(message = "내용은 필수 입력 값입니다.")
     private String content;
-    private List<Tag> tag;
+    private List<Tag> tag = new ArrayList<>();
 }

@@ -1,5 +1,6 @@
 package naem.server.domain.post.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
@@ -14,5 +15,5 @@ public class PostUpdateReqDto {
 
     private String title;
     private String content;
-    private List<Tag> tag;
+    private List<Tag> tag = new ArrayList<>();
 }

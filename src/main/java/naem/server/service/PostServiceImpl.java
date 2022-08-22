@@ -97,25 +97,33 @@ public class PostServiceImpl implements PostService {
 
             Post post = oPost.get();
 
-            // 해당 게시글의 PostTag 목록에서 postTag 삭제
-            for (PostTag postTag : post.getPostTags()) {
-                PostTag.removePostTag(postTag);
-            }
-            // 관계가 끊어졌고, 해당 게시글의 postTags를 삭제한다
-            postTagRepository.deleteAll(post.getPostTags());
+            if (!post.getPostTags().isEmpty()) {
 
-            List<Tag> tags = new ArrayList<>(updateRequestDto.getTag());
-            PostTag postTag = null;
-            List<PostTag> postTags = new ArrayList<>();
-            int tagListSize = 3;
-
-            if (tags.size() > tagListSize) {
-                throw new CustomException(TAG_LIST_SIZE_ERROR);
+                // 해당 게시글의 PostTag 목록에서 postTag 삭제
+                for (PostTag postTag : post.getPostTags()) {
+                    PostTag.removePostTag(postTag);
+                }
+                // 관계가 끊어졌고, 해당 게시글의 postTags를 삭제한다
+                postTagRepository.deleteAll(post.getPostTags());
             }
-            for (Tag tag : tags) {
-                // 포스트태그 생성
-                postTag = PostTag.createPostTag(tag);
-                postTags.add(postTag);
+
+            List<PostTag> postTags = null;
+
+            if (!updateRequestDto.getTag().isEmpty()) {
+
+                List<Tag> tags = new ArrayList<>(updateRequestDto.getTag());
+                PostTag postTag = null;
+                postTags = new ArrayList<>();
+                int tagListSize = 3;
+
+                if (tags.size() > tagListSize) {
+                    throw new CustomException(TAG_LIST_SIZE_ERROR);
+                }
+                for (Tag tag : tags) {
+                    // 포스트태그 생성
+                    postTag = PostTag.createPostTag(tag);
+                    postTags.add(postTag);
+                }
             }
 
             // 게시글 수정

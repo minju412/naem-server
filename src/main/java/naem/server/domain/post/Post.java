@@ -116,7 +116,6 @@ public class Post {
 
     //==수정 메서드==//
     public void updatePost(String title, String content, List<PostTag> postTags) {
-        System.out.println("Post.updatePost");
 
         if (StringUtils.isNotBlank(title)) {
             this.title = title;
@@ -125,7 +124,7 @@ public class Post {
             this.content = content;
         }
 
-        if (!postTags.isEmpty()) {
+        if (postTags != null) {
             for (PostTag postTag : postTags) {
                 this.addPostTag(postTag);
             }
