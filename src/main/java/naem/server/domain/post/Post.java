@@ -2,6 +2,7 @@ package naem.server.domain.post;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -18,9 +19,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.Builder;
@@ -57,6 +60,7 @@ public class Post {
     private Integer likeCnt;
     private Integer viewCnt;
 
+    // @JsonIgnore
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostTag> postTags = new ArrayList<>();
 
@@ -76,18 +80,24 @@ public class Post {
     @Temporal(TemporalType.TIMESTAMP)
     private Date deleteAt;
 
-    @Builder
-    public Post(String title, String content, Member member, List<PostTag> postTag) {
-        this.title = title;
-        this.content = content;
-        this.member = member;
-        this.postTags = postTag;
-    }
+    // @Builder
+    // public Post(String title, String content, Member member, List<PostTag> postTag) {
+    //     this.title = title;
+    //     this.content = content;
+    //     this.member = member;
+    //     this.postTags = postTag;
+    // }
 
     //==연관관계 메서드==//
     public void addPostTag(PostTag postTag) {
         postTags.add(postTag);
         postTag.setPost(this);
+    }
+
+    public void deletePostTag(Long postId) {
+
+        boolean boo = postTags.removeIf(postTag -> postTag.getPost().getId().equals(postId));
+        System.out.println("boo = " + boo);
     }
 
     //==생성 메서드==//
@@ -104,6 +114,21 @@ public class Post {
         return post;
     }
 
+    //==수정 메서드==//
+    public void updatePost(String title, String content, List<PostTag> postTags) {
+        System.out.println("Post.updatePost");
 
+        if (StringUtils.isNotBlank(title)) {
+            this.title = title;
+        }
+        if (StringUtils.isNotBlank(content)) {
+            this.content = content;
+        }
 
+        if (!postTags.isEmpty()) {
+            for (PostTag postTag : postTags) {
+                this.addPostTag(postTag);
+            }
+        }
+    }
 }
