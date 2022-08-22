@@ -107,13 +107,12 @@ public class PostServiceImpl implements PostService {
                 postTagRepository.deleteAll(post.getPostTags());
             }
 
-            List<PostTag> postTags = null;
+            List<PostTag> postTags = new ArrayList<>();
 
             if (!updateRequestDto.getTag().isEmpty()) {
 
                 List<Tag> tags = new ArrayList<>(updateRequestDto.getTag());
                 PostTag postTag = null;
-                postTags = new ArrayList<>();
                 int tagListSize = 3;
 
                 if (tags.size() > tagListSize) {

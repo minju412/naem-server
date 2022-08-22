@@ -124,7 +124,7 @@ public class Post {
             this.content = content;
         }
 
-        if (postTags != null) {
+        if (!postTags.isEmpty()) {
             for (PostTag postTag : postTags) {
                 this.addPostTag(postTag);
             }
