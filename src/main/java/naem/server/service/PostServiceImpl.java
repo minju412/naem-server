@@ -2,6 +2,7 @@ package naem.server.service;
 
 import static naem.server.exception.ErrorCode.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -76,6 +77,10 @@ public class PostServiceImpl implements PostService {
 
             Post post = oPost.get();
 
+            if (post.getIsDeleted()) {
+                throw new CustomException(POST_NOT_FOUND);
+            }
+
             return new PostResDto(post);
 
         } else {
@@ -103,7 +108,13 @@ public class PostServiceImpl implements PostService {
         if (oPost.isPresent()) {
 
             Post post = oPost.get();
-            postRepository.delete(post);
+
+            if (post.getIsDeleted()) {
+                throw new CustomException(POST_NOT_FOUND);
+            }
+
+            post.deletePost();
+            postRepository.save(post);
 
         } else {
             throw new CustomException(POST_NOT_FOUND);

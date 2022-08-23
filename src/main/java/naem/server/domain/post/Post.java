@@ -1,5 +1,6 @@
 package naem.server.domain.post;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -73,16 +74,7 @@ public class Post {
 
     private Boolean isDeleted;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date deleteAt;
-
-    @Builder
-    public Post(String title, String content, Member member, List<PostTag> postTag) {
-        this.title = title;
-        this.content = content;
-        this.member = member;
-        this.postTags = postTag;
-    }
+    private LocalDateTime deleteAt;
 
     //==연관관계 메서드==//
     public void addPostTag(PostTag postTag) {
@@ -100,10 +92,16 @@ public class Post {
         }
         post.setTitle(title);
         post.setContent(content);
+        post.setIsDeleted(false);
         // post.setCreateAt(LocalDateTime.now());
         return post;
     }
 
+    //==삭제 메서드==//
+    public void deletePost() {
 
+        this.setIsDeleted(true);
+        this.setDeleteAt(LocalDateTime.now());
+    }
 
 }
