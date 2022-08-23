@@ -2,12 +2,15 @@ package naem.server.service;
 
 import static naem.server.exception.ErrorCode.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -79,12 +82,17 @@ public class PostServiceImpl implements PostService {
 
             Post post = oPost.get();
 
+            if (post.getIsDeleted()) {
+                throw new CustomException(POST_NOT_FOUND);
+            }
+
             return new PostResDto(post);
 
         } else {
             throw new CustomException(POST_NOT_FOUND);
         }
     }
+
 
     // 게시글 수정
     @Override
@@ -132,10 +140,10 @@ public class PostServiceImpl implements PostService {
             throw new CustomException(POST_NOT_FOUND);
         }
     }
-
+    
     /*
     post_id를 받아서 member_id를 반환한다
-     */
+    */
     @Override
     public Long getAuthorId(Long id) {
         Optional<Post> oPost = postRepository.findById(id);
@@ -144,6 +152,26 @@ public class PostServiceImpl implements PostService {
         }
         Post post = oPost.get();
         return post.getMember().getId();
+    }
+
+    @Override
+    public void delete(Long id) {
+        Optional<Post> oPost = postRepository.findById(id);
+
+        if (oPost.isPresent()) {
+
+            Post post = oPost.get();
+
+            if (post.getIsDeleted()) {
+                throw new CustomException(POST_NOT_FOUND);
+            }
+
+            post.deletePost();
+            postRepository.save(post);
+
+        } else {
+            throw new CustomException(POST_NOT_FOUND);
+        }
     }
 
 }
