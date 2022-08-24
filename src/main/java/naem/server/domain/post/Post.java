@@ -63,6 +63,9 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Image> img = new ArrayList<>();
+
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
     private Date createAt;
