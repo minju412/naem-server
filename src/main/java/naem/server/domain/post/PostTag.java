@@ -41,4 +41,14 @@ public class PostTag {
 
         return postTag;
     }
+
+    //==삭제 메서드==//
+    /*
+    * post_id와 tag_id의 매핑 제거
+    */
+    public static void removePostTag(PostTag postTag) {
+        postTag.setPost(null);
+        postTag.setTag(null);
+    }
+
 }
