@@ -8,9 +8,8 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -19,6 +18,7 @@ import naem.server.domain.Tag;
 import naem.server.domain.member.Member;
 import naem.server.domain.post.Post;
 import naem.server.domain.post.PostTag;
+import naem.server.domain.post.dto.BriefPostInfoDto;
 import naem.server.domain.post.dto.PostResDto;
 import naem.server.domain.post.dto.PostSaveReqDto;
 import naem.server.exception.CustomException;
@@ -88,15 +88,9 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public List<PostResDto> getPostList(@PageableDefault(size = 5, sort = "createAt") Pageable pageRequest) {
+    public Slice<BriefPostInfoDto> getPostList(Long cursor, Pageable pageRequest) {
+        return postRepository.getBriefPostInfoScroll(cursor, pageRequest);
 
-        List<PostResDto> postResDtos = new ArrayList<>();
-        Page<Post> all = postRepository.findAll(pageRequest);
-
-        for (Post post : all) {
-            postResDtos.add(new PostResDto(post));
-        }
-
-        return postResDtos;
     }
+
 }

@@ -1,12 +1,11 @@
 package naem.server.web;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import naem.server.domain.Response;
 import naem.server.domain.post.Post;
+import naem.server.domain.post.dto.BriefPostInfoDto;
 import naem.server.domain.post.dto.PostResDto;
 import naem.server.domain.post.dto.PostSaveReqDto;
 import naem.server.service.PostService;
@@ -57,10 +57,10 @@ public class BoardController {
         return postService.getPost(id);
     }
 
-    @ApiOperation(value = "게시글 리스트 조회", notes = "게시글 리스트 조회")
+    @ApiOperation(value = "게시글 리스트 조회 (무한 스크롤)", notes = "게시글 리스트 조회 (무한 스크롤)")
     @GetMapping("/list")
-    public List<PostResDto> list(@PageableDefault(size = 5, sort = "createAt") Pageable pageRequest) {
-        return postService.getPostList(pageRequest);
+    public Slice<BriefPostInfoDto> list(Long cursor, @PageableDefault(size = 5, sort = "createAt") Pageable pageRequest) {
+        return postService.getPostList(cursor, pageRequest);
     }
 
 }
