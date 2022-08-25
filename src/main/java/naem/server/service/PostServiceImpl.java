@@ -8,6 +8,9 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -85,11 +88,10 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public List<PostResDto> getPostList() {
+    public List<PostResDto> getPostList(@PageableDefault(size = 5, sort = "createAt") Pageable pageRequest) {
 
-        // Optional<List<Post>> all = Optional.of(postRepository.findAll());
-        List<Post> all = postRepository.findAll();
         List<PostResDto> postResDtos = new ArrayList<>();
+        Page<Post> all = postRepository.findAll(pageRequest);
 
         for (Post post : all) {
             postResDtos.add(new PostResDto(post));

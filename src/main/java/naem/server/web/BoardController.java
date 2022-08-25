@@ -1,9 +1,13 @@
 package naem.server.web;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,8 +59,8 @@ public class BoardController {
 
     @ApiOperation(value = "게시글 리스트 조회", notes = "게시글 리스트 조회")
     @GetMapping("/list")
-    public List<PostResDto> list() {
-        return postService.getPostList();
+    public List<PostResDto> list(@PageableDefault(size = 5, sort = "createAt") Pageable pageRequest) {
+        return postService.getPostList(pageRequest);
     }
 
 }
