@@ -53,4 +53,10 @@ public class BoardController {
         return postService.getPost(id);
     }
 
+    @ApiOperation(value = "게시글 리스트 조회", notes = "게시글 리스트 조회")
+    @GetMapping("/list")
+    public List<PostResDto> list() {
+        return postService.getPostList();
+    }
+
 }

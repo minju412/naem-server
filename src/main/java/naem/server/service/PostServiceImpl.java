@@ -82,4 +82,19 @@ public class PostServiceImpl implements PostService {
             throw new CustomException(POST_NOT_FOUND);
         }
     }
+
+    @Override
+    @Transactional
+    public List<PostResDto> getPostList() {
+
+        // Optional<List<Post>> all = Optional.of(postRepository.findAll());
+        List<Post> all = postRepository.findAll();
+        List<PostResDto> postResDtos = new ArrayList<>();
+
+        for (Post post : all) {
+            postResDtos.add(new PostResDto(post));
+        }
+
+        return postResDtos;
+    }
 }
