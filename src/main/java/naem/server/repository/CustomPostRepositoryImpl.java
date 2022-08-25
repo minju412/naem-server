@@ -24,15 +24,15 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Slice<BriefPostInfoDto> getBriefPostInfoScroll(Long cursor, Pageable pageable) {
+    public Slice<BriefPostInfoDto> getBriefPostInfoScroll(Long cursorId, Pageable pageable) {
 
         List<Post> postList = queryFactory
             .select(post)
             .from(post)
             .where(
-                ltPostId(cursor)
+                eqCursorId(cursorId)
             )
-            // .limit(pageable.getPageSize() + 1)
+            .limit(pageable.getPageSize() + 1) // limit 보다 데이터를 1개 더 들고와서, 해당 데이터가 있다면 hasNext 변수에 true 를 넣어 알림
             .fetch();
 
         List<BriefPostInfoDto> briefPostInfos = new ArrayList<>();
@@ -49,6 +49,13 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
     }
 
     //동적 쿼리를 위한 BooleanExpression
+    private BooleanExpression eqCursorId(Long cursorId) {
+        if (cursorId != null) {
+            return post.id.gt(cursorId);
+        }
+        return null;
+    }
+
     private BooleanExpression ltPostId(Long cursor) {
         return cursor == null ? null : post.id.lt(cursor);
     }
