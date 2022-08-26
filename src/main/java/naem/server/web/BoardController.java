@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import naem.server.domain.Response;
 import naem.server.domain.post.Post;
 import naem.server.domain.post.dto.BriefPostInfoDto;
+import naem.server.domain.post.dto.PostReadCondition;
 import naem.server.domain.post.dto.PostResDto;
 import naem.server.domain.post.dto.PostSaveReqDto;
 import naem.server.service.PostService;
@@ -59,8 +61,12 @@ public class BoardController {
 
     @ApiOperation(value = "게시글 리스트 조회 (무한 스크롤)", notes = "게시글 리스트 조회 (무한 스크롤)")
     @GetMapping("/list")
-    public Slice<BriefPostInfoDto> list(Long cursor, @PageableDefault(size = 5, sort = "createAt") Pageable pageRequest) {
-        return postService.getPostList(cursor, pageRequest);
+    public Slice<BriefPostInfoDto> list(Long cursor, String keyword, @PageableDefault(size = 5, sort = "createAt") Pageable pageRequest) {
+
+        if (StringUtils.hasText(keyword)) {
+            return postService.getPostList(cursor, new PostReadCondition(keyword), pageRequest);
+        }
+        return postService.getPostList(cursor, new PostReadCondition(), pageRequest);
     }
 
 }

@@ -19,6 +19,7 @@ import naem.server.domain.member.Member;
 import naem.server.domain.post.Post;
 import naem.server.domain.post.PostTag;
 import naem.server.domain.post.dto.BriefPostInfoDto;
+import naem.server.domain.post.dto.PostReadCondition;
 import naem.server.domain.post.dto.PostResDto;
 import naem.server.domain.post.dto.PostSaveReqDto;
 import naem.server.exception.CustomException;
@@ -88,8 +89,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public Slice<BriefPostInfoDto> getPostList(Long cursor, Pageable pageRequest) {
-        return postRepository.getBriefPostInfoScroll(cursor, pageRequest);
+    public Slice<BriefPostInfoDto> getPostList(Long cursor, PostReadCondition condition, Pageable pageRequest) {
+        return postRepository.getBriefPostInfoScroll(cursor, condition, pageRequest);
 
     }
 

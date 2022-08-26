@@ -16,6 +16,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import naem.server.domain.post.Post;
 import naem.server.domain.post.dto.BriefPostInfoDto;
+import naem.server.domain.post.dto.PostReadCondition;
 
 @Repository
 @RequiredArgsConstructor
@@ -24,12 +25,16 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Slice<BriefPostInfoDto> getBriefPostInfoScroll(Long cursorId, Pageable pageable) {
+    public Slice<BriefPostInfoDto> getBriefPostInfoScroll(Long cursorId, PostReadCondition condition,
+        Pageable pageable) {
 
         List<Post> postList = queryFactory
             .select(post)
             .from(post)
             .where(
+                eqIsDeleted(condition.getIsDeleted()), // 삭제되지 않은 게시글만 조회
+                eqTitle(condition.getKeyword()),
+                eqContent(condition.getKeyword()),
                 eqCursorId(cursorId)
             )
             .limit(pageable.getPageSize() + 1) // limit 보다 데이터를 1개 더 들고와서, 해당 데이터가 있다면 hasNext 변수에 true 를 넣어 알림
@@ -50,14 +55,22 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
 
     //동적 쿼리를 위한 BooleanExpression
     private BooleanExpression eqCursorId(Long cursorId) {
-        if (cursorId != null) {
-            return post.id.gt(cursorId);
-        }
-        return null;
+        return (cursorId == null) ? null : post.id.gt(cursorId);
     }
 
-    private BooleanExpression ltPostId(Long cursor) {
-        return cursor == null ? null : post.id.lt(cursor);
+    // 삭제된 게시글인지 필터링
+    private BooleanExpression eqIsDeleted(Boolean isDeleted) {
+        return (isDeleted == null) ? null : post.isDeleted.eq(isDeleted);
+    }
+
+    // 제목에 keyword 포함되어있는지 필터링
+    private BooleanExpression eqTitle(String keyword) {
+        return (keyword == null) ? null : post.title.contains(keyword);
+    }
+
+    // 내용에 keyword 포함되어있는지 필터링
+    private BooleanExpression eqContent(String keyword) {
+        return (keyword == null) ? null : post.content.contains(keyword);
     }
 
 }
