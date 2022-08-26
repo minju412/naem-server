@@ -1,5 +1,7 @@
 package naem.server.service;
 
+import naem.server.domain.post.Post;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -9,7 +11,7 @@ import naem.server.domain.post.dto.PostUpdateReqDto;
 
 public interface PostService {
 
-    void save(PostSaveReqDto requestDto);
+    Post save(PostSaveReqDto requestDto);
 
     PostResDto getPost(Long id);
 

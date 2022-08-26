@@ -40,7 +40,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public void save(PostSaveReqDto requestDto) {
+    public Post save(PostSaveReqDto requestDto) {
 
         Optional<Member> oMember = memberRepository.findByUsername(SecurityUtil.getLoginUsername());
         List<Tag> tags = new ArrayList<>(requestDto.getTag());
@@ -65,6 +65,8 @@ public class PostServiceImpl implements PostService {
             Post post = Post.createPost(member, requestDto.getTitle(), requestDto.getContent(), postTags);
 
             postRepository.save(post);
+
+            return post;
 
         } else {
             throw new CustomException(MEMBER_NOT_FOUND);

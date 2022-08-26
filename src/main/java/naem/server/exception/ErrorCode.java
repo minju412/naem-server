@@ -16,6 +16,7 @@ public enum ErrorCode {
     INVALID_REFRESH_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않은 리프레시 토큰입니다"),
     INVALID_CREDENTIAL(HttpStatus.BAD_REQUEST, "유효하지 않은 자격증명입니다"),
     TAG_LIST_SIZE_ERROR(HttpStatus.BAD_REQUEST, "최대 3개의 키워드를 선택할 수 있습니다"),
+    INVALID_FILE_ERROR(HttpStatus.BAD_REQUEST, "잘못된 형식의 파일입니다"),
 
     /* 401 UNAUTHORIZED : 인증되지 않음 */
     WRONG_PASSWORD(HttpStatus.UNAUTHORIZED, "잘못된 비밀번호입니다"),
@@ -38,6 +39,8 @@ public enum ErrorCode {
     /* 500 INTERNAL_SERVER_ERROR : 서버 에러 */
     ACCESS_TOKEN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "엑세스 토큰 오류입니다"),
     REFRESH_TOKEN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "리프레시 토큰 오류입니다"),
+    FILE_CAN_NOT_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다."),
+    FILE_CAN_NOT_DELETE(HttpStatus.INTERNAL_SERVER_ERROR, "파일 삭제에 실패했습니다."),
 
     ;
 
