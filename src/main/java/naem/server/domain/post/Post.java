@@ -3,7 +3,6 @@ package naem.server.domain.post;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -24,10 +23,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -114,13 +111,13 @@ public class Post {
         if (StringUtils.isNotBlank(content)) {
             this.content = content;
         }
+    }
 
     //==삭제 메서드==//
     public void deletePost() {
 
         this.setIsDeleted(true);
         this.setDeleteAt(LocalDateTime.now());
-    }
 
         if (!postTags.isEmpty()) {
             for (PostTag postTag : postTags) {
