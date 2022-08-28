@@ -8,7 +8,6 @@ import naem.server.domain.post.dto.PostReadCondition;
 
 public interface CustomPostRepository {
 
-    // Slice<BriefPostInfoDto> getBriefPostInfoScroll(Long cursorId, Pageable pageable);
     Slice<BriefPostInfoDto> getBriefPostInfoScroll(Long cursorId, PostReadCondition condition, Pageable pageable);
 
 }
