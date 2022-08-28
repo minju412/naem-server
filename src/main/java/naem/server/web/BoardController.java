@@ -7,7 +7,11 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
+import org.springframework.util.StringUtils;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,6 +32,8 @@ import lombok.extern.slf4j.Slf4j;
 import naem.server.domain.Response;
 import naem.server.domain.member.Member;
 import naem.server.domain.post.Post;
+import naem.server.domain.post.dto.BriefPostInfoDto;
+import naem.server.domain.post.dto.PostReadCondition;
 import naem.server.domain.post.dto.PostResDto;
 import naem.server.domain.post.dto.PostSaveReqDto;
 import naem.server.domain.post.dto.PostUpdateReqDto;
@@ -49,7 +55,7 @@ public class BoardController {
 
     @ApiOperation(value = "게시글 등록", notes = "Amazon S3에 파일 업로드")
     @PostMapping(value = "/save", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public Response uploadFile(@RequestPart @Valid PostSaveReqDto requestDto,
+    public Response save(@RequestPart @Valid PostSaveReqDto requestDto,
         @ApiParam("파일들 (여러 파일 업로드 가능)") @RequestPart(required = false) List<MultipartFile> multipartFile) {
 
         Post post = postService.save(requestDto);
@@ -62,7 +68,7 @@ public class BoardController {
 
     @ApiOperation(value = "게시글 단건 조회", notes = "게시글 단건 조회")
     @GetMapping("/detail/{id}")
-    public PostResDto detail(@PathVariable("id") long id) {
+    public PostResDto getPost(@PathVariable("id") long id) {
         return postService.getPost(id);
     }
     
@@ -102,6 +108,16 @@ public class BoardController {
 
         postService.delete(id);
         return new Response("OK", "게시글 삭제에 성공했습니다");
+    }
+
+    @ApiOperation(value = "게시글 리스트 조회 (무한 스크롤)", notes = "게시글 리스트 조회 (무한 스크롤)")
+    @GetMapping("/list")
+    public Slice<BriefPostInfoDto> getPostList(Long cursor, String keyword, @PageableDefault(size = 5, sort = "createAt") Pageable pageRequest) {
+
+        if (StringUtils.hasText(keyword)) {
+            return postService.getPostList(cursor, new PostReadCondition(keyword), pageRequest);
+        }
+        return postService.getPostList(cursor, new PostReadCondition(), pageRequest);
     }
 
 }

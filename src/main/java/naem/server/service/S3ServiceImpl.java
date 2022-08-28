@@ -85,6 +85,18 @@ public class S3ServiceImpl implements S3Service {
 
     // 유니크한 파일의 이름을 생성하는 로직
     private String createFileName(String originalName, String dirName) {
-        return dirName + "/" + UUID.randomUUID() + originalName;
+        return dirName + "/" + UUID.randomUUID() + getFileExtension(originalName);
+    }
+
+    /**
+     * 파일의 확장자명을 가져오는 로직
+     * file 형식이 잘못된 경우를 확인하기 위해 만들어진 로직이며, 파일 타입과 상관없이 업로드할 수 있게 하기 위해 .의 존재 유무만 판단
+     */
+    private String getFileExtension(String fileName) {
+        try {
+            return fileName.substring(fileName.lastIndexOf("."));
+        } catch (StringIndexOutOfBoundsException e) {
+            throw new CustomException(INVALID_FILE_ERROR);
+        }
     }
 }

@@ -9,6 +9,9 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,8 @@ import naem.server.domain.Tag;
 import naem.server.domain.member.Member;
 import naem.server.domain.post.Post;
 import naem.server.domain.post.PostTag;
+import naem.server.domain.post.dto.BriefPostInfoDto;
+import naem.server.domain.post.dto.PostReadCondition;
 import naem.server.domain.post.dto.PostResDto;
 import naem.server.domain.post.dto.PostSaveReqDto;
 import naem.server.domain.post.dto.PostUpdateReqDto;
@@ -94,7 +99,6 @@ public class PostServiceImpl implements PostService {
             throw new CustomException(POST_NOT_FOUND);
         }
     }
-
 
     // 게시글 수정
     @Override
@@ -174,6 +178,12 @@ public class PostServiceImpl implements PostService {
         } else {
             throw new CustomException(POST_NOT_FOUND);
         }
+    }
+    
+    @Override
+    @Transactional
+    public Slice<BriefPostInfoDto> getPostList(Long cursor, PostReadCondition condition, Pageable pageRequest) {
+        return postRepository.getBriefPostInfoScroll(cursor, condition, pageRequest);
     }
 
 }

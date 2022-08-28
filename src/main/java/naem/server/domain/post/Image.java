@@ -24,7 +24,7 @@ public class Image {
     @Column(name = "image_id")
     private Long id;
 
-    String imgurl;
+    private String imgurl;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
