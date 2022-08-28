@@ -1,5 +1,6 @@
 package naem.server.domain.post;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,12 +19,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -57,6 +58,7 @@ public class Post {
     private Integer likeCnt;
     private Integer viewCnt;
 
+    // @JsonIgnore
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostTag> postTags = new ArrayList<>();
 
@@ -76,16 +78,7 @@ public class Post {
 
     private Boolean isDeleted;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date deleteAt;
-
-    @Builder
-    public Post(String title, String content, Member member, List<PostTag> postTag) {
-        this.title = title;
-        this.content = content;
-        this.member = member;
-        this.postTags = postTag;
-    }
+    private LocalDateTime deleteAt;
 
     //==연관관계 메서드==//
     public void addPostTag(PostTag postTag) {
@@ -103,10 +96,33 @@ public class Post {
         }
         post.setTitle(title);
         post.setContent(content);
+        post.setIsDeleted(false);
         // post.setCreateAt(LocalDateTime.now());
         return post;
     }
 
 
+    //==수정 메서드==//
+    public void updatePost(String title, String content, List<PostTag> postTags) {
 
+        if (StringUtils.isNotBlank(title)) {
+            this.title = title;
+        }
+        if (StringUtils.isNotBlank(content)) {
+            this.content = content;
+        }
+    }
+
+    //==삭제 메서드==//
+    public void deletePost() {
+
+        this.setIsDeleted(true);
+        this.setDeleteAt(LocalDateTime.now());
+
+        if (!postTags.isEmpty()) {
+            for (PostTag postTag : postTags) {
+                this.addPostTag(postTag);
+            }
+        }
+    }
 }

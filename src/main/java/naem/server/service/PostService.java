@@ -8,6 +8,7 @@ import naem.server.domain.post.dto.BriefPostInfoDto;
 import naem.server.domain.post.dto.PostReadCondition;
 import naem.server.domain.post.dto.PostResDto;
 import naem.server.domain.post.dto.PostSaveReqDto;
+import naem.server.domain.post.dto.PostUpdateReqDto;
 
 public interface PostService {
 
@@ -17,4 +18,9 @@ public interface PostService {
 
     Slice<BriefPostInfoDto> getPostList(Long cursor, PostReadCondition condition, Pageable pageRequest);
 
+    void update(Long id, PostUpdateReqDto updateRequestDto);
+
+    Long getAuthorId(Long id);
+
+    void delete(Long id);
 }
