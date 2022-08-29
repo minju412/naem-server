@@ -67,7 +67,7 @@ public class BoardController {
     }
 
     @ApiOperation(value = "게시글 수정", notes = "게시글 수정")
-    @PatchMapping("/update/{id}")
+    @PatchMapping("/{id}")
     public Response update(@PathVariable("id") long postId, @Valid @RequestBody PostUpdateReqDto updateRequestDto,
         @AuthenticationPrincipal UserDetails userDetails) {
 

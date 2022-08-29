@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import naem.server.domain.Tag;
 import naem.server.domain.member.Member;
-import naem.server.domain.post.Image;
 import naem.server.domain.post.Post;
 import naem.server.domain.post.PostTag;
 import naem.server.domain.post.dto.BriefPostInfoDto;
@@ -105,16 +104,15 @@ public class PostServiceImpl implements PostService {
 
         Post post = postRepository.findById(postId)
             .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        if (post.getIsDeleted()) {
+            throw new CustomException(POST_NOT_FOUND);
+        }
 
         // 포스트 태그 제거
         List<PostTag> postTags = post.getPostTags();
         if (!postTags.isEmpty()) {
-            // 해당 게시글의 PostTag 목록에서 postTag 삭제
-            for (PostTag postTag : postTags) {
-                PostTag.removePostTag(postTag);
-            }
-            // 관계가 끊어졌고, 해당 게시글의 postTags를 삭제한다
-            postTagRepository.deleteAll(post.getPostTags());
+            PostTag.removePostTag(postTags); // 해당 게시글의 PostTag 목록에서 postTag 삭제
+            postTagRepository.deleteAll(postTags); // 관계가 끊어졌고, 해당 게시글의 postTags를 삭제한다
         }
 
         List<PostTag> newPostTags = new ArrayList<>();
@@ -136,7 +134,6 @@ public class PostServiceImpl implements PostService {
 
         // 게시글 수정
         post.updatePost(updateRequestDto.getTitle(), updateRequestDto.getContent(), newPostTags);
-
     }
 
     /*
@@ -163,7 +160,6 @@ public class PostServiceImpl implements PostService {
 
         Post post = postRepository.findById(postId)
             .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-
         if (post.getIsDeleted()) {
             throw new CustomException(POST_NOT_FOUND);
         }
@@ -171,12 +167,8 @@ public class PostServiceImpl implements PostService {
         // 포스트 태그 제거
         List<PostTag> postTags = post.getPostTags();
         if (!postTags.isEmpty()) {
-            // 해당 게시글의 PostTag 목록에서 postTag 삭제
-            for (PostTag postTag : postTags) {
-                PostTag.removePostTag(postTag);
-            }
-            // 관계가 끊어졌고, 해당 게시글의 postTags를 삭제한다
-            postTagRepository.deleteAll(post.getPostTags());
+            PostTag.removePostTag(postTags); // 해당 게시글의 PostTag 목록에서 postTag 삭제
+            postTagRepository.deleteAll(postTags); // 관계가 끊어졌고, 해당 게시글의 postTags를 삭제한다
         }
 
         return post;
