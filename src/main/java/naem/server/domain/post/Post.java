@@ -110,6 +110,11 @@ public class Post {
         if (StringUtils.isNotBlank(content)) {
             this.content = content;
         }
+        if (!postTags.isEmpty()) {
+            for (PostTag postTag : postTags) {
+                this.addPostTag(postTag);
+            }
+        }
     }
 
     //==삭제 메서드==//
