@@ -13,6 +13,8 @@ import naem.server.domain.post.dto.PostUpdateReqDto;
 
 public interface PostService {
 
+    void save(Post post);
+
     Post save(PostSaveReqDto requestDto);
 
     PostResDto getPost(Long id);
@@ -23,5 +25,5 @@ public interface PostService {
 
     Long getAuthorId(Long id);
 
-    void delete(Long id, UserDetails userDetails);
+    Post delete(Long id, UserDetails userDetails);
 }

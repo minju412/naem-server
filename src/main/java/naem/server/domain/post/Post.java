@@ -118,13 +118,14 @@ public class Post {
     }
 
     //==삭제 메서드==//
-    public void deletePost() {
+    public static void deletePost(Post post) {
 
-        this.setIsDeleted(true);
-        this.setDeleteAt(LocalDateTime.now());
+        post.setIsDeleted(true);
+        post.setDeleteAt(LocalDateTime.now());
 
-        if (!img.isEmpty()) {
-            for (Image image : img) {
+        List<Image> images = post.getImg();
+        if (!images.isEmpty()) {
+            for (Image image : images) {
                 image.deleteImages();
             }
         }

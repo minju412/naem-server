@@ -41,7 +41,11 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final PostTagRepository postTagRepository;
 
-    private final S3Service s3Service;
+    @Override
+    @Transactional
+    public void save(Post post) {
+        postRepository.save(post);
+    }
 
     @Override
     @Transactional
@@ -149,7 +153,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void delete(Long postId, UserDetails userDetails) {
+    public Post delete(Long postId, UserDetails userDetails) {
 
         Member member = memberRepository.findByUsername(userDetails.getUsername())
             .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
@@ -175,15 +179,7 @@ public class PostServiceImpl implements PostService {
             postTagRepository.deleteAll(post.getPostTags());
         }
 
-        // s3에서 이미지 삭제
-        List<Image> images = post.getImg();
-        if (!images.isEmpty()) {
-            s3Service.deleteImageList(images);
-        }
-
-        post.deletePost();
-        postRepository.save(post);
-
+        return post;
     }
 
     @Override

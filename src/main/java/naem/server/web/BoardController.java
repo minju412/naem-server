@@ -27,6 +27,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import naem.server.domain.Response;
+import naem.server.domain.post.Image;
 import naem.server.domain.post.Post;
 import naem.server.domain.post.dto.BriefPostInfoDto;
 import naem.server.domain.post.dto.PostReadCondition;
@@ -79,7 +80,14 @@ public class BoardController {
     public Response delete(@PathVariable("id") long postId,
         @AuthenticationPrincipal UserDetails userDetails) {
 
-        postService.delete(postId, userDetails);
+        Post deletedPost = postService.delete(postId, userDetails);
+        List<Image> images = deletedPost.getImg();
+        if (!images.isEmpty()) {
+            s3Service.deleteImageList(images);
+        }
+        Post.deletePost(deletedPost);
+        postService.save(deletedPost);
+
         return new Response("OK", "게시글 삭제에 성공했습니다");
     }
 
