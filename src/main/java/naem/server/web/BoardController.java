@@ -85,7 +85,7 @@ public class BoardController {
         if (!images.isEmpty()) {
             s3Service.deleteImageList(images);
         }
-        Post.deletePost(deletedPost);
+        deletedPost.deletePost();
         postService.save(deletedPost);
 
         return new Response("OK", "게시글 삭제에 성공했습니다");
