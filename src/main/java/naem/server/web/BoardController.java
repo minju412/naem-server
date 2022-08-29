@@ -11,9 +11,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
-import org.springframework.util.StringUtils;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -60,7 +60,7 @@ public class BoardController {
 
         Post post = postService.save(requestDto);
         if (multipartFile != null) {
-            s3Service.uploadImage(multipartFile, "test2", post);
+            s3Service.uploadImage(multipartFile, "test3", post);
         }
 
         return new Response("OK", "게시글 등록에 성공했습니다");
@@ -93,7 +93,7 @@ public class BoardController {
     
     // 게시글 삭제
     @DeleteMapping("{id}")
-    public Response delete(@PathVariable("id") long id,
+    public Response delete(@PathVariable("id") long postId,
         @AuthenticationPrincipal UserDetails userDetails) {
 
         Optional<Member> oUserDetail = memberService.findByUsername(userDetails.getUsername());
@@ -102,11 +102,11 @@ public class BoardController {
         }
         Member userDetail = oUserDetail.get();
 
-        if (!userDetail.getId().equals(postService.getAuthorId(id))) {
+        if (!userDetail.getId().equals(postService.getAuthorId(postId))) {
             throw new CustomException(ACCESS_DENIED);
         }
 
-        postService.delete(id);
+        postService.delete(postId);
         return new Response("OK", "게시글 삭제에 성공했습니다");
     }
 

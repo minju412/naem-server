@@ -2,24 +2,21 @@ package naem.server.service;
 
 import static naem.server.exception.ErrorCode.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
 
-
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import naem.server.domain.Tag;
 import naem.server.domain.member.Member;
+import naem.server.domain.post.Image;
 import naem.server.domain.post.Post;
 import naem.server.domain.post.PostTag;
 import naem.server.domain.post.dto.BriefPostInfoDto;
@@ -42,6 +39,8 @@ public class PostServiceImpl implements PostService {
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
     private final PostTagRepository postTagRepository;
+
+    private final S3Service s3Service;
 
     @Override
     @Transactional
@@ -111,20 +110,20 @@ public class PostServiceImpl implements PostService {
 
             Post post = oPost.get();
 
-            if (!post.getPostTags().isEmpty()) {
-
+            // 포스트 태그 제거
+            List<PostTag> postTags = post.getPostTags();
+            if (!postTags.isEmpty()) {
                 // 해당 게시글의 PostTag 목록에서 postTag 삭제
-                for (PostTag postTag : post.getPostTags()) {
+                for (PostTag postTag : postTags) {
                     PostTag.removePostTag(postTag);
                 }
                 // 관계가 끊어졌고, 해당 게시글의 postTags를 삭제한다
                 postTagRepository.deleteAll(post.getPostTags());
             }
 
-            List<PostTag> postTags = new ArrayList<>();
+            List<PostTag> newPostTags = new ArrayList<>();
 
             if (!updateRequestDto.getTag().isEmpty()) {
-
                 List<Tag> tags = new ArrayList<>(updateRequestDto.getTag());
                 PostTag postTag = null;
                 int tagListSize = 3;
@@ -135,12 +134,12 @@ public class PostServiceImpl implements PostService {
                 for (Tag tag : tags) {
                     // 포스트태그 생성
                     postTag = PostTag.createPostTag(tag);
-                    postTags.add(postTag);
+                    newPostTags.add(postTag);
                 }
             }
 
             // 게시글 수정
-            post.updatePost(updateRequestDto.getTitle(), updateRequestDto.getContent(), postTags);
+            post.updatePost(updateRequestDto.getTitle(), updateRequestDto.getContent(), newPostTags);
 
         } else {
             throw new CustomException(POST_NOT_FOUND);
@@ -170,6 +169,23 @@ public class PostServiceImpl implements PostService {
 
             if (post.getIsDeleted()) {
                 throw new CustomException(POST_NOT_FOUND);
+            }
+
+            // 포스트 태그 제거
+            List<PostTag> postTags = post.getPostTags();
+            if (!postTags.isEmpty()) {
+                // 해당 게시글의 PostTag 목록에서 postTag 삭제
+                for (PostTag postTag : postTags) {
+                    PostTag.removePostTag(postTag);
+                }
+                // 관계가 끊어졌고, 해당 게시글의 postTags를 삭제한다
+                postTagRepository.deleteAll(post.getPostTags());
+            }
+
+            // s3에서 이미지 삭제
+            List<Image> images = post.getImg();
+            if (!images.isEmpty()) {
+                s3Service.deleteImageList(images);
             }
 
             post.deletePost();

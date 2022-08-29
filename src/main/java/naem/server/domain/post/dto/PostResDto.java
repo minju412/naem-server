@@ -32,7 +32,7 @@ public class PostResDto {
             this.tags.add(Tag.createTag(postTag));
         }
         for (Image image : entity.getImg()) {
-            this.imgUrls.add(image.getImgurl());
+            this.imgUrls.add(image.getImgUrl());
         }
     }
 }

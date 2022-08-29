@@ -101,7 +101,6 @@ public class Post {
         return post;
     }
 
-
     //==수정 메서드==//
     public void updatePost(String title, String content, List<PostTag> postTags) {
 
@@ -119,9 +118,9 @@ public class Post {
         this.setIsDeleted(true);
         this.setDeleteAt(LocalDateTime.now());
 
-        if (!postTags.isEmpty()) {
-            for (PostTag postTag : postTags) {
-                this.addPostTag(postTag);
+        if (!img.isEmpty()) {
+            for (Image image : img) {
+                image.deleteImages();
             }
         }
     }
