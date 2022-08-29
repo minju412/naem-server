@@ -2,6 +2,7 @@ package naem.server.service;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import naem.server.domain.post.Post;
 import naem.server.domain.post.dto.BriefPostInfoDto;
@@ -18,9 +19,9 @@ public interface PostService {
 
     Slice<BriefPostInfoDto> getPostList(Long cursor, PostReadCondition condition, Pageable pageRequest);
 
-    void update(Long id, PostUpdateReqDto updateRequestDto);
+    void update(Long id, PostUpdateReqDto updateRequestDto, UserDetails userDetails);
 
     Long getAuthorId(Long id);
 
-    void delete(Long id);
+    void delete(Long id, UserDetails userDetails);
 }

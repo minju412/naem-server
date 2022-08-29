@@ -3,7 +3,6 @@ package naem.server.service;
 import static naem.server.exception.ErrorCode.*;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +24,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) {
 
-        Optional<Member> oMember = memberRepository.findByUsername(username);
-        if (oMember.isEmpty()) {
-            throw new CustomException(MEMBER_NOT_FOUND);
-        }
-        Member member = oMember.get();
+        Member member = memberRepository.findByUsername(username)
+            .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
 
         return new org

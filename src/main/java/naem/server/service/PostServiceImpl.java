@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -46,35 +47,30 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public Post save(PostSaveReqDto requestDto) {
 
-        Optional<Member> oMember = memberRepository.findByUsername(SecurityUtil.getLoginUsername());
+        Member member = memberRepository.findByUsername(SecurityUtil.getLoginUsername())
+            .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+
         List<Tag> tags = new ArrayList<>(requestDto.getTag());
         PostTag postTag = null;
         List<PostTag> postTags = new ArrayList<>();
         int tagListSize = 3;
 
-        if (oMember.isPresent()) {
-
-            if (tags.size() > tagListSize) {
-                throw new CustomException(TAG_LIST_SIZE_ERROR);
-            }
-
-            Member member = oMember.get();
-
-            for (Tag tag : tags) {
-                // 포스트태그 생성
-                postTag = PostTag.createPostTag(tag);
-                postTags.add(postTag);
-            }
-            // 게시글 생성
-            Post post = Post.createPost(member, requestDto.getTitle(), requestDto.getContent(), postTags);
-
-            postRepository.save(post);
-
-            return post;
-
-        } else {
-            throw new CustomException(MEMBER_NOT_FOUND);
+        if (tags.size() > tagListSize) {
+            throw new CustomException(TAG_LIST_SIZE_ERROR);
         }
+
+        for (Tag tag : tags) {
+            // 포스트태그 생성
+            postTag = PostTag.createPostTag(tag);
+            postTags.add(postTag);
+        }
+        // 게시글 생성
+        Post post = Post.createPost(member, requestDto.getTitle(), requestDto.getContent(), postTags);
+
+        postRepository.save(post);
+
+        return post;
+
     }
 
     // 게시글 단건 조회
@@ -82,70 +78,63 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public PostResDto getPost(Long id) {
 
-        Optional<Post> oPost = postRepository.findById(id);
+        Post post = postRepository.findById(id)
+            .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
 
-        if (oPost.isPresent()) {
-
-            Post post = oPost.get();
-
-            if (post.getIsDeleted()) {
-                throw new CustomException(POST_NOT_FOUND);
-            }
-
-            return new PostResDto(post);
-
-        } else {
+        if (post.getIsDeleted()) {
             throw new CustomException(POST_NOT_FOUND);
         }
+
+        return new PostResDto(post);
     }
 
     // 게시글 수정
     @Override
     @Transactional
-    public void update(Long id, PostUpdateReqDto updateRequestDto) {
+    public void update(Long postId, PostUpdateReqDto updateRequestDto, UserDetails userDetails) {
 
-        Optional<Post> oPost = postRepository.findById(id);
-
-        if (oPost.isPresent()) {
-
-            Post post = oPost.get();
-
-            // 포스트 태그 제거
-            List<PostTag> postTags = post.getPostTags();
-            if (!postTags.isEmpty()) {
-                // 해당 게시글의 PostTag 목록에서 postTag 삭제
-                for (PostTag postTag : postTags) {
-                    PostTag.removePostTag(postTag);
-                }
-                // 관계가 끊어졌고, 해당 게시글의 postTags를 삭제한다
-                postTagRepository.deleteAll(post.getPostTags());
-            }
-
-            List<PostTag> newPostTags = new ArrayList<>();
-
-            if (!updateRequestDto.getTag().isEmpty()) {
-                List<Tag> tags = new ArrayList<>(updateRequestDto.getTag());
-                PostTag postTag = null;
-                int tagListSize = 3;
-
-                if (tags.size() > tagListSize) {
-                    throw new CustomException(TAG_LIST_SIZE_ERROR);
-                }
-                for (Tag tag : tags) {
-                    // 포스트태그 생성
-                    postTag = PostTag.createPostTag(tag);
-                    newPostTags.add(postTag);
-                }
-            }
-
-            // 게시글 수정
-            post.updatePost(updateRequestDto.getTitle(), updateRequestDto.getContent(), newPostTags);
-
-        } else {
-            throw new CustomException(POST_NOT_FOUND);
+        Member member = memberRepository.findByUsername(userDetails.getUsername())
+            .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        if (!member.getId().equals(getAuthorId(postId))) {
+            throw new CustomException(ACCESS_DENIED);
         }
+
+        Post post = postRepository.findById(postId)
+            .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+
+        // 포스트 태그 제거
+        List<PostTag> postTags = post.getPostTags();
+        if (!postTags.isEmpty()) {
+            // 해당 게시글의 PostTag 목록에서 postTag 삭제
+            for (PostTag postTag : postTags) {
+                PostTag.removePostTag(postTag);
+            }
+            // 관계가 끊어졌고, 해당 게시글의 postTags를 삭제한다
+            postTagRepository.deleteAll(post.getPostTags());
+        }
+
+        List<PostTag> newPostTags = new ArrayList<>();
+
+        if (!updateRequestDto.getTag().isEmpty()) {
+            List<Tag> tags = new ArrayList<>(updateRequestDto.getTag());
+            PostTag postTag = null;
+            int tagListSize = 3;
+
+            if (tags.size() > tagListSize) {
+                throw new CustomException(TAG_LIST_SIZE_ERROR);
+            }
+            for (Tag tag : tags) {
+                // 포스트태그 생성
+                postTag = PostTag.createPostTag(tag);
+                newPostTags.add(postTag);
+            }
+        }
+
+        // 게시글 수정
+        post.updatePost(updateRequestDto.getTitle(), updateRequestDto.getContent(), newPostTags);
+
     }
-    
+
     /*
     post_id를 받아서 member_id를 반환한다
     */
@@ -160,42 +149,43 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void delete(Long id) {
-        Optional<Post> oPost = postRepository.findById(id);
+    public void delete(Long postId, UserDetails userDetails) {
 
-        if (oPost.isPresent()) {
+        Member member = memberRepository.findByUsername(userDetails.getUsername())
+            .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        if (!member.getId().equals(getAuthorId(postId))) {
+            throw new CustomException(ACCESS_DENIED);
+        }
 
-            Post post = oPost.get();
+        Post post = postRepository.findById(postId)
+            .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
 
-            if (post.getIsDeleted()) {
-                throw new CustomException(POST_NOT_FOUND);
-            }
-
-            // 포스트 태그 제거
-            List<PostTag> postTags = post.getPostTags();
-            if (!postTags.isEmpty()) {
-                // 해당 게시글의 PostTag 목록에서 postTag 삭제
-                for (PostTag postTag : postTags) {
-                    PostTag.removePostTag(postTag);
-                }
-                // 관계가 끊어졌고, 해당 게시글의 postTags를 삭제한다
-                postTagRepository.deleteAll(post.getPostTags());
-            }
-
-            // s3에서 이미지 삭제
-            List<Image> images = post.getImg();
-            if (!images.isEmpty()) {
-                s3Service.deleteImageList(images);
-            }
-
-            post.deletePost();
-            postRepository.save(post);
-
-        } else {
+        if (post.getIsDeleted()) {
             throw new CustomException(POST_NOT_FOUND);
         }
+
+        // 포스트 태그 제거
+        List<PostTag> postTags = post.getPostTags();
+        if (!postTags.isEmpty()) {
+            // 해당 게시글의 PostTag 목록에서 postTag 삭제
+            for (PostTag postTag : postTags) {
+                PostTag.removePostTag(postTag);
+            }
+            // 관계가 끊어졌고, 해당 게시글의 postTags를 삭제한다
+            postTagRepository.deleteAll(post.getPostTags());
+        }
+
+        // s3에서 이미지 삭제
+        List<Image> images = post.getImg();
+        if (!images.isEmpty()) {
+            s3Service.deleteImageList(images);
+        }
+
+        post.deletePost();
+        postRepository.save(post);
+
     }
-    
+
     @Override
     @Transactional
     public Slice<BriefPostInfoDto> getPostList(Long cursor, PostReadCondition condition, Pageable pageRequest) {
