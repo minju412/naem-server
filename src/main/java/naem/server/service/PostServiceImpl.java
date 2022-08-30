@@ -79,7 +79,7 @@ public class PostServiceImpl implements PostService {
     // 게시글 단건 조회
     @Override
     @Transactional
-    public PostResDto getPost(Long id) {
+    public PostResDto getPostResDto(Long id) {
 
         Post post = postRepository.findById(id)
             .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
@@ -91,16 +91,24 @@ public class PostServiceImpl implements PostService {
         return new PostResDto(post);
     }
 
+    @Override
+    @Transactional
+    public Post getPost(Long id) {
+
+        Post post = postRepository.findById(id)
+            .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+
+        if (post.getIsDeleted()) {
+            throw new CustomException(POST_NOT_FOUND);
+        }
+
+        return post;
+    }
+
     // 게시글 수정
     @Override
     @Transactional
-    public void update(Long postId, PostUpdateReqDto updateRequestDto, UserDetails userDetails) {
-
-        Member member = memberRepository.findByUsername(userDetails.getUsername())
-            .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-        if (!member.getId().equals(getAuthorId(postId))) {
-            throw new CustomException(ACCESS_DENIED);
-        }
+    public void update(Long postId, PostUpdateReqDto updateRequestDto) {
 
         Post post = postRepository.findById(postId)
             .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
@@ -150,13 +158,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post delete(Long postId, UserDetails userDetails) {
-
-        Member member = memberRepository.findByUsername(userDetails.getUsername())
-            .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-        if (!member.getId().equals(getAuthorId(postId))) {
-            throw new CustomException(ACCESS_DENIED);
-        }
+    public Post delete(Long postId) {
 
         Post post = postRepository.findById(postId)
             .orElseThrow(() -> new CustomException(POST_NOT_FOUND));

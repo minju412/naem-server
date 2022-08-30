@@ -1,5 +1,7 @@
 package naem.server.web;
 
+import static naem.server.exception.ErrorCode.*;
+
 import java.util.List;
 
 import javax.validation.Valid;
@@ -27,6 +29,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import naem.server.domain.Response;
+import naem.server.domain.member.Member;
 import naem.server.domain.post.Image;
 import naem.server.domain.post.Post;
 import naem.server.domain.post.dto.BriefPostInfoDto;
@@ -34,6 +37,8 @@ import naem.server.domain.post.dto.PostReadCondition;
 import naem.server.domain.post.dto.PostResDto;
 import naem.server.domain.post.dto.PostSaveReqDto;
 import naem.server.domain.post.dto.PostUpdateReqDto;
+import naem.server.exception.CustomException;
+import naem.server.service.MemberService;
 import naem.server.service.PostService;
 import naem.server.service.S3Service;
 
@@ -44,6 +49,7 @@ import naem.server.service.S3Service;
 @Slf4j
 public class BoardController {
 
+    private final MemberService memberService;
     private final PostService postService;
     private final S3Service s3Service;
 
@@ -54,7 +60,7 @@ public class BoardController {
 
         Post post = postService.save(requestDto);
         if (multipartFile != null) {
-            s3Service.uploadImage(multipartFile, "test3", post);
+            s3Service.uploadImage(multipartFile, "test4", post);
         }
 
         return new Response("OK", "게시글 등록에 성공했습니다");
@@ -62,16 +68,36 @@ public class BoardController {
 
     @ApiOperation(value = "게시글 단건 조회", notes = "게시글 단건 조회")
     @GetMapping("/detail/{id}")
-    public PostResDto getPost(@PathVariable("id") long id) {
-        return postService.getPost(id);
+    public PostResDto getPostResDto(@PathVariable("id") long id) {
+        return postService.getPostResDto(id);
     }
 
     @ApiOperation(value = "게시글 수정", notes = "게시글 수정")
     @PatchMapping("/{id}")
-    public Response update(@PathVariable("id") long postId, @Valid @RequestBody PostUpdateReqDto updateRequestDto,
+    public Response update(@PathVariable("id") long postId, @RequestPart @Valid PostUpdateReqDto updateRequestDto,
+        @ApiParam("파일들 (여러 파일 업로드 가능)") @RequestPart(required = false) List<MultipartFile> multipartFile,
         @AuthenticationPrincipal UserDetails userDetails) {
 
-        postService.update(postId, updateRequestDto, userDetails);
+        Member member = memberService.findByUsername(userDetails.getUsername())
+            .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        if (!member.getId().equals(postService.getAuthorId(postId))) {
+            throw new CustomException(ACCESS_DENIED);
+        }
+
+        // 이미지 제거
+        Post post = postService.getPost(postId);
+        List<Image> images = post.getImg();
+        if (!images.isEmpty()) {
+            s3Service.deleteImageList(images);
+        }
+        Image.deleteImages(images);
+
+        // 이미지 저장
+        if (multipartFile != null) {
+            s3Service.uploadImage(multipartFile, "test4", post);
+        }
+
+        postService.update(postId, updateRequestDto);
         return new Response("OK", "게시글 수정에 성공했습니다");
     }
 
@@ -80,7 +106,13 @@ public class BoardController {
     public Response delete(@PathVariable("id") long postId,
         @AuthenticationPrincipal UserDetails userDetails) {
 
-        Post deletedPost = postService.delete(postId, userDetails);
+        Member member = memberService.findByUsername(userDetails.getUsername())
+            .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        if (!member.getId().equals(postService.getAuthorId(postId))) {
+            throw new CustomException(ACCESS_DENIED);
+        }
+
+        Post deletedPost = postService.delete(postId);
         List<Image> images = deletedPost.getImg();
         if (!images.isEmpty()) {
             s3Service.deleteImageList(images);
