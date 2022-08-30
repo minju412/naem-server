@@ -14,6 +14,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
+import naem.server.domain.BoardType;
 import naem.server.domain.post.Post;
 import naem.server.domain.post.dto.BriefPostInfoDto;
 import naem.server.domain.post.dto.PostReadCondition;
@@ -24,6 +25,7 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
 
     private final JPAQueryFactory queryFactory;
 
+    // 게시글 조회 및 검색
     @Override
     public Slice<BriefPostInfoDto> getBriefPostInfoScroll(Long cursorId, PostReadCondition condition,
         Pageable pageable) {
@@ -33,6 +35,7 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
             .from(post)
             .where(
                 eqIsDeleted(condition.getIsDeleted()), // 삭제되지 않은 게시글만 조회
+                eqBoardType(condition.getBoardType()), // 게시판 타입 별 조회
                 eqTitle(condition.getKeyword()),
                 eqContent(condition.getKeyword()),
                 eqCursorId(cursorId)
@@ -71,6 +74,11 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
     // 내용에 keyword 포함되어있는지 필터링
     private BooleanExpression eqContent(String keyword) {
         return (keyword == null) ? null : post.content.contains(keyword);
+    }
+
+    // 게시판 타입 필터링
+    private BooleanExpression eqBoardType(BoardType boardType) {
+        return (boardType == null) ? null : post.board.boardType.eq(boardType);
     }
 
 }

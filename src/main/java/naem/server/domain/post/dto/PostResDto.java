@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import naem.server.domain.Board;
+import naem.server.domain.BoardType;
 import naem.server.domain.Tag;
 import naem.server.domain.post.Image;
 import naem.server.domain.post.Post;
@@ -20,12 +22,14 @@ import naem.server.domain.post.PostTag;
 @AllArgsConstructor
 public class PostResDto {
 
+    private BoardType boardType;
     private String title;
     private String content;
     private List<Tag> tags = new ArrayList<>();
     private List<String> imgUrls = new ArrayList<>();
 
     public PostResDto(Post entity) {
+        this.boardType = entity.getBoard().getBoardType();
         this.title = entity.getTitle();
         this.content = entity.getContent();
         for (PostTag postTag : entity.getPostTags()) {

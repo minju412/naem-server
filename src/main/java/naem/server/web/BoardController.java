@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +26,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import naem.server.domain.BoardType;
 import naem.server.domain.Response;
 import naem.server.domain.post.Image;
 import naem.server.domain.post.Post;
@@ -108,15 +110,24 @@ public class BoardController {
         return new Response("OK", "게시글 삭제에 성공했습니다");
     }
 
-    @ApiOperation(value = "게시글 리스트 조회 (무한 스크롤)", notes = "게시글 리스트 조회 (무한 스크롤)")
+    @ApiOperation(value = "게시글 조회 및 검색 (무한 스크롤)", notes = "게시글 리스트 조회 및 검색 (무한 스크롤)")
     @GetMapping("/list")
-    public Slice<BriefPostInfoDto> getPostList(Long cursor, String keyword,
+    public Slice<BriefPostInfoDto> getPostList(Long cursor, String keyword, BoardType boardType,
         @PageableDefault(size = 5, sort = "createAt") Pageable pageRequest) {
 
-        if (StringUtils.hasText(keyword)) {
-            return postService.getPostList(cursor, new PostReadCondition(keyword), pageRequest);
+        if (StringUtils.hasText(keyword)) { // 검색
+            if (boardType == null) {
+                return postService.getPostList(cursor, new PostReadCondition(keyword), pageRequest); // 전체 게시글 검색
+            } else {
+                return postService.getPostList(cursor, new PostReadCondition(boardType, keyword), pageRequest); // 게시판 타입별 검색
+            }
+        } else { // 조회
+            if (boardType == null) {
+                return postService.getPostList(cursor, new PostReadCondition(), pageRequest); // 전체 게시글 조회
+            } else {
+                return postService.getPostList(cursor, new PostReadCondition(boardType), pageRequest); // 게시판 타입별 조회
+            }
         }
-        return postService.getPostList(cursor, new PostReadCondition(), pageRequest);
     }
 
 }
