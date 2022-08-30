@@ -165,8 +165,23 @@ public class PostServiceImpl implements PostService {
             }
         }
 
-        // 게시글 수정
-        post.updatePost(updateRequestDto.getTitle(), updateRequestDto.getContent(), newPostTags);
+        // 게시판 생성
+        if (updateRequestDto.getBoard() != null) {
+            BoardType boardType = updateRequestDto.getBoard().getBoardType();
+            Optional<Board> oBoard = boardRepository.findByBoardType(boardType);
+            Board board;
+            if (oBoard.isPresent()) {
+                board = oBoard.get();
+                board.deletePostFromBoard(post); // 게시판에 게시글 삭제
+            } else {
+                board = Board.createBoard(boardType, post);
+                boardRepository.save(board);
+            }
+            post.updatePost(updateRequestDto.getTitle(), updateRequestDto.getContent(), newPostTags); // 게시글 수정
+            board.addPostToBoard(post); // 게시판에 게시글 추가
+        } else {
+            post.updatePost(updateRequestDto.getTitle(), updateRequestDto.getContent(), newPostTags);
+        }
     }
 
     /*
