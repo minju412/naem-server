@@ -198,6 +198,12 @@ public class PostServiceImpl implements PostService {
             postTagRepository.deleteAll(postTags); // 관계가 끊어졌고, 해당 게시글의 postTags를 삭제한다
         }
 
+        // 게시판에서 삭제된 게시글 제거
+        BoardType boardType = post.getBoard().getBoardType();
+        Board board = boardRepository.findByBoardType(boardType)
+            .orElseThrow(() -> new CustomException(BOARD_NOT_FOUND));
+        board.deletePostFromBoard(post);
+
         return post;
     }
 
