@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import naem.server.domain.Board;
+import naem.server.domain.BoardType;
 import naem.server.domain.Tag;
 import naem.server.domain.member.Member;
 import naem.server.domain.post.Post;
@@ -25,6 +27,7 @@ import naem.server.domain.post.dto.PostResDto;
 import naem.server.domain.post.dto.PostSaveReqDto;
 import naem.server.domain.post.dto.PostUpdateReqDto;
 import naem.server.exception.CustomException;
+import naem.server.repository.BoardRepository;
 import naem.server.repository.MemberRepository;
 import naem.server.repository.PostRepository;
 import naem.server.repository.PostTagRepository;
@@ -39,6 +42,7 @@ public class PostServiceImpl implements PostService {
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
     private final PostTagRepository postTagRepository;
+    private final BoardRepository boardRepository;
 
     @Override
     @Transactional
@@ -78,13 +82,23 @@ public class PostServiceImpl implements PostService {
             postTag = PostTag.createPostTag(tag);
             postTags.add(postTag);
         }
+
         // 게시글 생성
         Post post = Post.createPost(member, requestDto.getTitle(), requestDto.getContent(), postTags);
 
+        // 게시판 생성
+        BoardType boardType = requestDto.getBoard().getBoardType();
+        Optional<Board> oBoard = boardRepository.findByBoardType(boardType);
+        if (oBoard.isPresent()) {
+            Board board = oBoard.get();
+            board.addPostToBoard(post); // 게시판에 게시글 추가
+        } else {
+            Board board = Board.createBoard(boardType, post);
+            boardRepository.save(board);
+        }
+
         postRepository.save(post);
-
         return post;
-
     }
 
     // 게시글 단건 조회
