@@ -2,6 +2,7 @@ package naem.server.service;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import naem.server.domain.post.Post;
 import naem.server.domain.post.dto.BriefPostInfoDto;
@@ -11,6 +12,8 @@ import naem.server.domain.post.dto.PostSaveReqDto;
 import naem.server.domain.post.dto.PostUpdateReqDto;
 
 public interface PostService {
+
+    void checkPrivileges(long postId, UserDetails userDetails);
 
     void save(Post post);
 

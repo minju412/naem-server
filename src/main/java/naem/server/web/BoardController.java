@@ -1,7 +1,5 @@
 package naem.server.web;
 
-import static naem.server.exception.ErrorCode.*;
-
 import java.util.List;
 
 import javax.validation.Valid;
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,7 +26,6 @@ import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import naem.server.domain.Response;
-import naem.server.domain.member.Member;
 import naem.server.domain.post.Image;
 import naem.server.domain.post.Post;
 import naem.server.domain.post.dto.BriefPostInfoDto;
@@ -37,8 +33,6 @@ import naem.server.domain.post.dto.PostReadCondition;
 import naem.server.domain.post.dto.PostResDto;
 import naem.server.domain.post.dto.PostSaveReqDto;
 import naem.server.domain.post.dto.PostUpdateReqDto;
-import naem.server.exception.CustomException;
-import naem.server.service.MemberService;
 import naem.server.service.PostService;
 import naem.server.service.S3Service;
 
@@ -49,7 +43,6 @@ import naem.server.service.S3Service;
 @Slf4j
 public class BoardController {
 
-    private final MemberService memberService;
     private final PostService postService;
     private final S3Service s3Service;
 
@@ -78,11 +71,7 @@ public class BoardController {
         @ApiParam("파일들 (여러 파일 업로드 가능)") @RequestPart(required = false) List<MultipartFile> multipartFile,
         @AuthenticationPrincipal UserDetails userDetails) {
 
-        Member member = memberService.findByUsername(userDetails.getUsername())
-            .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-        if (!member.getId().equals(postService.getAuthorId(postId))) {
-            throw new CustomException(ACCESS_DENIED);
-        }
+        postService.checkPrivileges(postId, userDetails); // 접근 권한 확인
 
         // 이미지 제거
         Post post = postService.getPost(postId);
@@ -106,11 +95,7 @@ public class BoardController {
     public Response delete(@PathVariable("id") long postId,
         @AuthenticationPrincipal UserDetails userDetails) {
 
-        Member member = memberService.findByUsername(userDetails.getUsername())
-            .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-        if (!member.getId().equals(postService.getAuthorId(postId))) {
-            throw new CustomException(ACCESS_DENIED);
-        }
+        postService.checkPrivileges(postId, userDetails); // 접근 권한 확인
 
         Post deletedPost = postService.delete(postId);
         List<Image> images = deletedPost.getImg();

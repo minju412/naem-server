@@ -42,6 +42,17 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
+    public void checkPrivileges(long postId, UserDetails userDetails) {
+
+        Member member = memberRepository.findByUsername(userDetails.getUsername())
+            .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        if (!member.getId().equals(getAuthorId(postId))) {
+            throw new CustomException(ACCESS_DENIED);
+        }
+    }
+
+    @Override
+    @Transactional
     public void save(Post post) {
         postRepository.save(post);
     }

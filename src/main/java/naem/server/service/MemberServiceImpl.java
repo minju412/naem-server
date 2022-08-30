@@ -2,8 +2,6 @@ package naem.server.service;
 
 import static naem.server.exception.ErrorCode.*;
 
-import java.util.Optional;
-
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -27,12 +25,6 @@ public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-
-    @Override
-    @Transactional
-    public Optional<Member> findByUsername(String userName) {
-        return memberRepository.findByUsername(userName);
-    }
 
     /**
      * 내 정보 조회 로직
