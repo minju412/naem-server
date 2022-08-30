@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import naem.server.domain.Board;
 import naem.server.domain.BoardType;
 import naem.server.domain.Tag;
 import naem.server.domain.post.Image;
@@ -20,7 +19,7 @@ import naem.server.domain.post.PostTag;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostResDto {
+public class DetailedPostInfoDto {
 
     private BoardType boardType;
     private String title;
@@ -28,12 +27,12 @@ public class PostResDto {
     private List<Tag> tags = new ArrayList<>();
     private List<String> imgUrls = new ArrayList<>();
 
-    public PostResDto(Post entity) {
+    public DetailedPostInfoDto(Post entity) {
         this.boardType = entity.getBoard().getBoardType();
         this.title = entity.getTitle();
         this.content = entity.getContent();
         for (PostTag postTag : entity.getPostTags()) {
-            this.tags.add(Tag.createTag(postTag));
+            this.tags.add(Tag.getTagFromPostTag(postTag));
         }
         for (Image image : entity.getImg()) {
             this.imgUrls.add(image.getImgUrl());
