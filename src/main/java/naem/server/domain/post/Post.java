@@ -101,7 +101,6 @@ public class Post {
         return post;
     }
 
-
     //==수정 메서드==//
     public void updatePost(String title, String content, List<PostTag> postTags) {
 
@@ -111,6 +110,11 @@ public class Post {
         if (StringUtils.isNotBlank(content)) {
             this.content = content;
         }
+        if (!postTags.isEmpty()) {
+            for (PostTag postTag : postTags) {
+                this.addPostTag(postTag);
+            }
+        }
     }
 
     //==삭제 메서드==//
@@ -119,9 +123,10 @@ public class Post {
         this.setIsDeleted(true);
         this.setDeleteAt(LocalDateTime.now());
 
-        if (!postTags.isEmpty()) {
-            for (PostTag postTag : postTags) {
-                this.addPostTag(postTag);
+        List<Image> images = this.getImg();
+        if (!images.isEmpty()) {
+            for (Image image : images) {
+                image.deleteImages();
             }
         }
     }

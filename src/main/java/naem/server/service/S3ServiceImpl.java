@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
@@ -36,6 +37,7 @@ public class S3ServiceImpl implements S3Service {
     public String bucket;
 
     // 파일 업로드
+    @Override
     public List<String> uploadImage(List<MultipartFile> multipartFile, String dirName, Post post) {
 
         List<String> fileNameList = new ArrayList<>();
@@ -58,12 +60,12 @@ public class S3ServiceImpl implements S3Service {
                 throw new CustomException(FILE_CAN_NOT_UPLOAD);
             }
 
-            imageUrl.add(amazonS3Client.getUrl(bucket, fileName).toString());
             fileNameList.add(fileName);
+            imageUrl.add(amazonS3Client.getUrl(bucket, fileName).toString());
         });
 
         try {
-            saveUrl(imageUrl, post); // db에 uri 저장
+            storeInfoInDb(imageUrl, fileNameList, post); // db에 url 과 fileName 정보 저장
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -71,12 +73,11 @@ public class S3ServiceImpl implements S3Service {
         return fileNameList;
     }
 
-    public void saveUrl(List<String> imageUrls, Post post) throws IOException {
-
-        for (String imageUrl : imageUrls) {
-
+    public void storeInfoInDb(List<String> imageUrls, List<String> fileNameList, Post post) throws IOException {
+        for (int i = 0; i < imageUrls.size(); i++) {
             Image img = new Image();
-            img.setImgurl(imageUrl);
+            img.setImgUrl(imageUrls.get(i));
+            img.setFileName(fileNameList.get(i));
             img.setPost(post);
 
             imageRepository.save(img);
@@ -99,4 +100,13 @@ public class S3ServiceImpl implements S3Service {
             throw new CustomException(INVALID_FILE_ERROR);
         }
     }
+
+    // 이미지 리스트 삭제
+    @Override
+    public void deleteImageList(List<Image> images) {
+        for (Image image : images) {
+            amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, image.getFileName()));
+        }
+    }
+
 }

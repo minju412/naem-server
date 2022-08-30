@@ -24,10 +24,18 @@ public class Image {
     @Column(name = "image_id")
     private Long id;
 
-    private String imgurl;
+    private String imgUrl;
+    private String fileName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
+
+    //==삭제 메서드==//
+    public void deleteImages() {
+        this.setImgUrl(null);
+        this.setFileName(null);
+        this.setPost(null);
+    }
 
 }

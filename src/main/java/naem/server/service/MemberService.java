@@ -1,18 +1,16 @@
 package naem.server.service;
 
-import java.util.Optional;
-
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import naem.server.domain.member.Member;
+import naem.server.domain.member.dto.MemberWithdrawDto;
 import naem.server.domain.member.dto.PatchMemberDto;
+import naem.server.domain.member.dto.ProfileResDto;
 
 public interface MemberService {
 
-    Optional<Member> findByUsername(String username);
+    ProfileResDto getMyInfo(UserDetails userDetails);
 
-    void patch(long id, PatchMemberDto patchMemberDto);
+    void patch(long id, PatchMemberDto patchMemberDto, UserDetails userDetails);
     
-    void withdraw(String checkPassword) throws Exception;
+    void withdraw(long memberId, MemberWithdrawDto memberWithdrawDto, UserDetails userDetails) throws Exception;
 }

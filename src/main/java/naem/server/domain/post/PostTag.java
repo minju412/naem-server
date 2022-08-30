@@ -1,5 +1,7 @@
 package naem.server.domain.post;
 
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -43,12 +45,12 @@ public class PostTag {
     }
 
     //==삭제 메서드==//
-    /*
-    * post_id와 tag_id의 매핑 제거
-    */
-    public static void removePostTag(PostTag postTag) {
-        postTag.setPost(null);
-        postTag.setTag(null);
+    public static void removePostTag(List<PostTag> postTags) {
+        // post_id와 tag_id의 매핑 제거
+        for (PostTag postTag : postTags) {
+            postTag.setPost(null);
+            postTag.setTag(null);
+        }
     }
 
 }
