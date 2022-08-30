@@ -141,16 +141,17 @@ public class PostServiceImpl implements PostService {
             throw new CustomException(POST_NOT_FOUND);
         }
 
-        // 포스트 태그 제거
+        List<PostTag> newPostTags = null;
         List<PostTag> postTags = post.getPostTags();
-        if (!postTags.isEmpty()) {
-            PostTag.removePostTag(postTags); // 해당 게시글의 PostTag 목록에서 postTag 삭제
-            postTagRepository.deleteAll(postTags); // 관계가 끊어졌고, 해당 게시글의 postTags를 삭제한다
-        }
 
-        List<PostTag> newPostTags = new ArrayList<>();
+        if (updateRequestDto.getTag() != null) {
+            newPostTags = new ArrayList<>();
+            // 포스트 태그 제거
+            if (!postTags.isEmpty()) {
+                PostTag.removePostTag(postTags); // 해당 게시글의 PostTag 목록에서 postTag 삭제
+                postTagRepository.deleteAll(postTags); // 관계가 끊어졌고, 해당 게시글의 postTags를 삭제한다
+            }
 
-        if (!updateRequestDto.getTag().isEmpty()) {
             List<Tag> tags = new ArrayList<>(updateRequestDto.getTag());
             PostTag postTag = null;
             int tagListSize = 3;

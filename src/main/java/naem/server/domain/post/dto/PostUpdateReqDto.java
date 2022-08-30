@@ -17,5 +17,5 @@ public class PostUpdateReqDto {
     private Board board = null;
     private String title;
     private String content;
-    private List<Tag> tag = new ArrayList<>();
+    private List<Tag> tag = null;
 }
