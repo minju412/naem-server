@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import naem.server.domain.Tag;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class PostSaveReqDto {
 
     @NotBlank(message = "제목은 필수 입력 값입니다.")

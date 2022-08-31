@@ -1,4 +1,4 @@
-package naem.server;
+package naem.server.service;
 
 import static naem.server.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.*; // assertThatThrownBy
