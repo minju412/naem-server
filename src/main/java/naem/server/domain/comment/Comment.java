@@ -1,6 +1,7 @@
-package naem.server.domain;
+package naem.server.domain.comment;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,6 +21,7 @@ import lombok.Getter;
 import lombok.Setter;
 import naem.server.domain.member.Member;
 import naem.server.domain.post.Post;
+import naem.server.domain.post.PostTag;
 
 @Entity
 @Getter
@@ -53,4 +55,15 @@ public class Comment {
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date deleteAt;
+
+    //==생성 메서드==//
+    public static Comment createComment(Post post, Member member, String content) {
+
+        Comment comment = new Comment();
+        comment.setMember(member);
+        comment.setContent(content);
+        comment.setPost(post);
+        post.getComments().add(comment); // 해당 게시글에 댓글 추가
+        return comment;
+    }
 }
