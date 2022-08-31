@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import naem.server.domain.Tag;
+import naem.server.domain.comment.Comment;
+import naem.server.domain.comment.dto.CommentResDto;
 import naem.server.domain.post.Image;
 import naem.server.domain.post.Post;
 import naem.server.domain.post.PostTag;
@@ -24,6 +26,7 @@ public class PostResDto {
     private String content;
     private List<Tag> tags = new ArrayList<>();
     private List<String> imgUrls = new ArrayList<>();
+    private List<CommentResDto> comments = new ArrayList<>();
 
     public PostResDto(Post entity) {
         this.title = entity.getTitle();
@@ -33,6 +36,9 @@ public class PostResDto {
         }
         for (Image image : entity.getImg()) {
             this.imgUrls.add(image.getImgUrl());
+        }
+        for (Comment comment : entity.getComments()) {
+            this.comments.add(new CommentResDto(comment));
         }
     }
 }
