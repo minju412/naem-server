@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import naem.server.domain.BoardType;
 import naem.server.domain.post.Post;
 
 @Getter
@@ -15,6 +16,7 @@ import naem.server.domain.post.Post;
 public class BriefPostInfoDto {
 
     private Long postId;
+    private BoardType boardType;
     private String title;
     private String content;
     private String writerName;
@@ -22,6 +24,7 @@ public class BriefPostInfoDto {
 
     public BriefPostInfoDto(Post post) {
         this.postId = post.getId();
+        this.boardType = post.getBoard().getBoardType();
         this.title = post.getTitle();
         this.content = post.getContent();
         this.writerName = post.getMember().getNickname();

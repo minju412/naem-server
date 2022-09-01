@@ -1,5 +1,7 @@
 package naem.server.domain.post;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -32,10 +34,14 @@ public class Image {
     private Post post;
 
     //==삭제 메서드==//
-    public void deleteImages() {
-        this.setImgUrl(null);
-        this.setFileName(null);
-        this.setPost(null);
+    public static void deleteImages(List<Image> images) {
+        if (!images.isEmpty()) {
+            for (Image image : images) {
+                image.setImgUrl(null);
+                image.setFileName(null);
+                image.setPost(null);
+            }
+        }
     }
 
 }

@@ -8,9 +8,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import naem.server.domain.Tag;
 import naem.server.domain.comment.Comment;
 import naem.server.domain.comment.dto.CommentResDto;
+
+import naem.server.domain.BoardType;
+import naem.server.domain.Tag;
+
 import naem.server.domain.post.Image;
 import naem.server.domain.post.Post;
 import naem.server.domain.post.PostTag;
@@ -22,6 +27,7 @@ import naem.server.domain.post.PostTag;
 @AllArgsConstructor
 public class DetailedPostInfoDto {
 
+    private BoardType boardType;
     private String title;
     private String content;
     private List<Tag> tags = new ArrayList<>();
@@ -29,10 +35,11 @@ public class DetailedPostInfoDto {
     private List<CommentResDto> comments = new ArrayList<>();
 
     public DetailedPostInfoDto(Post entity) {
+        this.boardType = entity.getBoard().getBoardType();
         this.title = entity.getTitle();
         this.content = entity.getContent();
         for (PostTag postTag : entity.getPostTags()) {
-            this.tags.add(Tag.createTag(postTag));
+            this.tags.add(Tag.getTagFromPostTag(postTag));
         }
         for (Image image : entity.getImg()) {
             this.imgUrls.add(image.getImgUrl());

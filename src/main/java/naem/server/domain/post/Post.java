@@ -110,7 +110,7 @@ public class Post {
         if (StringUtils.isNotBlank(content)) {
             this.content = content;
         }
-        if (!postTags.isEmpty()) {
+        if (postTags != null) {
             for (PostTag postTag : postTags) {
                 this.addPostTag(postTag);
             }
@@ -122,12 +122,6 @@ public class Post {
 
         this.setIsDeleted(true);
         this.setDeleteAt(LocalDateTime.now());
-
-        List<Image> images = this.getImg();
-        if (!images.isEmpty()) {
-            for (Image image : images) {
-                image.deleteImages();
-            }
-        }
+        Image.deleteImages(this.getImg());
     }
 }
