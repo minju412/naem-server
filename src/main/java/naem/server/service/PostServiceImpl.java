@@ -24,6 +24,7 @@ import naem.server.domain.post.PostTag;
 import naem.server.domain.post.dto.BriefPostInfoDto;
 import naem.server.domain.post.dto.DetailedPostInfoDto;
 import naem.server.domain.post.dto.PostReadCondition;
+import naem.server.domain.post.dto.DetailedPostInfoDto;
 import naem.server.domain.post.dto.PostSaveReqDto;
 import naem.server.domain.post.dto.PostUpdateReqDto;
 import naem.server.exception.CustomException;
@@ -103,7 +104,7 @@ public class PostServiceImpl implements PostService {
     // 게시글 단건 조회
     @Override
     @Transactional
-    public DetailedPostInfoDto getDetailedPostInfoDto(Long id) {
+    public DetailedPostInfoDto getPost(Long id) {
 
         Post post = postRepository.findById(id)
             .orElseThrow(() -> new CustomException(POST_NOT_FOUND));

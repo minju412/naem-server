@@ -8,6 +8,7 @@ import naem.server.domain.post.Post;
 import naem.server.domain.post.dto.BriefPostInfoDto;
 import naem.server.domain.post.dto.DetailedPostInfoDto;
 import naem.server.domain.post.dto.PostReadCondition;
+import naem.server.domain.post.dto.DetailedPostInfoDto;
 import naem.server.domain.post.dto.PostSaveReqDto;
 import naem.server.domain.post.dto.PostUpdateReqDto;
 
@@ -19,9 +20,7 @@ public interface PostService {
 
     Post save(PostSaveReqDto requestDto);
 
-    DetailedPostInfoDto getDetailedPostInfoDto(Long id);
-
-    Post getPost(Long id);
+    DetailedPostInfoDto getPost(Long id);
 
     Slice<BriefPostInfoDto> getPostList(Long cursor, PostReadCondition condition, Pageable pageRequest);
 
