@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import naem.server.domain.Board;
+import naem.server.domain.BoardType;
 import naem.server.domain.Tag;
 import naem.server.domain.member.Member;
 import naem.server.domain.post.Post;
@@ -25,6 +27,7 @@ import naem.server.domain.post.dto.PostResDto;
 import naem.server.domain.post.dto.PostSaveReqDto;
 import naem.server.domain.post.dto.PostUpdateReqDto;
 import naem.server.exception.CustomException;
+import naem.server.repository.BoardRepository;
 import naem.server.repository.MemberRepository;
 import naem.server.repository.PostRepository;
 import naem.server.repository.PostTagRepository;
@@ -39,6 +42,18 @@ public class PostServiceImpl implements PostService {
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
     private final PostTagRepository postTagRepository;
+    private final BoardRepository boardRepository;
+
+    @Override
+    @Transactional
+    public void checkPrivileges(long postId, UserDetails userDetails) {
+
+        Member member = memberRepository.findByUsername(userDetails.getUsername())
+            .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        if (!member.getId().equals(getAuthorId(postId))) {
+            throw new CustomException(ACCESS_DENIED);
+        }
+    }
 
     @Override
     @Transactional
@@ -67,19 +82,29 @@ public class PostServiceImpl implements PostService {
             postTag = PostTag.createPostTag(tag);
             postTags.add(postTag);
         }
+
         // 게시글 생성
         Post post = Post.createPost(member, requestDto.getTitle(), requestDto.getContent(), postTags);
 
+        // 게시판 생성
+        BoardType boardType = requestDto.getBoard().getBoardType();
+        Optional<Board> oBoard = boardRepository.findByBoardType(boardType);
+        if (oBoard.isPresent()) {
+            Board board = oBoard.get();
+            board.addPostToBoard(post); // 게시판에 게시글 추가
+        } else {
+            Board board = Board.createBoard(boardType, post);
+            boardRepository.save(board);
+        }
+
         postRepository.save(post);
-
         return post;
-
     }
 
     // 게시글 단건 조회
     @Override
     @Transactional
-    public PostResDto getPost(Long id) {
+    public PostResDto getPostResDto(Long id) {
 
         Post post = postRepository.findById(id)
             .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
@@ -91,16 +116,24 @@ public class PostServiceImpl implements PostService {
         return new PostResDto(post);
     }
 
+    @Override
+    @Transactional
+    public Post getPost(Long id) {
+
+        Post post = postRepository.findById(id)
+            .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+
+        if (post.getIsDeleted()) {
+            throw new CustomException(POST_NOT_FOUND);
+        }
+
+        return post;
+    }
+
     // 게시글 수정
     @Override
     @Transactional
-    public void update(Long postId, PostUpdateReqDto updateRequestDto, UserDetails userDetails) {
-
-        Member member = memberRepository.findByUsername(userDetails.getUsername())
-            .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-        if (!member.getId().equals(getAuthorId(postId))) {
-            throw new CustomException(ACCESS_DENIED);
-        }
+    public void update(Long postId, PostUpdateReqDto updateRequestDto) {
 
         Post post = postRepository.findById(postId)
             .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
@@ -150,13 +183,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post delete(Long postId, UserDetails userDetails) {
-
-        Member member = memberRepository.findByUsername(userDetails.getUsername())
-            .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-        if (!member.getId().equals(getAuthorId(postId))) {
-            throw new CustomException(ACCESS_DENIED);
-        }
+    public Post delete(Long postId) {
 
         Post post = postRepository.findById(postId)
             .orElseThrow(() -> new CustomException(POST_NOT_FOUND));

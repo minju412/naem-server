@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -54,7 +53,7 @@ public class BoardController {
 
         Post post = postService.save(requestDto);
         if (multipartFile != null) {
-            s3Service.uploadImage(multipartFile, "test3", post);
+            s3Service.uploadImage(multipartFile, "test4", post);
         }
 
         return new Response("OK", "게시글 등록에 성공했습니다");
@@ -62,16 +61,32 @@ public class BoardController {
 
     @ApiOperation(value = "게시글 단건 조회", notes = "게시글 단건 조회")
     @GetMapping("/detail/{id}")
-    public PostResDto getPost(@PathVariable("id") long id) {
-        return postService.getPost(id);
+    public PostResDto getPostResDto(@PathVariable("id") long id) {
+        return postService.getPostResDto(id);
     }
 
     @ApiOperation(value = "게시글 수정", notes = "게시글 수정")
     @PatchMapping("/{id}")
-    public Response update(@PathVariable("id") long postId, @Valid @RequestBody PostUpdateReqDto updateRequestDto,
+    public Response update(@PathVariable("id") long postId, @RequestPart @Valid PostUpdateReqDto updateRequestDto,
+        @ApiParam("파일들 (여러 파일 업로드 가능)") @RequestPart(required = false) List<MultipartFile> multipartFile,
         @AuthenticationPrincipal UserDetails userDetails) {
 
-        postService.update(postId, updateRequestDto, userDetails);
+        postService.checkPrivileges(postId, userDetails); // 접근 권한 확인
+
+        // 이미지 제거
+        Post post = postService.getPost(postId);
+        List<Image> images = post.getImg();
+        if (!images.isEmpty()) {
+            s3Service.deleteImageList(images);
+        }
+        Image.deleteImages(images);
+
+        // 이미지 저장
+        if (multipartFile != null) {
+            s3Service.uploadImage(multipartFile, "test4", post);
+        }
+
+        postService.update(postId, updateRequestDto);
         return new Response("OK", "게시글 수정에 성공했습니다");
     }
 
@@ -80,7 +95,9 @@ public class BoardController {
     public Response delete(@PathVariable("id") long postId,
         @AuthenticationPrincipal UserDetails userDetails) {
 
-        Post deletedPost = postService.delete(postId, userDetails);
+        postService.checkPrivileges(postId, userDetails); // 접근 권한 확인
+
+        Post deletedPost = postService.delete(postId);
         List<Image> images = deletedPost.getImg();
         if (!images.isEmpty()) {
             s3Service.deleteImageList(images);

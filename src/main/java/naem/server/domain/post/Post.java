@@ -122,12 +122,6 @@ public class Post {
 
         this.setIsDeleted(true);
         this.setDeleteAt(LocalDateTime.now());
-
-        List<Image> images = this.getImg();
-        if (!images.isEmpty()) {
-            for (Image image : images) {
-                image.deleteImages();
-            }
-        }
+        Image.deleteImages(this.getImg());
     }
 }
