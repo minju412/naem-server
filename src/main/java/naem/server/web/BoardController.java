@@ -98,7 +98,7 @@ public class BoardController {
 
         postService.checkPrivileges(postId, userDetails); // 접근 권한 확인
 
-        Post deletedPost = postService.delete(postId);
+        Post deletedPost = postService.deletePost(postId);
         List<Image> images = deletedPost.getImg();
         if (!images.isEmpty()) {
             s3Service.deleteImageList(images);

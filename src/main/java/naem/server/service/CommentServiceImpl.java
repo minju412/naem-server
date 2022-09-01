@@ -46,7 +46,7 @@ public class CommentServiceImpl implements CommentService {
 
         Comment comment = commentRepository.findById(commentId)
             .orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
-        if (comment.getIsDeleted() != null) {
+        if (comment.getIsDeleted() == true) {
             throw new CustomException(COMMENT_NOT_FOUND);
         }
         return comment;

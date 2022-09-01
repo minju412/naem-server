@@ -15,6 +15,8 @@ public interface PostService {
 
     void checkPrivileges(long postId, UserDetails userDetails);
 
+    Post checkPostExist(long postId);
+
     void save(Post post);
 
     Post save(PostSaveReqDto requestDto);
@@ -29,5 +31,5 @@ public interface PostService {
 
     Long getAuthorId(Long id);
 
-    Post delete(Long id);
+    Post deletePost(Long id);
 }

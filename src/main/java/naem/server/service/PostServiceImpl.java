@@ -56,6 +56,18 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
+    public Post checkPostExist(long postId) {
+
+        Post post = postRepository.findById(postId)
+            .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        if (post.getIsDeleted() == true) {
+            throw new CustomException(POST_NOT_FOUND);
+        }
+        return post;
+    }
+
+    @Override
+    @Transactional
     public void save(Post post) {
         postRepository.save(post);
     }
@@ -134,11 +146,8 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public void update(Long postId, PostUpdateReqDto updateRequestDto) {
 
-        Post post = postRepository.findById(postId)
-            .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        if (post.getIsDeleted()) {
-            throw new CustomException(POST_NOT_FOUND);
-        }
+        // 존재하는 게시글인지 확인
+        Post post = checkPostExist(postId);
 
         List<PostTag> newPostTags = null;
         List<PostTag> postTags = post.getPostTags();
@@ -198,13 +207,10 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post delete(Long postId) {
+    public Post deletePost(Long postId) {
 
-        Post post = postRepository.findById(postId)
-            .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        if (post.getIsDeleted()) {
-            throw new CustomException(POST_NOT_FOUND);
-        }
+        // 존재하는 게시글인지 확인
+        Post post = checkPostExist(postId);
 
         // 포스트 태그 제거
         List<PostTag> postTags = post.getPostTags();
