@@ -21,7 +21,7 @@ import naem.server.domain.post.Post;
 import naem.server.domain.post.PostTag;
 import naem.server.domain.post.dto.BriefPostInfoDto;
 import naem.server.domain.post.dto.PostReadCondition;
-import naem.server.domain.post.dto.PostResDto;
+import naem.server.domain.post.dto.DetailedPostInfoDto;
 import naem.server.domain.post.dto.PostSaveReqDto;
 import naem.server.domain.post.dto.PostUpdateReqDto;
 import naem.server.exception.CustomException;
@@ -79,7 +79,7 @@ public class PostServiceImpl implements PostService {
     // 게시글 단건 조회
     @Override
     @Transactional
-    public PostResDto getPost(Long id) {
+    public DetailedPostInfoDto getPost(Long id) {
 
         Post post = postRepository.findById(id)
             .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
@@ -88,7 +88,7 @@ public class PostServiceImpl implements PostService {
             throw new CustomException(POST_NOT_FOUND);
         }
 
-        return new PostResDto(post);
+        return new DetailedPostInfoDto(post);
     }
 
     // 게시글 수정

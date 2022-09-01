@@ -31,7 +31,7 @@ import naem.server.domain.post.Image;
 import naem.server.domain.post.Post;
 import naem.server.domain.post.dto.BriefPostInfoDto;
 import naem.server.domain.post.dto.PostReadCondition;
-import naem.server.domain.post.dto.PostResDto;
+import naem.server.domain.post.dto.DetailedPostInfoDto;
 import naem.server.domain.post.dto.PostSaveReqDto;
 import naem.server.domain.post.dto.PostUpdateReqDto;
 import naem.server.service.PostService;
@@ -62,7 +62,7 @@ public class BoardController {
 
     @ApiOperation(value = "게시글 단건 조회", notes = "게시글 단건 조회")
     @GetMapping("/detail/{id}")
-    public PostResDto getPost(@PathVariable("id") long id) {
+    public DetailedPostInfoDto getPost(@PathVariable("id") long id) {
         return postService.getPost(id);
     }
 

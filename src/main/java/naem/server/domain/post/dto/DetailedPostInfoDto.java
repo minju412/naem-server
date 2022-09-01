@@ -20,7 +20,7 @@ import naem.server.domain.post.PostTag;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostResDto {
+public class DetailedPostInfoDto {
 
     private String title;
     private String content;
@@ -28,7 +28,7 @@ public class PostResDto {
     private List<String> imgUrls = new ArrayList<>();
     private List<CommentResDto> comments = new ArrayList<>();
 
-    public PostResDto(Post entity) {
+    public DetailedPostInfoDto(Post entity) {
         this.title = entity.getTitle();
         this.content = entity.getContent();
         for (PostTag postTag : entity.getPostTags()) {

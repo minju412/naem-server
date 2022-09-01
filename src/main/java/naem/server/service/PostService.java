@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import naem.server.domain.post.Post;
 import naem.server.domain.post.dto.BriefPostInfoDto;
 import naem.server.domain.post.dto.PostReadCondition;
-import naem.server.domain.post.dto.PostResDto;
+import naem.server.domain.post.dto.DetailedPostInfoDto;
 import naem.server.domain.post.dto.PostSaveReqDto;
 import naem.server.domain.post.dto.PostUpdateReqDto;
 
@@ -17,7 +17,7 @@ public interface PostService {
 
     Post save(PostSaveReqDto requestDto);
 
-    PostResDto getPost(Long id);
+    DetailedPostInfoDto getPost(Long id);
 
     Slice<BriefPostInfoDto> getPostList(Long cursor, PostReadCondition condition, Pageable pageRequest);
 
