@@ -1,5 +1,6 @@
 package naem.server.domain.comment;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import lombok.Getter;
 import lombok.Setter;
 import naem.server.domain.member.Member;
+import naem.server.domain.post.Image;
 import naem.server.domain.post.Post;
 import naem.server.domain.post.PostTag;
 
@@ -53,8 +55,7 @@ public class Comment {
 
     private Boolean isDeleted;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date deleteAt;
+    private LocalDateTime deleteAt;
 
     //==생성 메서드==//
     public static Comment createComment(Post post, Member member, String content) {
@@ -65,5 +66,12 @@ public class Comment {
         comment.setPost(post);
         post.getComments().add(comment); // 해당 게시글에 댓글 추가
         return comment;
+    }
+
+    //==삭제 메서드==//
+    public void deleteComment(Post post) {
+        this.setIsDeleted(true);
+        this.setDeleteAt(LocalDateTime.now());
+        post.getComments().remove(this); // 해당 게시글의 댓글 리스트에서 댓글 제거
     }
 }

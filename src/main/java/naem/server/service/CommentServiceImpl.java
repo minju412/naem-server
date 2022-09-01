@@ -2,6 +2,10 @@ package naem.server.service;
 
 import static naem.server.exception.ErrorCode.*;
 
+import java.util.Optional;
+
+import javax.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -26,6 +30,54 @@ public class CommentServiceImpl implements CommentService {
     private final PostRepository postRepository;
 
     @Override
+    @Transactional
+    public void checkCommentPrivileges(long commentId) {
+
+        Member member = memberRepository.findByUsername(SecurityUtil.getLoginUsername())
+            .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        if (!member.getId().equals(getCommentAuthorId(commentId))) {
+            throw new CustomException(ACCESS_DENIED);
+        }
+    }
+
+    @Override
+    @Transactional
+    public Comment checkCommentExist(long commentId) {
+
+        Comment comment = commentRepository.findById(commentId)
+            .orElseThrow(() -> new CustomException(COMMENT_NOT_FOUND));
+        if (comment.getIsDeleted() != null) {
+            throw new CustomException(COMMENT_NOT_FOUND);
+        }
+        return comment;
+    }
+
+    // commentId 로 작성자의 memberId 반환
+    @Override
+    public Long getCommentAuthorId(Long commentId) {
+        Optional<Comment> oComment = commentRepository.findById(commentId);
+        if (oComment.isEmpty()) {
+            return null;
+        }
+        Comment comment = oComment.get();
+        return comment.getMember().getId();
+    }
+
+    // commentId 로 게시글 찾아서 반환
+    @Override
+    public Post getCommentPost(Long commentId) {
+        Optional<Comment> oComment = commentRepository.findById(commentId);
+        if (oComment.isEmpty()) {
+            return null;
+        }
+        Comment comment = oComment.get();
+        Long postId = comment.getPost().getId();
+        Post post = postRepository.findById(postId)
+            .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        return post;
+    }
+
+    @Override
     public void save(Long postId, CommentSaveDto commentSaveDto) {
 
         Member member = memberRepository.findByUsername(SecurityUtil.getLoginUsername())
@@ -37,6 +89,16 @@ public class CommentServiceImpl implements CommentService {
         }
 
         Comment comment = Comment.createComment(post, member, commentSaveDto.getContent());
+        commentRepository.save(comment);
+    }
+
+    @Override
+    public void deleteComment(Long commentId) {
+
+        checkCommentPrivileges(commentId);
+        Comment comment = checkCommentExist(commentId);
+        Post post = getCommentPost(commentId);
+        comment.deleteComment(post);
         commentRepository.save(comment);
     }
 }
