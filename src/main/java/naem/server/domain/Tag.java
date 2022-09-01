@@ -30,14 +30,14 @@ public class Tag {
     @Enumerated(EnumType.STRING)
     private TagType tagType;
 
-    //==생성 메서드==//
-    public static Tag createTag(PostTag postTag) {
-        return postTag.getTag();
-    }
-
     // @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL)
     // private List<PostTag> postTags = new ArrayList<>();
-    //
+
     // @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL)
     // private List<MemberTag> memberTags = new ArrayList<>();
+
+    // 포스트 태그로부터 태그 받아오기
+    public static Tag getTagFromPostTag(PostTag postTag) {
+        return postTag.getTag();
+    }
 }

@@ -22,8 +22,8 @@ import naem.server.domain.member.Member;
 import naem.server.domain.post.Post;
 import naem.server.domain.post.PostTag;
 import naem.server.domain.post.dto.BriefPostInfoDto;
+import naem.server.domain.post.dto.DetailedPostInfoDto;
 import naem.server.domain.post.dto.PostReadCondition;
-import naem.server.domain.post.dto.PostResDto;
 import naem.server.domain.post.dto.PostSaveReqDto;
 import naem.server.domain.post.dto.PostUpdateReqDto;
 import naem.server.exception.CustomException;
@@ -36,7 +36,6 @@ import naem.server.service.util.SecurityUtil;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-// @org.springframework.transaction.annotation.Transactional(readOnly = true)
 public class PostServiceImpl implements PostService {
 
     private final MemberRepository memberRepository;
@@ -104,7 +103,7 @@ public class PostServiceImpl implements PostService {
     // 게시글 단건 조회
     @Override
     @Transactional
-    public PostResDto getPostResDto(Long id) {
+    public DetailedPostInfoDto getDetailedPostInfoDto(Long id) {
 
         Post post = postRepository.findById(id)
             .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
@@ -113,7 +112,7 @@ public class PostServiceImpl implements PostService {
             throw new CustomException(POST_NOT_FOUND);
         }
 
-        return new PostResDto(post);
+        return new DetailedPostInfoDto(post);
     }
 
     @Override
@@ -141,16 +140,17 @@ public class PostServiceImpl implements PostService {
             throw new CustomException(POST_NOT_FOUND);
         }
 
-        // 포스트 태그 제거
+        List<PostTag> newPostTags = null;
         List<PostTag> postTags = post.getPostTags();
-        if (!postTags.isEmpty()) {
-            PostTag.removePostTag(postTags); // 해당 게시글의 PostTag 목록에서 postTag 삭제
-            postTagRepository.deleteAll(postTags); // 관계가 끊어졌고, 해당 게시글의 postTags를 삭제한다
-        }
 
-        List<PostTag> newPostTags = new ArrayList<>();
+        if (updateRequestDto.getTag() != null) {
+            newPostTags = new ArrayList<>();
+            // 포스트 태그 제거
+            if (!postTags.isEmpty()) {
+                PostTag.removePostTag(postTags); // 해당 게시글의 PostTag 목록에서 postTag 삭제
+                postTagRepository.deleteAll(postTags); // 관계가 끊어졌고, 해당 게시글의 postTags를 삭제한다
+            }
 
-        if (!updateRequestDto.getTag().isEmpty()) {
             List<Tag> tags = new ArrayList<>(updateRequestDto.getTag());
             PostTag postTag = null;
             int tagListSize = 3;
@@ -165,8 +165,23 @@ public class PostServiceImpl implements PostService {
             }
         }
 
-        // 게시글 수정
-        post.updatePost(updateRequestDto.getTitle(), updateRequestDto.getContent(), newPostTags);
+        // 게시판 생성
+        if (updateRequestDto.getBoard() != null) {
+            BoardType boardType = updateRequestDto.getBoard().getBoardType();
+            Optional<Board> oBoard = boardRepository.findByBoardType(boardType);
+            Board board;
+            if (oBoard.isPresent()) {
+                board = oBoard.get();
+                board.deletePostFromBoard(post); // 게시판에 게시글 삭제
+            } else {
+                board = Board.createBoard(boardType, post);
+                boardRepository.save(board);
+            }
+            post.updatePost(updateRequestDto.getTitle(), updateRequestDto.getContent(), newPostTags); // 게시글 수정
+            board.addPostToBoard(post); // 게시판에 게시글 추가
+        } else {
+            post.updatePost(updateRequestDto.getTitle(), updateRequestDto.getContent(), newPostTags);
+        }
     }
 
     /*
@@ -197,6 +212,12 @@ public class PostServiceImpl implements PostService {
             PostTag.removePostTag(postTags); // 해당 게시글의 PostTag 목록에서 postTag 삭제
             postTagRepository.deleteAll(postTags); // 관계가 끊어졌고, 해당 게시글의 postTags를 삭제한다
         }
+
+        // 게시판에서 삭제된 게시글 제거
+        BoardType boardType = post.getBoard().getBoardType();
+        Board board = boardRepository.findByBoardType(boardType)
+            .orElseThrow(() -> new CustomException(BOARD_NOT_FOUND));
+        board.deletePostFromBoard(post);
 
         return post;
     }

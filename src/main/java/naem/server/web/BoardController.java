@@ -25,12 +25,13 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import naem.server.domain.BoardType;
 import naem.server.domain.Response;
 import naem.server.domain.post.Image;
 import naem.server.domain.post.Post;
 import naem.server.domain.post.dto.BriefPostInfoDto;
+import naem.server.domain.post.dto.DetailedPostInfoDto;
 import naem.server.domain.post.dto.PostReadCondition;
-import naem.server.domain.post.dto.PostResDto;
 import naem.server.domain.post.dto.PostSaveReqDto;
 import naem.server.domain.post.dto.PostUpdateReqDto;
 import naem.server.service.PostService;
@@ -61,8 +62,8 @@ public class BoardController {
 
     @ApiOperation(value = "게시글 단건 조회", notes = "게시글 단건 조회")
     @GetMapping("/detail/{id}")
-    public PostResDto getPostResDto(@PathVariable("id") long id) {
-        return postService.getPostResDto(id);
+    public DetailedPostInfoDto getDetailedPostInfoDto(@PathVariable("id") long id) {
+        return postService.getDetailedPostInfoDto(id);
     }
 
     @ApiOperation(value = "게시글 수정", notes = "게시글 수정")
@@ -108,15 +109,24 @@ public class BoardController {
         return new Response("OK", "게시글 삭제에 성공했습니다");
     }
 
-    @ApiOperation(value = "게시글 리스트 조회 (무한 스크롤)", notes = "게시글 리스트 조회 (무한 스크롤)")
+    @ApiOperation(value = "게시글 조회 및 검색 (무한 스크롤)", notes = "게시글 리스트 조회 및 검색 (무한 스크롤)")
     @GetMapping("/list")
-    public Slice<BriefPostInfoDto> getPostList(Long cursor, String keyword,
+    public Slice<BriefPostInfoDto> getPostList(Long cursor, String keyword, BoardType boardType,
         @PageableDefault(size = 5, sort = "createAt") Pageable pageRequest) {
 
-        if (StringUtils.hasText(keyword)) {
-            return postService.getPostList(cursor, new PostReadCondition(keyword), pageRequest);
+        if (StringUtils.hasText(keyword)) { // 검색
+            if (boardType == null) {
+                return postService.getPostList(cursor, new PostReadCondition(keyword), pageRequest); // 전체 게시글 검색
+            } else {
+                return postService.getPostList(cursor, new PostReadCondition(boardType, keyword), pageRequest); // 게시판 타입별 검색
+            }
+        } else { // 조회
+            if (boardType == null) {
+                return postService.getPostList(cursor, new PostReadCondition(), pageRequest); // 전체 게시글 조회
+            } else {
+                return postService.getPostList(cursor, new PostReadCondition(boardType), pageRequest); // 게시판 타입별 조회
+            }
         }
-        return postService.getPostList(cursor, new PostReadCondition(), pageRequest);
     }
 
 }

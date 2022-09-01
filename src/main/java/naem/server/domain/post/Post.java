@@ -110,7 +110,7 @@ public class Post {
         if (StringUtils.isNotBlank(content)) {
             this.content = content;
         }
-        if (!postTags.isEmpty()) {
+        if (postTags != null) {
             for (PostTag postTag : postTags) {
                 this.addPostTag(postTag);
             }
