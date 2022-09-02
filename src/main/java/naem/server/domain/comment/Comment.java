@@ -63,6 +63,7 @@ public class Comment {
         Comment comment = new Comment();
         comment.setMember(member);
         comment.setContent(content);
+        comment.setIsDeleted(false);
         comment.setPost(post);
         post.getComments().add(comment); // 해당 게시글에 댓글 추가
         return comment;
@@ -73,5 +74,6 @@ public class Comment {
         this.setIsDeleted(true);
         this.setDeleteAt(LocalDateTime.now());
         post.getComments().remove(this); // 해당 게시글의 댓글 리스트에서 댓글 제거
+        this.setPost(null);
     }
 }

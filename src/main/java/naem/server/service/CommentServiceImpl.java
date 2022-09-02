@@ -71,10 +71,7 @@ public class CommentServiceImpl implements CommentService {
             return null;
         }
         Comment comment = oComment.get();
-        Long postId = comment.getPost().getId();
-        Post post = postRepository.findById(postId)
-            .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        return post;
+        return comment.getPost();
     }
 
     @Override
