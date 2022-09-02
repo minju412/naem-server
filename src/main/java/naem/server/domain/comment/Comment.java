@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -75,5 +76,12 @@ public class Comment {
         this.setDeleteAt(LocalDateTime.now());
         post.getComments().remove(this); // 해당 게시글의 댓글 리스트에서 댓글 제거
         this.setPost(null);
+    }
+
+    //==수정 메서드==//
+    public void updateComment(String content) {
+        if (StringUtils.isNotBlank(content)) {
+            this.content = content;
+        }
     }
 }

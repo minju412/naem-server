@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import naem.server.domain.comment.Comment;
 import naem.server.domain.comment.dto.CommentSaveDto;
+import naem.server.domain.comment.dto.CommentUpdateDto;
 import naem.server.domain.member.Member;
 import naem.server.domain.post.Post;
 import naem.server.exception.CustomException;
@@ -75,6 +76,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public void save(Long postId, CommentSaveDto commentSaveDto) {
 
         Member member = memberRepository.findByUsername(SecurityUtil.getLoginUsername())
@@ -90,6 +92,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public void deleteComment(Long commentId) {
 
         checkCommentPrivileges(commentId);
@@ -97,5 +100,14 @@ public class CommentServiceImpl implements CommentService {
         Post post = getCommentPost(commentId);
         comment.deleteComment(post);
         commentRepository.save(comment);
+    }
+
+    @Override
+    @Transactional
+    public void updateComment(Long commentId, CommentUpdateDto commentUpdateDto) {
+
+        checkCommentPrivileges(commentId);
+        Comment comment = checkCommentExist(commentId);
+        comment.updateComment(commentUpdateDto.getContent());
     }
 }

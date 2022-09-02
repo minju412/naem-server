@@ -2,6 +2,7 @@ package naem.server.service;
 
 import naem.server.domain.comment.Comment;
 import naem.server.domain.comment.dto.CommentSaveDto;
+import naem.server.domain.comment.dto.CommentUpdateDto;
 import naem.server.domain.post.Post;
 
 public interface CommentService {
@@ -17,4 +18,6 @@ public interface CommentService {
     void save(Long postId, CommentSaveDto commentSaveDto);
 
     void deleteComment(Long commentId);
+
+    void updateComment(Long commentId, CommentUpdateDto commentUpdateDto);
 }
