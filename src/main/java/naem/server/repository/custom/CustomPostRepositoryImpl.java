@@ -1,4 +1,4 @@
-package naem.server.repository;
+package naem.server.repository.custom;
 
 import static naem.server.domain.post.QPost.*;
 

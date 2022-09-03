@@ -1,4 +1,4 @@
-package naem.server.repository;
+package naem.server.repository.custom;
 
 import static naem.server.domain.QComment.*;
 
@@ -25,7 +25,7 @@ public class CustomCommentRepositoryImpl implements CustomCommentRepository {
 
     private final JPAQueryFactory queryFactory;
 
-    // 게시글 조회 및 검색
+    // 내 댓글 조회
     @Override
     public Slice<CommentResDto> getCommentScroll(Long cursorId, CommentReadCondition condition, Pageable pageable) {
 
