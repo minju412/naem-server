@@ -26,9 +26,9 @@ public class DetailedPostInfoDto {
     private BoardType boardType;
     private String title;
     private String content;
-    private List<Tag> tags = new ArrayList<>();
-    private List<String> imgUrls = new ArrayList<>();
-    private List<CommentResDto> comments = new ArrayList<>();
+    private List<Tag> tags;
+    private List<String> imgUrls;
+    private List<CommentResDto> comments;
 
     public DetailedPostInfoDto(Post entity) {
         this.boardType = entity.getBoard().getBoardType();

@@ -19,8 +19,6 @@ import naem.server.domain.comment.dto.CommentSaveDto;
 import naem.server.domain.comment.dto.CommentUpdateDto;
 import naem.server.domain.member.Member;
 import naem.server.domain.post.Post;
-import naem.server.domain.post.dto.BriefPostInfoDto;
-import naem.server.domain.post.dto.PostReadCondition;
 import naem.server.exception.CustomException;
 import naem.server.repository.CommentRepository;
 import naem.server.repository.MemberRepository;

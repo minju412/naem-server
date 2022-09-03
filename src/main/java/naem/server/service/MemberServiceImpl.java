@@ -32,13 +32,10 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     @Transactional
-    public void checkMemberPrivileges(long memberId) {
-
-        Member member = memberRepository.findByUsername(SecurityUtil.getLoginUsername())
+    public Member getLoginMember(UserDetails userDetails) {
+        Member member = memberRepository.findByUsername(userDetails.getUsername())
             .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-        if (member.getId() != memberId) {
-            throw new CustomException(ACCESS_DENIED);
-        }
+        return member;
     }
 
     /**

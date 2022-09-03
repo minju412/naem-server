@@ -5,6 +5,8 @@ import javax.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -64,12 +66,11 @@ public class CommentController {
     }
 
     @ApiOperation(value = "내가 작성한 댓글 조회", notes = "내가 작성한 댓글 조회")
-    @GetMapping("/my/{id}")
-    public Slice<CommentResDto> getMyCommentList(@PathVariable("id") Long memberId, Long cursor,
+    @GetMapping("/my")
+    public Slice<CommentResDto> getMyCommentList(@AuthenticationPrincipal UserDetails userDetails, Long cursor,
         @PageableDefault(size = 5, sort = "createAt") Pageable pageRequest) {
 
-        memberService.checkMemberPrivileges(memberId); // memberId가 로그인한 본인인지 체크
-        Member commentAuthor = commentService.getCommentAuthor(memberId);
+        Member commentAuthor = memberService.getLoginMember(userDetails);
         return commentService.getMyCommentList(cursor, new CommentReadCondition(commentAuthor), pageRequest);
     }
 }
