@@ -7,7 +7,6 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -20,18 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import naem.server.domain.BoardType;
 import naem.server.domain.Response;
 import naem.server.domain.comment.dto.CommentReadCondition;
 import naem.server.domain.comment.dto.CommentResDto;
 import naem.server.domain.comment.dto.CommentSaveDto;
 import naem.server.domain.comment.dto.CommentUpdateDto;
 import naem.server.domain.member.Member;
-import naem.server.domain.post.dto.BriefPostInfoDto;
-import naem.server.domain.post.dto.PostReadCondition;
 import naem.server.service.CommentService;
 import naem.server.service.MemberService;
-import naem.server.service.util.SecurityUtil;
 
 @RequiredArgsConstructor
 @RestController

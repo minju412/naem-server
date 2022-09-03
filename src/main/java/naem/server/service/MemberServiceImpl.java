@@ -17,7 +17,6 @@ import naem.server.domain.member.dto.PatchMemberDto;
 import naem.server.domain.member.dto.ProfileResDto;
 import naem.server.exception.CustomException;
 import naem.server.repository.MemberRepository;
-import naem.server.service.util.SecurityUtil;
 
 @Service
 @RequiredArgsConstructor
@@ -44,10 +43,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public ProfileResDto getMyInfo(UserDetails userDetails) {
-
-        Member member = memberRepository.findByUsername(userDetails.getUsername())
-            .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-
+        Member member = getLoginMember(userDetails);
         return new ProfileResDto(member);
     }
 
@@ -58,19 +54,16 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public void patch(long memberId, PatchMemberDto patchMemberDto, UserDetails userDetails) {
 
-        Member member = memberRepository.findByUsername(userDetails.getUsername())
-            .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        Member member = getLoginMember(userDetails);
         if (member.getId() != memberId) {
             throw new CustomException(ACCESS_DENIED);
         }
-
         if (StringUtils.isNotBlank(patchMemberDto.getNickname())) {
             member.setNickname(patchMemberDto.getNickname());
         }
         if (StringUtils.isNotBlank(patchMemberDto.getIntroduction())) {
             member.setIntroduction(patchMemberDto.getIntroduction());
         }
-
         memberRepository.save(member);
     }
 
@@ -80,16 +73,13 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void withdraw(long memberId, MemberWithdrawDto memberWithdrawDto, UserDetails userDetails) {
 
-        Member member = memberRepository.findByUsername(userDetails.getUsername())
-            .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        Member member = getLoginMember(userDetails);
         if (member.getId() != memberId) {
             throw new CustomException(ACCESS_DENIED);
         }
-
         if (!member.matchPassword(passwordEncoder, memberWithdrawDto.getCheckPassword())) {
             throw new CustomException(WRONG_PASSWORD);
         }
-
         memberRepository.delete(member);
     }
 }
