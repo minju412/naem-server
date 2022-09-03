@@ -28,6 +28,7 @@ import naem.server.domain.member.Member;
 import naem.server.domain.post.dto.BriefPostInfoDto;
 import naem.server.domain.post.dto.PostReadCondition;
 import naem.server.service.CommentService;
+import naem.server.service.MemberService;
 import naem.server.service.util.SecurityUtil;
 
 @RequiredArgsConstructor
@@ -37,6 +38,7 @@ import naem.server.service.util.SecurityUtil;
 @Slf4j
 public class CommentController {
 
+    private final MemberService memberService;
     private final CommentService commentService;
 
     @ApiOperation(value = "댓글 등록", notes = "댓글 등록")
@@ -66,6 +68,7 @@ public class CommentController {
     public Slice<CommentResDto> getMyCommentList(@PathVariable("id") Long memberId, Long cursor,
         @PageableDefault(size = 5, sort = "createAt") Pageable pageRequest) {
 
+        memberService.checkMemberPrivileges(memberId); // memberId가 로그인한 본인인지 체크
         Member commentAuthor = commentService.getCommentAuthor(memberId);
         return commentService.getMyCommentList(cursor, new CommentReadCondition(commentAuthor), pageRequest);
     }

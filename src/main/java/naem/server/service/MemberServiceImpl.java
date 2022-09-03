@@ -17,6 +17,7 @@ import naem.server.domain.member.dto.PatchMemberDto;
 import naem.server.domain.member.dto.ProfileResDto;
 import naem.server.exception.CustomException;
 import naem.server.repository.MemberRepository;
+import naem.server.service.util.SecurityUtil;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +26,20 @@ public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+
+    /**
+     * memberId가 로그인한 본인인지 체크
+     */
+    @Override
+    @Transactional
+    public void checkMemberPrivileges(long memberId) {
+
+        Member member = memberRepository.findByUsername(SecurityUtil.getLoginUsername())
+            .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        if (member.getId() != memberId) {
+            throw new CustomException(ACCESS_DENIED);
+        }
+    }
 
     /**
      * 내 정보 조회 로직

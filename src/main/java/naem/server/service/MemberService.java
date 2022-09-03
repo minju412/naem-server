@@ -8,6 +8,8 @@ import naem.server.domain.member.dto.ProfileResDto;
 
 public interface MemberService {
 
+    void checkMemberPrivileges(long memberId);
+
     ProfileResDto getMyInfo(UserDetails userDetails);
 
     void patch(long id, PatchMemberDto patchMemberDto, UserDetails userDetails);
