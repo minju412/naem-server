@@ -24,7 +24,6 @@ import naem.server.domain.post.PostTag;
 import naem.server.domain.post.dto.BriefPostInfoDto;
 import naem.server.domain.post.dto.DetailedPostInfoDto;
 import naem.server.domain.post.dto.PostReadCondition;
-import naem.server.domain.post.dto.DetailedPostInfoDto;
 import naem.server.domain.post.dto.PostSaveReqDto;
 import naem.server.domain.post.dto.PostUpdateReqDto;
 import naem.server.exception.CustomException;
@@ -53,6 +52,18 @@ public class PostServiceImpl implements PostService {
         if (!member.getId().equals(getAuthorId(postId))) {
             throw new CustomException(ACCESS_DENIED);
         }
+    }
+
+    @Override
+    @Transactional
+    public Post checkPostExist(long postId) {
+
+        Post post = postRepository.findById(postId)
+            .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        if (post.getIsDeleted() == true) {
+            throw new CustomException(POST_NOT_FOUND);
+        }
+        return post;
     }
 
     @Override
@@ -104,7 +115,7 @@ public class PostServiceImpl implements PostService {
     // 게시글 단건 조회
     @Override
     @Transactional
-    public DetailedPostInfoDto getPost(Long id) {
+    public DetailedPostInfoDto getDetailedPostInfo(Long id) {
 
         Post post = postRepository.findById(id)
             .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
@@ -135,11 +146,8 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public void update(Long postId, PostUpdateReqDto updateRequestDto) {
 
-        Post post = postRepository.findById(postId)
-            .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        if (post.getIsDeleted()) {
-            throw new CustomException(POST_NOT_FOUND);
-        }
+        // 존재하는 게시글인지 확인
+        Post post = checkPostExist(postId);
 
         List<PostTag> newPostTags = null;
         List<PostTag> postTags = post.getPostTags();
@@ -199,13 +207,10 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post delete(Long postId) {
+    public Post deletePost(Long postId) {
 
-        Post post = postRepository.findById(postId)
-            .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        if (post.getIsDeleted()) {
-            throw new CustomException(POST_NOT_FOUND);
-        }
+        // 존재하는 게시글인지 확인
+        Post post = checkPostExist(postId);
 
         // 포스트 태그 제거
         List<PostTag> postTags = post.getPostTags();

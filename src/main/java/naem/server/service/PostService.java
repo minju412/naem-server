@@ -8,7 +8,6 @@ import naem.server.domain.post.Post;
 import naem.server.domain.post.dto.BriefPostInfoDto;
 import naem.server.domain.post.dto.DetailedPostInfoDto;
 import naem.server.domain.post.dto.PostReadCondition;
-import naem.server.domain.post.dto.DetailedPostInfoDto;
 import naem.server.domain.post.dto.PostSaveReqDto;
 import naem.server.domain.post.dto.PostUpdateReqDto;
 
@@ -16,11 +15,15 @@ public interface PostService {
 
     void checkPrivileges(long postId, UserDetails userDetails);
 
+    Post checkPostExist(long postId);
+
     void save(Post post);
 
     Post save(PostSaveReqDto requestDto);
 
-    DetailedPostInfoDto getPost(Long id);
+    DetailedPostInfoDto getDetailedPostInfo(Long id);
+
+    Post getPost(Long id);
 
     Slice<BriefPostInfoDto> getPostList(Long cursor, PostReadCondition condition, Pageable pageRequest);
 
@@ -28,5 +31,5 @@ public interface PostService {
 
     Long getAuthorId(Long id);
 
-    Post delete(Long id);
+    Post deletePost(Long id);
 }

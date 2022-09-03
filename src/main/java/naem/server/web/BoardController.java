@@ -32,7 +32,6 @@ import naem.server.domain.post.Post;
 import naem.server.domain.post.dto.BriefPostInfoDto;
 import naem.server.domain.post.dto.DetailedPostInfoDto;
 import naem.server.domain.post.dto.PostReadCondition;
-import naem.server.domain.post.dto.DetailedPostInfoDto;
 import naem.server.domain.post.dto.PostSaveReqDto;
 import naem.server.domain.post.dto.PostUpdateReqDto;
 import naem.server.service.PostService;
@@ -64,7 +63,7 @@ public class BoardController {
     @ApiOperation(value = "게시글 단건 조회", notes = "게시글 단건 조회")
     @GetMapping("/detail/{id}")
     public DetailedPostInfoDto getPost(@PathVariable("id") long id) {
-        return postService.getPost(id);
+        return postService.getDetailedPostInfo(id);
     }
 
     @ApiOperation(value = "게시글 수정", notes = "게시글 수정")
@@ -99,7 +98,7 @@ public class BoardController {
 
         postService.checkPrivileges(postId, userDetails); // 접근 권한 확인
 
-        Post deletedPost = postService.delete(postId);
+        Post deletedPost = postService.deletePost(postId);
         List<Image> images = deletedPost.getImg();
         if (!images.isEmpty()) {
             s3Service.deleteImageList(images);

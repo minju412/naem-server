@@ -8,14 +8,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
+import naem.server.domain.BoardType;
 import naem.server.domain.Tag;
 import naem.server.domain.comment.Comment;
 import naem.server.domain.comment.dto.CommentResDto;
-
-import naem.server.domain.BoardType;
-import naem.server.domain.Tag;
-
 import naem.server.domain.post.Image;
 import naem.server.domain.post.Post;
 import naem.server.domain.post.PostTag;
