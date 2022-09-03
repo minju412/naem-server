@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,19 +37,17 @@ public class MemberController {
     }
 
     @ApiOperation(value = "회원 정보 수정", notes = "회원 정보 수정")
-    @PatchMapping("/{id}")
-    public Response memberPatch(@PathVariable("id") long memberId, @RequestBody PatchMemberDto patchMemberDto,
-        @AuthenticationPrincipal UserDetails userDetails) {
+    @PatchMapping()
+    public Response memberPatch(@RequestBody PatchMemberDto patchMemberDto, @AuthenticationPrincipal UserDetails userDetails) {
 
-        memberService.patch(memberId, patchMemberDto, userDetails);
+        memberService.patch(patchMemberDto, userDetails);
         return new Response("OK", "정보 수정에 성공했습니다");
     }
 
     @ApiOperation(value = "회원 탈퇴", notes = "회원 탈퇴")
-    @DeleteMapping("/{id}")
-    public Response withdraw(@PathVariable("id") long memberId, @Valid @RequestBody MemberWithdrawDto memberWithdrawDto,
-        @AuthenticationPrincipal UserDetails userDetails) {
-        memberService.withdraw(memberId, memberWithdrawDto, userDetails);
+    @DeleteMapping()
+    public Response withdraw(@Valid @RequestBody MemberWithdrawDto memberWithdrawDto, @AuthenticationPrincipal UserDetails userDetails) {
+        memberService.withdraw(memberWithdrawDto, userDetails);
         return new Response("OK", "회원 탈퇴에 성공하였습니다");
     }
 }

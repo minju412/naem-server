@@ -52,12 +52,9 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     @Transactional
-    public void patch(long memberId, PatchMemberDto patchMemberDto, UserDetails userDetails) {
+    public void patch(PatchMemberDto patchMemberDto, UserDetails userDetails) {
 
         Member member = getLoginMember(userDetails);
-        if (member.getId() != memberId) {
-            throw new CustomException(ACCESS_DENIED);
-        }
         if (StringUtils.isNotBlank(patchMemberDto.getNickname())) {
             member.setNickname(patchMemberDto.getNickname());
         }
@@ -71,12 +68,9 @@ public class MemberServiceImpl implements MemberService {
      * 회원 탈퇴 로직
      */
     @Override
-    public void withdraw(long memberId, MemberWithdrawDto memberWithdrawDto, UserDetails userDetails) {
+    public void withdraw(MemberWithdrawDto memberWithdrawDto, UserDetails userDetails) {
 
         Member member = getLoginMember(userDetails);
-        if (member.getId() != memberId) {
-            throw new CustomException(ACCESS_DENIED);
-        }
         if (!member.matchPassword(passwordEncoder, memberWithdrawDto.getCheckPassword())) {
             throw new CustomException(WRONG_PASSWORD);
         }
