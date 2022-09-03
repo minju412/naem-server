@@ -6,15 +6,21 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import naem.server.domain.comment.Comment;
+import naem.server.domain.comment.dto.CommentReadCondition;
+import naem.server.domain.comment.dto.CommentResDto;
 import naem.server.domain.comment.dto.CommentSaveDto;
 import naem.server.domain.comment.dto.CommentUpdateDto;
 import naem.server.domain.member.Member;
 import naem.server.domain.post.Post;
+import naem.server.domain.post.dto.BriefPostInfoDto;
+import naem.server.domain.post.dto.PostReadCondition;
 import naem.server.exception.CustomException;
 import naem.server.repository.CommentRepository;
 import naem.server.repository.MemberRepository;
@@ -36,7 +42,7 @@ public class CommentServiceImpl implements CommentService {
 
         Member member = memberRepository.findByUsername(SecurityUtil.getLoginUsername())
             .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-        if (!member.getId().equals(getCommentAuthorId(commentId))) {
+        if (!member.equals(getCommentAuthor(commentId))) {
             throw new CustomException(ACCESS_DENIED);
         }
     }
@@ -53,15 +59,15 @@ public class CommentServiceImpl implements CommentService {
         return comment;
     }
 
-    // commentId 로 작성자의 memberId 반환
+    // commentId 로 작성자(Member) 반환
     @Override
-    public Long getCommentAuthorId(Long commentId) {
+    public Member getCommentAuthor(Long commentId) {
         Optional<Comment> oComment = commentRepository.findById(commentId);
         if (oComment.isEmpty()) {
             return null;
         }
         Comment comment = oComment.get();
-        return comment.getMember().getId();
+        return comment.getMember();
     }
 
     // commentId 로 게시글 찾아서 반환
@@ -109,5 +115,11 @@ public class CommentServiceImpl implements CommentService {
         checkCommentPrivileges(commentId);
         Comment comment = checkCommentExist(commentId);
         comment.updateComment(commentUpdateDto.getContent());
+    }
+
+    @Override
+    @Transactional
+    public Slice<CommentResDto> getMyCommentList(Long cursor, CommentReadCondition condition, Pageable pageRequest) {
+        return commentRepository.getCommentScroll(cursor, condition, pageRequest);
     }
 }

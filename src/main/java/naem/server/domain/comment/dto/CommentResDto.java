@@ -14,10 +14,12 @@ import naem.server.domain.comment.Comment;
 @AllArgsConstructor
 public class CommentResDto {
 
+    private Long commentId;
     private String member;
     private String content;
 
     public CommentResDto(Comment entity) {
+        this.commentId = entity.getId();
         this.member = entity.getMember().getUsername();
         this.content = entity.getContent();
     }

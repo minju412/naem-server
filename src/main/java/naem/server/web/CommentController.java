@@ -2,7 +2,12 @@ package naem.server.web;
 
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,10 +18,17 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import naem.server.domain.BoardType;
 import naem.server.domain.Response;
+import naem.server.domain.comment.dto.CommentReadCondition;
+import naem.server.domain.comment.dto.CommentResDto;
 import naem.server.domain.comment.dto.CommentSaveDto;
 import naem.server.domain.comment.dto.CommentUpdateDto;
+import naem.server.domain.member.Member;
+import naem.server.domain.post.dto.BriefPostInfoDto;
+import naem.server.domain.post.dto.PostReadCondition;
 import naem.server.service.CommentService;
+import naem.server.service.util.SecurityUtil;
 
 @RequiredArgsConstructor
 @RestController
@@ -47,5 +59,14 @@ public class CommentController {
         @Valid @RequestBody CommentUpdateDto commentUpdateDto) {
         commentService.updateComment(commentId, commentUpdateDto);
         return new Response("OK", "댓글 수정에 성공했습니다");
+    }
+
+    @ApiOperation(value = "내가 작성한 댓글 조회", notes = "내가 작성한 댓글 조회")
+    @GetMapping("/my/{id}")
+    public Slice<CommentResDto> getMyCommentList(@PathVariable("id") Long memberId, Long cursor,
+        @PageableDefault(size = 5, sort = "createAt") Pageable pageRequest) {
+
+        Member commentAuthor = commentService.getCommentAuthor(memberId);
+        return commentService.getMyCommentList(cursor, new CommentReadCondition(commentAuthor), pageRequest);
     }
 }
