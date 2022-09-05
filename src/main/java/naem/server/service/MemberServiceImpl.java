@@ -27,15 +27,23 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
 
     /**
+     * memberId가 로그인한 본인인지 체크
+     */
+    @Override
+    @Transactional
+    public Member getLoginMember(UserDetails userDetails) {
+        Member member = memberRepository.findByUsername(userDetails.getUsername())
+            .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        return member;
+    }
+
+    /**
      * 내 정보 조회 로직
      */
     @Override
     @Transactional
     public ProfileResDto getMyInfo(UserDetails userDetails) {
-
-        Member member = memberRepository.findByUsername(userDetails.getUsername())
-            .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-
+        Member member = getLoginMember(userDetails);
         return new ProfileResDto(member);
     }
 
@@ -44,21 +52,15 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     @Transactional
-    public void patch(long memberId, PatchMemberDto patchMemberDto, UserDetails userDetails) {
+    public void patch(PatchMemberDto patchMemberDto, UserDetails userDetails) {
 
-        Member member = memberRepository.findByUsername(userDetails.getUsername())
-            .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-        if (member.getId() != memberId) {
-            throw new CustomException(ACCESS_DENIED);
-        }
-
+        Member member = getLoginMember(userDetails);
         if (StringUtils.isNotBlank(patchMemberDto.getNickname())) {
             member.setNickname(patchMemberDto.getNickname());
         }
         if (StringUtils.isNotBlank(patchMemberDto.getIntroduction())) {
             member.setIntroduction(patchMemberDto.getIntroduction());
         }
-
         memberRepository.save(member);
     }
 
@@ -66,18 +68,12 @@ public class MemberServiceImpl implements MemberService {
      * 회원 탈퇴 로직
      */
     @Override
-    public void withdraw(long memberId, MemberWithdrawDto memberWithdrawDto, UserDetails userDetails) {
+    public void withdraw(MemberWithdrawDto memberWithdrawDto, UserDetails userDetails) {
 
-        Member member = memberRepository.findByUsername(userDetails.getUsername())
-            .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-        if (member.getId() != memberId) {
-            throw new CustomException(ACCESS_DENIED);
-        }
-
+        Member member = getLoginMember(userDetails);
         if (!member.matchPassword(passwordEncoder, memberWithdrawDto.getCheckPassword())) {
             throw new CustomException(WRONG_PASSWORD);
         }
-
         memberRepository.delete(member);
     }
 }
