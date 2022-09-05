@@ -27,6 +27,8 @@ public interface PostService {
 
     Slice<BriefPostInfoDto> getPostList(Long cursor, PostReadCondition condition, Pageable pageRequest);
 
+    Slice<BriefPostInfoDto> getMyPostList(Long cursor, PostReadCondition condition, Pageable pageRequest);
+
     void update(Long id, PostUpdateReqDto updateRequestDto);
 
     Long getAuthorId(Long id);
