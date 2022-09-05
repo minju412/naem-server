@@ -2,13 +2,21 @@ package naem.server.domain.post.dto;
 
 import lombok.Data;
 import naem.server.domain.BoardType;
+import naem.server.domain.member.Member;
 
 @Data
 public class PostReadCondition {
 
+    private Member member; // 작성자 아이디
     private String keyword; // 검색 키워드
     private Boolean isDeleted;
     private BoardType boardType; // 게시판 타입
+
+    // 내가 쓴 게시글 조회
+    public PostReadCondition(Member member) {
+        this.member = member;
+        this.isDeleted = false;
+    }
 
     // 전체 게시글 조회
     public PostReadCondition() {

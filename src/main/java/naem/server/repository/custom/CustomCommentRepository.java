@@ -8,5 +8,5 @@ import naem.server.domain.comment.dto.CommentResDto;
 
 public interface CustomCommentRepository {
 
-    Slice<CommentResDto> getCommentScroll(Long cursorId, CommentReadCondition condition, Pageable pageable);
+    Slice<CommentResDto> getMyCommentScroll(Long cursorId, CommentReadCondition condition, Pageable pageable);
 }

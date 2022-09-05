@@ -234,4 +234,10 @@ public class PostServiceImpl implements PostService {
         return postRepository.getBriefPostInfoScroll(cursor, condition, pageRequest);
     }
 
+    @Override
+    @Transactional
+    public Slice<BriefPostInfoDto> getMyPostList(Long cursor, PostReadCondition condition, Pageable pageRequest) {
+        return postRepository.getMyPostScroll(cursor, condition, pageRequest);
+    }
+
 }

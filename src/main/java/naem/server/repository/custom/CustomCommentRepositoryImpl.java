@@ -1,6 +1,6 @@
 package naem.server.repository.custom;
 
-import static naem.server.domain.QComment.*;
+import static naem.server.domain.comment.QComment.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ public class CustomCommentRepositoryImpl implements CustomCommentRepository {
 
     // 내 댓글 조회
     @Override
-    public Slice<CommentResDto> getCommentScroll(Long cursorId, CommentReadCondition condition, Pageable pageable) {
+    public Slice<CommentResDto> getMyCommentScroll(Long cursorId, CommentReadCondition condition, Pageable pageable) {
 
         List<Comment> commentList = queryFactory
             .select(comment)

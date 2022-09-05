@@ -15,6 +15,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 import naem.server.domain.BoardType;
+import naem.server.domain.member.Member;
 import naem.server.domain.post.Post;
 import naem.server.domain.post.dto.BriefPostInfoDto;
 import naem.server.domain.post.dto.PostReadCondition;
@@ -56,6 +57,34 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
         return new SliceImpl<>(briefPostInfos, pageable, hasNext);
     }
 
+    // 내 게시글 조회
+    @Override
+    public Slice<BriefPostInfoDto> getMyPostScroll(Long cursorId, PostReadCondition condition, Pageable pageable) {
+
+        List<Post> postList = queryFactory
+            .select(post)
+            .from(post)
+            .where(
+                eqIsDeleted(condition.getIsDeleted()), // 삭제되지 않은 게시글만 조회
+                eqIsMine(condition.getMember()), // 내가 작성한 게시글만 조회
+                eqCursorId(cursorId)
+            )
+            .limit(pageable.getPageSize() + 1) // limit 보다 데이터를 1개 더 들고와서, 해당 데이터가 있다면 hasNext 변수에 true 를 넣어 알림
+            .fetch();
+
+        List<BriefPostInfoDto> briefPostInfoDtos = new ArrayList<>();
+        for (Post post : postList) {
+            briefPostInfoDtos.add(new BriefPostInfoDto(post));
+        }
+
+        boolean hasNext = false;
+        if (briefPostInfoDtos.size() > pageable.getPageSize()) {
+            briefPostInfoDtos.remove(pageable.getPageSize());
+            hasNext = true;
+        }
+        return new SliceImpl<>(briefPostInfoDtos, pageable, hasNext);
+    }
+
     //동적 쿼리를 위한 BooleanExpression
     private BooleanExpression eqCursorId(Long cursorId) {
         return (cursorId == null) ? null : post.id.gt(cursorId);
@@ -79,6 +108,11 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
     // 게시판 타입 필터링
     private BooleanExpression eqBoardType(BoardType boardType) {
         return (boardType == null) ? null : post.board.boardType.eq(boardType);
+    }
+
+    // 내가 쓴 게시인지 필터링
+    private BooleanExpression eqIsMine(Member member) {
+        return (member == null) ? null : post.member.eq(member);
     }
 
 }

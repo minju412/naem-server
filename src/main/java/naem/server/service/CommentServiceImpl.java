@@ -118,6 +118,6 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public Slice<CommentResDto> getMyCommentList(Long cursor, CommentReadCondition condition, Pageable pageRequest) {
-        return commentRepository.getCommentScroll(cursor, condition, pageRequest);
+        return commentRepository.getMyCommentScroll(cursor, condition, pageRequest);
     }
 }

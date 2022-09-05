@@ -10,4 +10,6 @@ public interface CustomPostRepository {
 
     Slice<BriefPostInfoDto> getBriefPostInfoScroll(Long cursorId, PostReadCondition condition, Pageable pageable);
 
+    Slice<BriefPostInfoDto> getMyPostScroll(Long cursorId, PostReadCondition condition, Pageable pageable);
+
 }

@@ -27,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import naem.server.domain.BoardType;
 import naem.server.domain.Response;
+import naem.server.domain.member.Member;
 import naem.server.domain.post.Image;
 import naem.server.domain.post.Post;
 import naem.server.domain.post.dto.BriefPostInfoDto;
@@ -34,6 +35,7 @@ import naem.server.domain.post.dto.DetailedPostInfoDto;
 import naem.server.domain.post.dto.PostReadCondition;
 import naem.server.domain.post.dto.PostSaveReqDto;
 import naem.server.domain.post.dto.PostUpdateReqDto;
+import naem.server.service.MemberService;
 import naem.server.service.PostService;
 import naem.server.service.S3Service;
 
@@ -44,6 +46,7 @@ import naem.server.service.S3Service;
 @Slf4j
 public class BoardController {
 
+    private final MemberService memberService;
     private final PostService postService;
     private final S3Service s3Service;
 
@@ -127,6 +130,15 @@ public class BoardController {
                 return postService.getPostList(cursor, new PostReadCondition(boardType), pageRequest); // 게시판 타입별 조회
             }
         }
+    }
+
+    @ApiOperation(value = "내가 작성한 게시글 조회", notes = "내가 작성한 게시글 조회")
+    @GetMapping("/my")
+    public Slice<BriefPostInfoDto> getMyPostList(@AuthenticationPrincipal UserDetails userDetails, Long cursor,
+        @PageableDefault(size = 5, sort = "createAt") Pageable pageRequest) {
+
+        Member commentAuthor = memberService.getLoginMember(userDetails);
+        return postService.getMyPostList(cursor, new PostReadCondition(commentAuthor), pageRequest);
     }
 
 }
