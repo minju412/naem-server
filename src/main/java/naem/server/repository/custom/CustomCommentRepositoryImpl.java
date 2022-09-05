@@ -1,6 +1,6 @@
 package naem.server.repository.custom;
 
-import static naem.server.domain.QComment.*;
+import static naem.server.domain.comment.QComment.*;
 
 import java.util.ArrayList;
 import java.util.List;
