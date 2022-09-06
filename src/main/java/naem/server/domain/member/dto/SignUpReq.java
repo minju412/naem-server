@@ -29,7 +29,6 @@ public class SignUpReq {
     private String phoneNumber;
 
     @NotBlank(message = "아이디는 필수 입력 값입니다.")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[0-9]).{5,20}$", message = "아이디는 5~20자의 영문 소문자 및 숫자를 사용하세요.")
     @Size(min = 5, max = 20)
     @Column(unique = true)
     private String username;
