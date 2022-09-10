@@ -49,6 +49,8 @@ public class SecurityConfig {
                 "/swagger*/**",
                 "/favicon.ico"
             ).permitAll()
+            // .antMatchers("/admin/**").hasRole("ADMIN")
+            .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
             .anyRequest().authenticated();
 
         // No session will be created or used by spring security

@@ -2,10 +2,10 @@ package naem.server.service;
 
 import static naem.server.exception.ErrorCode.*;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         Member member = memberRepository.findByUsername(username)
             .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
-        Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
+        List<GrantedAuthority> grantedAuthorities = AuthorityUtils.createAuthorityList(member.getRole().toString());
 
         return new org
             .springframework
