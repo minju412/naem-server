@@ -5,6 +5,8 @@ import static naem.server.exception.ErrorCode.*;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import naem.server.domain.member.Member;
+import naem.server.domain.member.dto.MemberReadCondition;
 import naem.server.domain.member.dto.MemberWithdrawDto;
 import naem.server.domain.member.dto.PatchMemberDto;
 import naem.server.domain.member.dto.ProfileResDto;
@@ -75,5 +78,14 @@ public class MemberServiceImpl implements MemberService {
             throw new CustomException(WRONG_PASSWORD);
         }
         memberRepository.delete(member);
+    }
+
+    /**
+     * 가입된 회원 목록 조회 로직
+     */
+    @Override
+    @Transactional
+    public Slice<ProfileResDto> getMemberList(Long cursor, MemberReadCondition condition, Pageable pageRequest) {
+        return memberRepository.getProfileResDtoScroll(cursor, condition, pageRequest);
     }
 }

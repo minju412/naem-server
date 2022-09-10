@@ -14,11 +14,13 @@ import naem.server.domain.member.Member;
 @AllArgsConstructor
 public class ProfileResDto {
 
+    private Long memberId;
     private String username;
     private String nickname;
     private String introduction;
 
     public ProfileResDto(Member entity) {
+        this.memberId = entity.getId();
         this.username = entity.getUsername();
         this.nickname = entity.getNickname();
         this.introduction = entity.getIntroduction();
