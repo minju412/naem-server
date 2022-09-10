@@ -15,6 +15,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 import naem.server.domain.member.Member;
+import naem.server.domain.member.MemberRole;
 import naem.server.domain.member.dto.MemberReadCondition;
 import naem.server.domain.member.dto.ProfileResDto;
 
@@ -24,7 +25,7 @@ public class CustomMemberRepositoryImpl implements CustomMemberRepository {
 
     private final JPAQueryFactory queryFactory;
 
-    // 내 댓글 조회
+    // 가입된 회원 조회
     @Override
     public Slice<ProfileResDto> getProfileResDtoScroll(Long cursorId, MemberReadCondition condition, Pageable pageable) {
 
@@ -33,6 +34,7 @@ public class CustomMemberRepositoryImpl implements CustomMemberRepository {
             .from(member)
             .where(
                 eqIsDeleted(condition.getIsDeleted()), // 탈퇴하지 않은 회원만 조회
+                eqIsUser(condition.getMemberRole()), // 인증된 회원만 조회
                 eqCursorId(cursorId)
             )
             .limit(pageable.getPageSize() + 1) // limit 보다 데이터를 1개 더 들고와서, 해당 데이터가 있다면 hasNext 변수에 true 를 넣어 알림
@@ -59,6 +61,11 @@ public class CustomMemberRepositoryImpl implements CustomMemberRepository {
     // 탈퇴한 회원인지 필터링
     private BooleanExpression eqIsDeleted(Boolean isDeleted) {
         return (isDeleted == null) ? null : member.isDeleted.eq(isDeleted);
+    }
+
+    // 회원 role 필터링 (어드민은 제외)
+    private BooleanExpression eqIsUser(MemberRole memberRole) {
+        return (memberRole == null) ? null : member.role.eq(memberRole);
     }
 
 }
