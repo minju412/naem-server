@@ -11,6 +11,8 @@ public interface MemberRepository extends JpaRepository<Member, Long>, CustomMem
 
     Optional<Member> findByUsername(String username);
 
+    Optional<Member> findByRecommenderCode(String recommenderCode);
+
     boolean existsByUsername(String username);
 
     boolean existsByNickname(String nickname);

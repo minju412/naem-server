@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import naem.server.config.JwtTokenProvider;
 import naem.server.domain.member.Member;
 import naem.server.domain.member.dto.MemberConflictCheckDto;
+import naem.server.domain.member.dto.ProtectorAuthDto;
 import naem.server.domain.member.dto.RegenerateTokenDto;
 import naem.server.domain.member.dto.SignInReq;
 import naem.server.domain.member.dto.SignUpReq;
@@ -154,5 +155,16 @@ public class AuthServiceImpl implements AuthService {
             throw new CustomException(INVALID_REFRESH_TOKEN);
         }
     }
+
+    @Override
+    @Transactional
+    public void protectorAuthorization(ProtectorAuthDto protectorAuthDto) {
+        Member protector = userRepository.findByUsername(protectorAuthDto.getUsername())
+            .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        userRepository.findByRecommenderCode(protectorAuthDto.getRecommenderCode())
+            .orElseThrow(() -> new CustomException(INVALID_RECOMMENDER_CODE));
+        protector.updateAuthorization();
+    }
+
 }
 

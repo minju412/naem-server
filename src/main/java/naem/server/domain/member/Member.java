@@ -59,7 +59,7 @@ public class Member {
 
     private String recommenderCode; // 추천인 코드
 
-    private Boolean isAuthenticated = false;
+    private Boolean isAuthorized = false;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<MemberTag> memberTags = new ArrayList<>();
@@ -110,6 +110,12 @@ public class Member {
      */
     public boolean matchPassword(PasswordEncoder passwordEncoder, String checkPassword) {
         return passwordEncoder.matches(checkPassword, getPassword());
+    }
+
+    //==수정 메서드==//
+    public void updateAuthorization() {
+        this.isAuthorized = true;
+        this.role = MemberRole.ROLE_USER;
     }
 
 }

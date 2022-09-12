@@ -3,6 +3,7 @@ package naem.server.web;
 import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import naem.server.domain.Response;
 import naem.server.domain.member.dto.MemberConflictCheckDto;
+import naem.server.domain.member.dto.ProtectorAuthDto;
 import naem.server.domain.member.dto.RegenerateTokenDto;
 import naem.server.domain.member.dto.SignInReq;
 import naem.server.domain.member.dto.SignUpReq;
@@ -52,5 +54,12 @@ public class AuthController {
     @PostMapping("/regenerateToken")
     public ResponseEntity<TokenDto> regenerateToken(@Valid @RequestBody RegenerateTokenDto refreshTokenDto) {
         return authService.regenerateToken(refreshTokenDto);
+    }
+
+    @ApiOperation(value = "보호자 인증 요청", notes = "보호자 인증 요청")
+    @PatchMapping("/protector")
+    public Response protectorAuthorization(@Valid @RequestBody ProtectorAuthDto protectorAuthDto) {
+        authService.protectorAuthorization(protectorAuthDto);
+        return new Response("OK", "보호자 인증에 성공했습니다");
     }
 }
