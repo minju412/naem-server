@@ -45,8 +45,6 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private MemberRole role = MemberRole.ROLE_NOT_PERMITTED;
 
-    private String phoneNumber;
-
     @Size(min = 5, max = 20)
     @Column(unique = true)
     private String username;
@@ -82,9 +80,8 @@ public class Member {
     private Date deleteAt;
 
     @Builder
-    public Member(MemberType memberType, String phoneNumber, String username, String password, String nickname /*MemberRole role*/) {
+    public Member(MemberType memberType, String username, String password, String nickname /*MemberRole role*/) {
         this.memberType = memberType;
-        this.phoneNumber = phoneNumber;
         this.username = username;
         this.password = password;
         this.nickname = nickname;

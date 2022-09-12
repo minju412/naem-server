@@ -13,7 +13,5 @@ public interface MemberRepository extends JpaRepository<Member, Long>, CustomMem
 
     boolean existsByUsername(String username);
 
-    boolean existsByPhoneNumber(String phoneNumber);
-
     boolean existsByNickname(String nickname);
 }

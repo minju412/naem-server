@@ -44,9 +44,6 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public void signUp(SignUpReq signUpReq) {
 
-        if (userRepository.existsByPhoneNumber(signUpReq.getPhoneNumber())) {
-            throw new CustomException(DUPLICATE_MEMBER);
-        }
         if (userRepository.existsByUsername(signUpReq.getUsername())) {
             throw new CustomException(CONFLICT_ID);
         }
