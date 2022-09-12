@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import naem.server.config.JwtTokenProvider;
 import naem.server.domain.member.Member;
+import naem.server.domain.member.dto.MemberConflictCheckDto;
 import naem.server.domain.member.dto.RegenerateTokenDto;
 import naem.server.domain.member.dto.SignInReq;
 import naem.server.domain.member.dto.SignUpReq;
@@ -56,6 +57,14 @@ public class AuthServiceImpl implements AuthService {
         newUser.hashPassword(bCryptPasswordEncoder);
 
         userRepository.save(newUser);
+    }
+
+    @Override
+    @Transactional
+    public void isConflict(MemberConflictCheckDto memberConflictCheckDto) {
+        if (userRepository.existsByUsername(memberConflictCheckDto.getUsername())) {
+            throw new CustomException(CONFLICT_ID);
+        }
     }
 
     @Override

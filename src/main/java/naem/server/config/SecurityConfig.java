@@ -37,14 +37,11 @@ public class SecurityConfig {
         http
             .csrf().disable();
 
-        //
         http
             .authorizeRequests()
             .antMatchers(
                 "/",
-                "/auth/signUp",
-                "/auth/signIn*",
-                "/auth/regenerateToken",
+                "/auth/**",
                 "/v3/api-docs",
                 "/swagger*/**",
                 "/favicon.ico"
