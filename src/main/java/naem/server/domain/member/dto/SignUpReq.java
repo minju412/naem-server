@@ -25,7 +25,6 @@ public class SignUpReq {
     private MemberType memberType;
 
     @NotBlank(message = "아이디는 필수 입력 값입니다.")
-    @Size(min = 5, max = 20)
     @Column(unique = true)
     private String username;
 

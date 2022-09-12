@@ -3,7 +3,7 @@ package naem.server.web;
 import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,7 +37,7 @@ public class AuthController {
     }
 
     @ApiOperation(value = "아이디 중복 체크", notes = "아이디 중복 체크")
-    @PostMapping("/check")
+    @GetMapping("/check/username")
     public Response isConflict(@Valid @RequestBody MemberConflictCheckDto memberConflictCheckDto) {
         authService.isConflict(memberConflictCheckDto);
         return new Response("OK", "사용할 수 있는 아이디입니다");
