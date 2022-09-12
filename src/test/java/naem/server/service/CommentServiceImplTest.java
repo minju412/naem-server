@@ -62,7 +62,6 @@ class CommentServiceImplTest {
     EntityManager em;
 
     private MemberType memberType = MemberType.IN_PERSON;
-    private String phoneNumber = "010-0000-0002";
     private String username = "test2";
     private String password = "qwerQWER12!";
     private String nickName = "테스트2";
@@ -82,7 +81,7 @@ class CommentServiceImplTest {
 
     @BeforeEach()
     public void signUpAndSetAuthentication() throws Exception {
-        authService.signUp(new SignUpReq(memberType, phoneNumber, username, password, nickName));
+        authService.signUp(new SignUpReq(memberType, username, password, nickName));
         SecurityContext emptyContext = SecurityContextHolder.createEmptyContext();
         emptyContext.setAuthentication(
             new UsernamePasswordAuthenticationToken(

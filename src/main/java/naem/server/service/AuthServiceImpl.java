@@ -2,6 +2,7 @@ package naem.server.service;
 
 import static naem.server.exception.ErrorCode.*;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.data.redis.core.RedisTemplate;
@@ -67,6 +68,13 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ResponseEntity<TokenDto> signIn(SignInReq signInReq) {
         try {
+
+            Member member = userRepository.findByUsername(signInReq.getUsername())
+                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+            if (member.getRole().toString().equals("ROLE_NOT_PERMITTED")) {
+                throw new CustomException(ROLE_NOT_PERMITTED);
+            }
+
             Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                     signInReq.getUsername(),
