@@ -42,7 +42,7 @@ public class SecurityConfig {
             .antMatchers(
                 "/",
                 "/auth/signUp",
-                "/auth/check",
+                "/auth/checkid",
                 "/auth/signIn",
                 "/auth/regenerateToken",
                 "/v3/api-docs",
