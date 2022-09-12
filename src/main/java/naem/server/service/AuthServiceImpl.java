@@ -2,6 +2,7 @@ package naem.server.service;
 
 import static naem.server.exception.ErrorCode.*;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.data.redis.core.RedisTemplate;
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import naem.server.config.JwtTokenProvider;
 import naem.server.domain.member.Member;
+import naem.server.domain.member.dto.MemberConflictCheckDto;
 import naem.server.domain.member.dto.RegenerateTokenDto;
 import naem.server.domain.member.dto.SignInReq;
 import naem.server.domain.member.dto.SignUpReq;
@@ -43,9 +45,6 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public void signUp(SignUpReq signUpReq) {
 
-        if (userRepository.existsByPhoneNumber(signUpReq.getPhoneNumber())) {
-            throw new CustomException(DUPLICATE_MEMBER);
-        }
         if (userRepository.existsByUsername(signUpReq.getUsername())) {
             throw new CustomException(CONFLICT_ID);
         }
@@ -59,8 +58,23 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
+    public void isConflict(MemberConflictCheckDto memberConflictCheckDto) {
+        if (userRepository.existsByUsername(memberConflictCheckDto.getUsername())) {
+            throw new CustomException(CONFLICT_ID);
+        }
+    }
+
+    @Override
     public ResponseEntity<TokenDto> signIn(SignInReq signInReq) {
         try {
+
+            Member member = userRepository.findByUsername(signInReq.getUsername())
+                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+            if (member.getRole().toString().equals("ROLE_NOT_PERMITTED")) {
+                throw new CustomException(ROLE_NOT_PERMITTED);
+            }
+
             Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                     signInReq.getUsername(),

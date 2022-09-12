@@ -45,7 +45,6 @@ public class AuthServiceTest {
     ObjectMapper objectMapper = new ObjectMapper();
 
     private MemberType memberType = MemberType.IN_PERSON;
-    private String phoneNumber = "010-0000-0002";
     private String username = "test2";
     private String password = "qwerQWER12!";
     private String nickName = "테스트2";
@@ -79,7 +78,7 @@ public class AuthServiceTest {
     public void 회원가입_성공() throws Exception {
         // given
         String signUpData = objectMapper.writeValueAsString(
-            new SignUpReq(memberType, phoneNumber, username, password, nickName));
+            new SignUpReq(memberType, username, password, nickName));
 
         // when
         signUp(signUpData);

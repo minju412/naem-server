@@ -24,6 +24,7 @@ public enum ErrorCode {
 
     /* 403 FORBIDDEN : 권한이 없음 */
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "접근 권한이 없습니다"),
+    ROLE_NOT_PERMITTED(HttpStatus.FORBIDDEN, "인증이 완료되기 전까지는 서비스를 이용할 수 없습니다"),
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저 정보를 찾을 수 없습니다"),
