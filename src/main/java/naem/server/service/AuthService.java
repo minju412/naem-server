@@ -17,5 +17,4 @@ public interface AuthService {
     ResponseEntity<TokenDto> signIn(SignInReq signInReq);
 
     ResponseEntity<TokenDto> regenerateToken(RegenerateTokenDto refreshTokenDto);
-
 }
