@@ -37,7 +37,7 @@ public class AuthController {
     }
 
     @ApiOperation(value = "아이디 중복 체크", notes = "아이디 중복 체크")
-    @GetMapping("/check/username")
+    @GetMapping("/checkid")
     public Response isConflict(@Valid @RequestBody MemberConflictCheckDto memberConflictCheckDto) {
         authService.isConflict(memberConflictCheckDto);
         return new Response("OK", "사용할 수 있는 아이디입니다");
