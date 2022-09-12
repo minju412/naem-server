@@ -3,7 +3,6 @@ package naem.server.service;
 import org.springframework.http.ResponseEntity;
 
 import naem.server.domain.member.dto.MemberConflictCheckDto;
-import naem.server.domain.member.dto.ProtectorAuthDto;
 import naem.server.domain.member.dto.RegenerateTokenDto;
 import naem.server.domain.member.dto.SignInReq;
 import naem.server.domain.member.dto.SignUpReq;
@@ -18,7 +17,4 @@ public interface AuthService {
     ResponseEntity<TokenDto> signIn(SignInReq signInReq);
 
     ResponseEntity<TokenDto> regenerateToken(RegenerateTokenDto refreshTokenDto);
-
-    void protectorAuthorization(ProtectorAuthDto protectorAuthDto);
-
 }

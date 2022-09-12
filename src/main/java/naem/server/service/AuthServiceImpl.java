@@ -22,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 import naem.server.config.JwtTokenProvider;
 import naem.server.domain.member.Member;
 import naem.server.domain.member.dto.MemberConflictCheckDto;
-import naem.server.domain.member.dto.ProtectorAuthDto;
 import naem.server.domain.member.dto.RegenerateTokenDto;
 import naem.server.domain.member.dto.SignInReq;
 import naem.server.domain.member.dto.SignUpReq;
@@ -46,11 +45,20 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public void signUp(SignUpReq signUpReq) {
 
+        // request 에 추천인 코드가 있는 경우
         if (StringUtils.isNotBlank(signUpReq.getRecommenderCode())) {
             if (!signUpReq.getMemberType().toString().equals("PROTECTOR")) {
-                throw new CustomException(RECOMMENDER_CODE_ERROR);
+                throw new CustomException(NO_RECOMMENDER_CODE_REQUIRED); // 추천인 코드 필요 X
+            }
+            // 추천인 코드 검증
+            userRepository.findByRecommenderCode(signUpReq.getRecommenderCode())
+                .orElseThrow(() -> new CustomException(INVALID_RECOMMENDER_CODE));
+        } else { // request 에 추천인 코드가 없는 경우
+            if (signUpReq.getMemberType().toString().equals("PROTECTOR")) {
+                throw new CustomException(RECOMMENDER_CODE_REQUIRED); // 추천인 코드 필요
             }
         }
+
         if (userRepository.existsByUsername(signUpReq.getUsername())) {
             throw new CustomException(CONFLICT_ID);
         }
@@ -59,6 +67,9 @@ public class AuthServiceImpl implements AuthService {
         }
         Member newUser = signUpReq.toUserEntity();
         newUser.hashPassword(bCryptPasswordEncoder);
+        if (StringUtils.isNotBlank(signUpReq.getRecommenderCode())) {
+            newUser.updateAuthorization();
+        }
 
         userRepository.save(newUser);
     }
@@ -154,16 +165,6 @@ public class AuthServiceImpl implements AuthService {
         } catch (AuthenticationException e) {
             throw new CustomException(INVALID_REFRESH_TOKEN);
         }
-    }
-
-    @Override
-    @Transactional
-    public void protectorAuthorization(ProtectorAuthDto protectorAuthDto) {
-        Member protector = userRepository.findByUsername(protectorAuthDto.getUsername())
-            .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-        userRepository.findByRecommenderCode(protectorAuthDto.getRecommenderCode())
-            .orElseThrow(() -> new CustomException(INVALID_RECOMMENDER_CODE));
-        protector.updateAuthorization();
     }
 
 }

@@ -44,7 +44,6 @@ public class SecurityConfig {
                 "/auth/signUp",
                 "/auth/check",
                 "/auth/signIn",
-                "/auth/protector",
                 "/auth/regenerateToken",
                 "/v3/api-docs",
                 "/swagger*/**",
