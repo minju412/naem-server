@@ -38,6 +38,8 @@ public class SignUpReq {
     @Column(unique = true)
     private String nickname;
 
+    private String recommenderCode;
+
     @Builder
     public SignUpReq(MemberType memberType, String username, String password, String nickname) {
         this.memberType = memberType;

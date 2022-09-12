@@ -57,6 +57,8 @@ public class Member {
 
     private String introduction;
 
+    private String recommenderCode; // 추천인 코드
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<MemberTag> memberTags = new ArrayList<>();
 

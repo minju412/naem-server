@@ -2,9 +2,9 @@ package naem.server.service;
 
 import static naem.server.exception.ErrorCode.*;
 
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -45,6 +45,11 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public void signUp(SignUpReq signUpReq) {
 
+        if (StringUtils.isNotBlank(signUpReq.getRecommenderCode())) {
+            if (!signUpReq.getMemberType().toString().equals("PROTECTOR")) {
+                throw new CustomException(RECOMMENDER_CODE_ERROR);
+            }
+        }
         if (userRepository.existsByUsername(signUpReq.getUsername())) {
             throw new CustomException(CONFLICT_ID);
         }

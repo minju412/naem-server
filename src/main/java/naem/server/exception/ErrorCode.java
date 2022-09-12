@@ -17,6 +17,7 @@ public enum ErrorCode {
     INVALID_CREDENTIAL(HttpStatus.BAD_REQUEST, "유효하지 않은 자격증명입니다"),
     TAG_LIST_SIZE_ERROR(HttpStatus.BAD_REQUEST, "최대 3개의 키워드를 선택할 수 있습니다"),
     INVALID_FILE_ERROR(HttpStatus.BAD_REQUEST, "잘못된 형식의 파일입니다"),
+    RECOMMENDER_CODE_ERROR(HttpStatus.BAD_REQUEST, "추천인 코드는 보호자 회원의 경우에만 필요합니다"),
 
     /* 401 UNAUTHORIZED : 인증되지 않음 */
     WRONG_PASSWORD(HttpStatus.UNAUTHORIZED, "잘못된 비밀번호입니다"),
