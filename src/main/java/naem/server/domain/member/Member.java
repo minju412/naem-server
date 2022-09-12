@@ -59,6 +59,8 @@ public class Member {
 
     private String recommenderCode; // 추천인 코드
 
+    private Boolean isAuthenticated = false;
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<MemberTag> memberTags = new ArrayList<>();
 
