@@ -100,10 +100,6 @@ public class MemberServiceImpl implements MemberService {
         DisabledMemberInfo disabledMemberInfo = disabledMemberInfoRepository.findById(id)
             .orElseThrow(() -> new CustomException(DISABLED_MEMBER_INFO_NOT_FOUND));
 
-        // if (disabledMemberInfo.getIsDeleted()) {
-        //     throw new CustomException(POST_NOT_FOUND);
-        // }
-
         return new DisabledMemberInfoDto(disabledMemberInfo);
     }
 }
