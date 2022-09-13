@@ -19,11 +19,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Image {
+public class PostImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "image_id")
+    @Column(name = "post_image_id")
     private Long id;
 
     private String imgUrl;
@@ -34,9 +34,9 @@ public class Image {
     private Post post;
 
     //==삭제 메서드==//
-    public static void deleteImages(List<Image> images) {
+    public static void deleteImages(List<PostImage> images) {
         if (!images.isEmpty()) {
-            for (Image image : images) {
+            for (PostImage image : images) {
                 image.setImgUrl(null);
                 image.setFileName(null);
                 image.setPost(null);

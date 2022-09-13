@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import naem.server.domain.member.DisabledMemberInfo;
-import naem.server.domain.post.Image;
 import naem.server.domain.post.Post;
+import naem.server.domain.post.PostImage;
 
 public interface S3Service {
 
@@ -14,6 +14,6 @@ public interface S3Service {
 
     List<String> uploadDisabledAuthImage(List<MultipartFile> multipartFile, String dirName, DisabledMemberInfo disabledMemberInfo);
 
-    void deleteImageList(List<Image> images);
+    void deleteImageList(List<PostImage> images);
 
 }

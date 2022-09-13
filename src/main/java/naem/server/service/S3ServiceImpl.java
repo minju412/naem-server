@@ -22,11 +22,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import naem.server.domain.member.DisabledAuthImage;
 import naem.server.domain.member.DisabledMemberInfo;
-import naem.server.domain.post.Image;
 import naem.server.domain.post.Post;
+import naem.server.domain.post.PostImage;
 import naem.server.exception.CustomException;
 import naem.server.repository.DisabledAuthImageRepository;
-import naem.server.repository.ImageRepository;
+import naem.server.repository.PostImageRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +34,7 @@ import naem.server.repository.ImageRepository;
 public class S3ServiceImpl implements S3Service {
 
     private final AmazonS3Client amazonS3Client;
-    private final ImageRepository imageRepository; // 게시글 사진 레포
+    private final PostImageRepository imageRepository; // 게시글 사진 레포
     private final DisabledAuthImageRepository disabledAuthImageRepository; // 장애인 인증 사진 레포
 
     @Value("${cloud.aws.s3.bucket}")
@@ -123,7 +123,7 @@ public class S3ServiceImpl implements S3Service {
      */
     public void storeInfoInDb(List<String> imageUrls, List<String> fileNameList, Post post) throws IOException {
         for (int i = 0; i < imageUrls.size(); i++) {
-            Image img = new Image();
+            PostImage img = new PostImage();
             img.setImgUrl(imageUrls.get(i));
             img.setFileName(fileNameList.get(i));
             img.setPost(post);
@@ -151,9 +151,9 @@ public class S3ServiceImpl implements S3Service {
 
     // 이미지 리스트 삭제
     @Override
-    public void deleteImageList(List<Image> images) {
-        for (Image image : images) {
-            amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, image.getFileName()));
+    public void deleteImageList(List<PostImage> images) {
+        for (PostImage postImage : images) {
+            amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, postImage.getFileName()));
         }
     }
 

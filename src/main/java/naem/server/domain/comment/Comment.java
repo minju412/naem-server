@@ -2,7 +2,6 @@ package naem.server.domain.comment;
 
 import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,9 +21,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import lombok.Getter;
 import lombok.Setter;
 import naem.server.domain.member.Member;
-import naem.server.domain.post.Image;
 import naem.server.domain.post.Post;
-import naem.server.domain.post.PostTag;
 
 @Entity
 @Getter

@@ -66,7 +66,7 @@ public class Post {
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private List<Image> img = new ArrayList<>();
+    private List<PostImage> img = new ArrayList<>();
 
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
@@ -122,6 +122,6 @@ public class Post {
 
         this.setIsDeleted(true);
         this.setDeleteAt(LocalDateTime.now());
-        Image.deleteImages(this.getImg());
+        PostImage.deleteImages(this.getImg());
     }
 }

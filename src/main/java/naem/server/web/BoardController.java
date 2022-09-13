@@ -28,8 +28,8 @@ import lombok.extern.slf4j.Slf4j;
 import naem.server.domain.BoardType;
 import naem.server.domain.Response;
 import naem.server.domain.member.Member;
-import naem.server.domain.post.Image;
 import naem.server.domain.post.Post;
+import naem.server.domain.post.PostImage;
 import naem.server.domain.post.dto.BriefPostInfoDto;
 import naem.server.domain.post.dto.DetailedPostInfoDto;
 import naem.server.domain.post.dto.PostReadCondition;
@@ -79,11 +79,11 @@ public class BoardController {
 
         // 이미지 제거
         Post post = postService.getPost(postId);
-        List<Image> images = post.getImg();
+        List<PostImage> images = post.getImg();
         if (!images.isEmpty()) {
             s3Service.deleteImageList(images);
         }
-        Image.deleteImages(images);
+        PostImage.deleteImages(images);
 
         // 이미지 저장
         if (multipartFile != null) {
@@ -102,7 +102,7 @@ public class BoardController {
         postService.checkPrivileges(postId, userDetails); // 접근 권한 확인
 
         Post deletedPost = postService.deletePost(postId);
-        List<Image> images = deletedPost.getImg();
+        List<PostImage> images = deletedPost.getImg();
         if (!images.isEmpty()) {
             s3Service.deleteImageList(images);
         }
