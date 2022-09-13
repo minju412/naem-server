@@ -142,13 +142,18 @@ public class S3ServiceImpl implements S3Service {
 
     // 파일의 확장자 명을 가져오는 로직 (file 형식 확인)
     private String getFileExtension(String fileName) {
-        String fileExtension = fileName.substring(fileName.lastIndexOf("."));
-
-        if (fileExtension.equals(".jpeg") || fileExtension.equals(".jpg") || fileExtension.equals(".png")) {
-            return fileExtension;
-        } else {
+        try {
+            return fileName.substring(fileName.lastIndexOf("."));
+        } catch (StringIndexOutOfBoundsException e) {
             throw new CustomException(INVALID_FILE_ERROR);
         }
+
+        // String fileExtension = fileName.substring(fileName.lastIndexOf("."));
+        // if (fileExtension.equals(".jpeg") || fileExtension.equals(".jpg") || fileExtension.equals(".png")) {
+        //     return fileExtension;
+        // } else {
+        //     throw new CustomException(INVALID_FILE_ERROR);
+        // }
     }
 
     // 이미지 리스트 삭제
