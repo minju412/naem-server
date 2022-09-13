@@ -49,8 +49,41 @@ public class S3ServiceImpl implements S3Service {
         List<String> fileNameList = new ArrayList<>();
         List<String> imageUrl = new ArrayList<>();
 
-        multipartFile.forEach(file -> {
+        uploadS3(multipartFile, dirName, fileNameList, imageUrl);
 
+        try {
+            storeDisabledAuthInfoInDb(imageUrl, fileNameList, disabledMemberInfo); // db에 url 과 fileName 정보 저장
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return fileNameList;
+    }
+
+    /**
+     * 게시글 이미지 업로드
+     */
+    @Override
+    public List<String> uploadImage(List<MultipartFile> multipartFile, String dirName, Post post) {
+
+        List<String> fileNameList = new ArrayList<>();
+        List<String> imageUrl = new ArrayList<>();
+
+        uploadS3(multipartFile, dirName, fileNameList, imageUrl);
+
+        try {
+            storeInfoInDb(imageUrl, fileNameList, post); // db에 url 과 fileName 정보 저장
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return fileNameList;
+    }
+
+    // S3 업로드 로직
+    private void uploadS3(List<MultipartFile> multipartFile, String dirName, List<String> fileNameList, List<String> imageUrl) {
+
+        multipartFile.forEach(file -> {
             String fileName = createFileName(file.getOriginalFilename(), dirName);
 
             ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -69,14 +102,6 @@ public class S3ServiceImpl implements S3Service {
             fileNameList.add(fileName);
             imageUrl.add(amazonS3Client.getUrl(bucket, fileName).toString());
         });
-
-        try {
-            storeDisabledAuthInfoInDb(imageUrl, fileNameList, disabledMemberInfo); // db에 url 과 fileName 정보 저장
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return fileNameList;
     }
 
     /**
@@ -91,45 +116,6 @@ public class S3ServiceImpl implements S3Service {
 
             disabledAuthImageRepository.save(img);
         }
-    }
-
-    /**
-     * 게시글 이미지 업로드
-     */
-    @Override
-    public List<String> uploadImage(List<MultipartFile> multipartFile, String dirName, Post post) {
-
-        List<String> fileNameList = new ArrayList<>();
-        List<String> imageUrl = new ArrayList<>();
-
-        multipartFile.forEach(file -> {
-
-            String fileName = createFileName(file.getOriginalFilename(), dirName);
-
-            ObjectMetadata objectMetadata = new ObjectMetadata();
-            objectMetadata.setContentLength(file.getSize());
-            objectMetadata.setContentType(file.getContentType());
-
-            // s3에 업로드
-            try (InputStream inputStream = file.getInputStream()) {
-                amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
-                    .withCannedAcl(CannedAccessControlList.PublicRead));
-
-            } catch (IOException e) {
-                throw new CustomException(FILE_CAN_NOT_UPLOAD);
-            }
-
-            fileNameList.add(fileName);
-            imageUrl.add(amazonS3Client.getUrl(bucket, fileName).toString());
-        });
-
-        try {
-            storeInfoInDb(imageUrl, fileNameList, post); // db에 url 과 fileName 정보 저장
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return fileNameList;
     }
 
     /**
