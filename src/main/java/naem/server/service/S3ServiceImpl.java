@@ -20,10 +20,13 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import naem.server.domain.post.Image;
+import naem.server.domain.member.DisabledAuthImage;
+import naem.server.domain.member.DisabledMemberInfo;
 import naem.server.domain.post.Post;
+import naem.server.domain.post.PostImage;
 import naem.server.exception.CustomException;
-import naem.server.repository.ImageRepository;
+import naem.server.repository.DisabledAuthImageRepository;
+import naem.server.repository.PostImageRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -31,20 +34,58 @@ import naem.server.repository.ImageRepository;
 public class S3ServiceImpl implements S3Service {
 
     private final AmazonS3Client amazonS3Client;
-    private final ImageRepository imageRepository;
+    private final PostImageRepository imageRepository; // 게시글 사진 레포
+    private final DisabledAuthImageRepository disabledAuthImageRepository; // 장애인 인증 사진 레포
 
     @Value("${cloud.aws.s3.bucket}")
     public String bucket;
 
-    // 파일 업로드
+    /**
+     * 장애인 인증 이미지 업로드
+     */
+    @Override
+    public List<String> uploadDisabledAuthImage(List<MultipartFile> multipartFile, String dirName,
+        DisabledMemberInfo disabledMemberInfo) {
+
+        List<String> fileNameList = new ArrayList<>();
+        List<String> imageUrl = new ArrayList<>();
+
+        uploadS3(multipartFile, dirName, fileNameList, imageUrl);
+
+        try {
+            storeDisabledAuthInfoInDb(imageUrl, fileNameList, disabledMemberInfo); // db에 url 과 fileName 정보 저장
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return fileNameList;
+    }
+
+    /**
+     * 게시글 이미지 업로드
+     */
     @Override
     public List<String> uploadImage(List<MultipartFile> multipartFile, String dirName, Post post) {
 
         List<String> fileNameList = new ArrayList<>();
         List<String> imageUrl = new ArrayList<>();
 
-        multipartFile.forEach(file -> {
+        uploadS3(multipartFile, dirName, fileNameList, imageUrl);
 
+        try {
+            storeInfoInDb(imageUrl, fileNameList, post); // db에 url 과 fileName 정보 저장
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return fileNameList;
+    }
+
+    // S3 업로드 로직
+    private void uploadS3(List<MultipartFile> multipartFile, String dirName, List<String> fileNameList,
+        List<String> imageUrl) {
+
+        multipartFile.forEach(file -> {
             String fileName = createFileName(file.getOriginalFilename(), dirName);
 
             ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -63,19 +104,29 @@ public class S3ServiceImpl implements S3Service {
             fileNameList.add(fileName);
             imageUrl.add(amazonS3Client.getUrl(bucket, fileName).toString());
         });
-
-        try {
-            storeInfoInDb(imageUrl, fileNameList, post); // db에 url 과 fileName 정보 저장
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return fileNameList;
     }
 
+    /**
+     * 장애인 인증 이미지 db 저장
+     */
+    public void storeDisabledAuthInfoInDb(List<String> imageUrls, List<String> fileNameList,
+        DisabledMemberInfo disabledMemberInfo) throws IOException {
+        for (int i = 0; i < imageUrls.size(); i++) {
+            DisabledAuthImage img = new DisabledAuthImage();
+            img.setImgUrl(imageUrls.get(i));
+            img.setFileName(fileNameList.get(i));
+            img.setDisabledMemberInfo(disabledMemberInfo);
+
+            disabledAuthImageRepository.save(img);
+        }
+    }
+
+    /**
+     * 게시글 이미지 db 저장
+     */
     public void storeInfoInDb(List<String> imageUrls, List<String> fileNameList, Post post) throws IOException {
         for (int i = 0; i < imageUrls.size(); i++) {
-            Image img = new Image();
+            PostImage img = new PostImage();
             img.setImgUrl(imageUrls.get(i));
             img.setFileName(fileNameList.get(i));
             img.setPost(post);
@@ -89,23 +140,27 @@ public class S3ServiceImpl implements S3Service {
         return dirName + "/" + UUID.randomUUID() + getFileExtension(originalName);
     }
 
-    /**
-     * 파일의 확장자명을 가져오는 로직
-     * file 형식이 잘못된 경우를 확인하기 위해 만들어진 로직이며, 파일 타입과 상관없이 업로드할 수 있게 하기 위해 .의 존재 유무만 판단
-     */
+    // 파일의 확장자 명을 가져오는 로직 (file 형식 확인)
     private String getFileExtension(String fileName) {
         try {
             return fileName.substring(fileName.lastIndexOf("."));
         } catch (StringIndexOutOfBoundsException e) {
             throw new CustomException(INVALID_FILE_ERROR);
         }
+
+        // String fileExtension = fileName.substring(fileName.lastIndexOf("."));
+        // if (fileExtension.equals(".jpeg") || fileExtension.equals(".jpg") || fileExtension.equals(".png")) {
+        //     return fileExtension;
+        // } else {
+        //     throw new CustomException(INVALID_FILE_ERROR);
+        // }
     }
 
     // 이미지 리스트 삭제
     @Override
-    public void deleteImageList(List<Image> images) {
-        for (Image image : images) {
-            amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, image.getFileName()));
+    public void deleteImageList(List<PostImage> images) {
+        for (PostImage postImage : images) {
+            amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, postImage.getFileName()));
         }
     }
 

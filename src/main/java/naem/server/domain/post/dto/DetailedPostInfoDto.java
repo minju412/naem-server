@@ -1,6 +1,5 @@
 package naem.server.domain.post.dto;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -12,7 +11,7 @@ import naem.server.domain.BoardType;
 import naem.server.domain.Tag;
 import naem.server.domain.comment.Comment;
 import naem.server.domain.comment.dto.CommentResDto;
-import naem.server.domain.post.Image;
+import naem.server.domain.post.PostImage;
 import naem.server.domain.post.Post;
 import naem.server.domain.post.PostTag;
 
@@ -37,7 +36,7 @@ public class DetailedPostInfoDto {
         for (PostTag postTag : entity.getPostTags()) {
             this.tags.add(Tag.getTagFromPostTag(postTag));
         }
-        for (Image image : entity.getImg()) {
+        for (PostImage image : entity.getImg()) {
             this.imgUrls.add(image.getImgUrl());
         }
         for (Comment comment : entity.getComments()) {

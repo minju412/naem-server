@@ -1,4 +1,4 @@
-package naem.server.domain.post;
+package naem.server.domain.member;
 
 import java.util.List;
 
@@ -19,27 +19,27 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Image {
+public class DisabledAuthImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "image_id")
+    @Column(name = "disabled_auth_image_id")
     private Long id;
 
     private String imgUrl;
     private String fileName;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
-    private Post post;
+    @JoinColumn(name = "disabled_member_info_id")
+    private DisabledMemberInfo disabledMemberInfo;
 
     //==삭제 메서드==//
-    public static void deleteImages(List<Image> images) {
+    public static void deleteDisabledAuthImages(List<DisabledAuthImage> images) {
         if (!images.isEmpty()) {
-            for (Image image : images) {
+            for (DisabledAuthImage image : images) {
                 image.setImgUrl(null);
                 image.setFileName(null);
-                image.setPost(null);
+                image.setDisabledMemberInfo(null);
             }
         }
     }

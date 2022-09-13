@@ -20,13 +20,17 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import naem.server.config.JwtTokenProvider;
+import naem.server.domain.member.DisabledMemberInfo;
 import naem.server.domain.member.Member;
+import naem.server.domain.member.dto.DisabledMemberAuthReq;
 import naem.server.domain.member.dto.MemberConflictCheckDto;
 import naem.server.domain.member.dto.RegenerateTokenDto;
 import naem.server.domain.member.dto.SignInReq;
 import naem.server.domain.member.dto.SignUpReq;
 import naem.server.domain.member.dto.TokenDto;
+import naem.server.domain.post.Post;
 import naem.server.exception.CustomException;
+import naem.server.repository.DisabledMemberInfoRepository;
 import naem.server.repository.MemberRepository;
 
 @Service
@@ -35,10 +39,13 @@ import naem.server.repository.MemberRepository;
 public class AuthServiceImpl implements AuthService {
 
     private final MemberRepository userRepository;
+    private final DisabledMemberInfoRepository disabledMemberInfoRepository;
+
     private final PasswordEncoder bCryptPasswordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
     private final RedisTemplate<String, String> redisTemplate;
+
     private long REFRESH_TOKEN_EXPIRE_TIME = 1000L * 60 * 60 * 24 * 7; // 7일
 
     @Override
@@ -165,6 +172,30 @@ public class AuthServiceImpl implements AuthService {
         } catch (AuthenticationException e) {
             throw new CustomException(INVALID_REFRESH_TOKEN);
         }
+    }
+
+    @Override
+    @Transactional
+    public DisabledMemberInfo disabledMemberAuth(DisabledMemberAuthReq disabledAuthReq) {
+
+        // 가입된 유저인지 확인
+        Member member = userRepository.findByUsername(disabledAuthReq.getUsername())
+            .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        // 멤버 타입 확인
+        if (!member.getMemberType().toString().equals("IN_PERSON")) {
+            throw new CustomException(INVALID_MEMBER_TYPE);
+        }
+        // 인증되지 않은 회원인지 확인
+        if (member.getIsAuthorized() == true) {
+            throw new CustomException(ALREADY_AUTHORIZED_MEMBER);
+        }
+
+        // 장애인 인증 정보 생성
+        DisabledMemberInfo disabledMemberInfo = DisabledMemberInfo.createDisabledMemberInfo(
+            disabledAuthReq.getUsername());
+        disabledMemberInfoRepository.save(disabledMemberInfo);
+
+        return disabledMemberInfo;
     }
 
 }

@@ -45,7 +45,6 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private MemberRole role = MemberRole.ROLE_NOT_PERMITTED;
 
-    @Size(min = 5, max = 20)
     @Column(unique = true)
     private String username;
 
