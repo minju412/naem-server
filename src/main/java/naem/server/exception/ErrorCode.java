@@ -37,6 +37,7 @@ public enum ErrorCode {
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 게시글을 찾을 수 없습니다"),
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 댓글을 찾을 수 없습니다"),
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 게시판을 찾을 수 없습니다"),
+    DISABLED_MEMBER_INFO_NOT_FOUND(HttpStatus.NOT_FOUND, "장애인 인증 요청 정보를 찾을 수 없습니다"),
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_MEMBER(HttpStatus.CONFLICT, "이미 가입한 회원입니다"),

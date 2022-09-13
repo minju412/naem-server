@@ -5,6 +5,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import naem.server.domain.member.Member;
+import naem.server.domain.member.dto.DisabledMemberInfoDto;
 import naem.server.domain.member.dto.MemberReadCondition;
 import naem.server.domain.member.dto.MemberWithdrawDto;
 import naem.server.domain.member.dto.PatchMemberDto;
@@ -21,4 +22,6 @@ public interface MemberService {
     void withdraw(MemberWithdrawDto memberWithdrawDto, UserDetails userDetails) throws Exception;
 
     Slice<ProfileResDto> getMemberList(Long cursor, MemberReadCondition condition, Pageable pageRequest);
+
+    DisabledMemberInfoDto getDisabledMemberInfoDto(Long id);
 }

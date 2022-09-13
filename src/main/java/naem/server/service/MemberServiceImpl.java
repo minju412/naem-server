@@ -13,12 +13,15 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import naem.server.domain.member.DisabledMemberInfo;
 import naem.server.domain.member.Member;
+import naem.server.domain.member.dto.DisabledMemberInfoDto;
 import naem.server.domain.member.dto.MemberReadCondition;
 import naem.server.domain.member.dto.MemberWithdrawDto;
 import naem.server.domain.member.dto.PatchMemberDto;
 import naem.server.domain.member.dto.ProfileResDto;
 import naem.server.exception.CustomException;
+import naem.server.repository.DisabledMemberInfoRepository;
 import naem.server.repository.MemberRepository;
 
 @Service
@@ -26,6 +29,7 @@ import naem.server.repository.MemberRepository;
 @Slf4j
 public class MemberServiceImpl implements MemberService {
 
+    private final DisabledMemberInfoRepository disabledMemberInfoRepository;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -87,5 +91,19 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public Slice<ProfileResDto> getMemberList(Long cursor, MemberReadCondition condition, Pageable pageRequest) {
         return memberRepository.getProfileResDtoScroll(cursor, condition, pageRequest);
+    }
+
+    @Override
+    @Transactional
+    public DisabledMemberInfoDto getDisabledMemberInfoDto(Long id) {
+
+        DisabledMemberInfo disabledMemberInfo = disabledMemberInfoRepository.findById(id)
+            .orElseThrow(() -> new CustomException(DISABLED_MEMBER_INFO_NOT_FOUND));
+
+        // if (disabledMemberInfo.getIsDeleted()) {
+        //     throw new CustomException(POST_NOT_FOUND);
+        // }
+
+        return new DisabledMemberInfoDto(disabledMemberInfo);
     }
 }
