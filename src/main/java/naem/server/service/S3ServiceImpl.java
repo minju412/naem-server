@@ -44,7 +44,8 @@ public class S3ServiceImpl implements S3Service {
      * 장애인 인증 이미지 업로드
      */
     @Override
-    public List<String> uploadDisabledAuthImage(List<MultipartFile> multipartFile, String dirName, DisabledMemberInfo disabledMemberInfo) {
+    public List<String> uploadDisabledAuthImage(List<MultipartFile> multipartFile, String dirName,
+        DisabledMemberInfo disabledMemberInfo) {
 
         List<String> fileNameList = new ArrayList<>();
         List<String> imageUrl = new ArrayList<>();
@@ -81,7 +82,8 @@ public class S3ServiceImpl implements S3Service {
     }
 
     // S3 업로드 로직
-    private void uploadS3(List<MultipartFile> multipartFile, String dirName, List<String> fileNameList, List<String> imageUrl) {
+    private void uploadS3(List<MultipartFile> multipartFile, String dirName, List<String> fileNameList,
+        List<String> imageUrl) {
 
         multipartFile.forEach(file -> {
             String fileName = createFileName(file.getOriginalFilename(), dirName);
@@ -107,7 +109,8 @@ public class S3ServiceImpl implements S3Service {
     /**
      * 장애인 인증 이미지 db 저장
      */
-    public void storeDisabledAuthInfoInDb(List<String> imageUrls, List<String> fileNameList, DisabledMemberInfo disabledMemberInfo) throws IOException {
+    public void storeDisabledAuthInfoInDb(List<String> imageUrls, List<String> fileNameList,
+        DisabledMemberInfo disabledMemberInfo) throws IOException {
         for (int i = 0; i < imageUrls.size(); i++) {
             DisabledAuthImage img = new DisabledAuthImage();
             img.setImgUrl(imageUrls.get(i));
@@ -137,14 +140,13 @@ public class S3ServiceImpl implements S3Service {
         return dirName + "/" + UUID.randomUUID() + getFileExtension(originalName);
     }
 
-    /**
-     * 파일의 확장자명을 가져오는 로직
-     * file 형식이 잘못된 경우를 확인하기 위해 만들어진 로직이며, 파일 타입과 상관없이 업로드할 수 있게 하기 위해 .의 존재 유무만 판단
-     */
+    // 파일의 확장자 명을 가져오는 로직 (file 형식 확인)
     private String getFileExtension(String fileName) {
-        try {
-            return fileName.substring(fileName.lastIndexOf("."));
-        } catch (StringIndexOutOfBoundsException e) {
+        String fileExtension = fileName.substring(fileName.lastIndexOf("."));
+
+        if (fileExtension.equals(".jpeg") || fileExtension.equals(".jpg") || fileExtension.equals(".png")) {
+            return fileExtension;
+        } else {
             throw new CustomException(INVALID_FILE_ERROR);
         }
     }
