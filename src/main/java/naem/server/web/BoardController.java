@@ -57,7 +57,7 @@ public class BoardController {
 
         Post post = postService.save(requestDto);
         if (multipartFile != null) {
-            s3Service.uploadImage(multipartFile, "test4", post);
+            s3Service.uploadImage(multipartFile, "Post", post);
         }
 
         return new Response("OK", "게시글 등록에 성공했습니다");
@@ -87,7 +87,7 @@ public class BoardController {
 
         // 이미지 저장
         if (multipartFile != null) {
-            s3Service.uploadImage(multipartFile, "test4", post);
+            s3Service.uploadImage(multipartFile, "Post", post);
         }
 
         postService.update(postId, updateRequestDto);

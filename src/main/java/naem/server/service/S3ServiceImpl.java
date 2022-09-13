@@ -20,9 +20,12 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import naem.server.domain.member.DisabledAuthImage;
+import naem.server.domain.member.DisabledMemberInfo;
 import naem.server.domain.post.Image;
 import naem.server.domain.post.Post;
 import naem.server.exception.CustomException;
+import naem.server.repository.DisabledAuthImageRepository;
 import naem.server.repository.ImageRepository;
 
 @Service
@@ -31,12 +34,68 @@ import naem.server.repository.ImageRepository;
 public class S3ServiceImpl implements S3Service {
 
     private final AmazonS3Client amazonS3Client;
-    private final ImageRepository imageRepository;
+    private final ImageRepository imageRepository; // 게시글 사진 레포
+    private final DisabledAuthImageRepository disabledAuthImageRepository; // 장애인 인증 사진 레포
 
     @Value("${cloud.aws.s3.bucket}")
     public String bucket;
 
-    // 파일 업로드
+    /**
+     * 장애인 인증 이미지 업로드
+     */
+    @Override
+    public List<String> uploadDisabledAuthImage(List<MultipartFile> multipartFile, String dirName, DisabledMemberInfo disabledMemberInfo) {
+
+        List<String> fileNameList = new ArrayList<>();
+        List<String> imageUrl = new ArrayList<>();
+
+        multipartFile.forEach(file -> {
+
+            String fileName = createFileName(file.getOriginalFilename(), dirName);
+
+            ObjectMetadata objectMetadata = new ObjectMetadata();
+            objectMetadata.setContentLength(file.getSize());
+            objectMetadata.setContentType(file.getContentType());
+
+            // s3에 업로드
+            try (InputStream inputStream = file.getInputStream()) {
+                amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
+
+            } catch (IOException e) {
+                throw new CustomException(FILE_CAN_NOT_UPLOAD);
+            }
+
+            fileNameList.add(fileName);
+            imageUrl.add(amazonS3Client.getUrl(bucket, fileName).toString());
+        });
+
+        try {
+            storeDisabledAuthInfoInDb(imageUrl, fileNameList, disabledMemberInfo); // db에 url 과 fileName 정보 저장
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return fileNameList;
+    }
+
+    /**
+     * 장애인 인증 이미지 db 저장
+     */
+    public void storeDisabledAuthInfoInDb(List<String> imageUrls, List<String> fileNameList, DisabledMemberInfo disabledMemberInfo) throws IOException {
+        for (int i = 0; i < imageUrls.size(); i++) {
+            DisabledAuthImage img = new DisabledAuthImage();
+            img.setImgUrl(imageUrls.get(i));
+            img.setFileName(fileNameList.get(i));
+            img.setDisabledMemberInfo(disabledMemberInfo);
+
+            disabledAuthImageRepository.save(img);
+        }
+    }
+
+    /**
+     * 게시글 이미지 업로드
+     */
     @Override
     public List<String> uploadImage(List<MultipartFile> multipartFile, String dirName, Post post) {
 
@@ -73,6 +132,9 @@ public class S3ServiceImpl implements S3Service {
         return fileNameList;
     }
 
+    /**
+     * 게시글 이미지 db 저장
+     */
     public void storeInfoInDb(List<String> imageUrls, List<String> fileNameList, Post post) throws IOException {
         for (int i = 0; i < imageUrls.size(); i++) {
             Image img = new Image();
