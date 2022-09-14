@@ -28,7 +28,6 @@ import naem.server.domain.member.dto.RegenerateTokenDto;
 import naem.server.domain.member.dto.SignInReq;
 import naem.server.domain.member.dto.SignUpReq;
 import naem.server.domain.member.dto.TokenDto;
-import naem.server.domain.post.Post;
 import naem.server.exception.CustomException;
 import naem.server.repository.DisabledMemberInfoRepository;
 import naem.server.repository.MemberRepository;
@@ -197,6 +196,4 @@ public class AuthServiceImpl implements AuthService {
 
         return disabledMemberInfo;
     }
-
 }
-
