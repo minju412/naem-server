@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import naem.server.domain.member.DisabledMemberInfo;
 import naem.server.domain.member.Member;
+import naem.server.domain.member.MemberRole;
 import naem.server.domain.member.dto.DisabledMemberInfoDto;
 import naem.server.domain.member.dto.MemberReadCondition;
 import naem.server.domain.member.dto.MemberWithdrawDto;
@@ -93,6 +94,9 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.getProfileResDtoScroll(cursor, condition, pageRequest);
     }
 
+    /**
+     * 장애인 인증 요청 정보 조회 로직
+     */
     @Override
     @Transactional
     public DisabledMemberInfoDto getDisabledMemberInfoDto(Long id) {
@@ -101,5 +105,31 @@ public class MemberServiceImpl implements MemberService {
             .orElseThrow(() -> new CustomException(DISABLED_MEMBER_INFO_NOT_FOUND));
 
         return new DisabledMemberInfoDto(disabledMemberInfo);
+    }
+
+    /**
+     * 장애인 인증 요청 수락 로직
+     */
+    @Override
+    @Transactional
+    public void grantDisabledReq(Long disabledMemberInfoId) {
+
+        DisabledMemberInfo disabledMemberInfo = disabledMemberInfoRepository.findById(disabledMemberInfoId)
+            .orElseThrow(() -> new CustomException(DISABLED_MEMBER_INFO_NOT_FOUND));
+
+        Member member = memberRepository.findByUsername(disabledMemberInfo.getUsername())
+            .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        // 멤버 타입 확인
+        if (!member.getMemberType().toString().equals("IN_PERSON")) {
+            throw new CustomException(INVALID_MEMBER_TYPE);
+        }
+        // 이미 인증된 회원인지 확인
+        if (member.getIsAuthorized() == true) {
+            throw new CustomException(ALREADY_AUTHORIZED_MEMBER);
+        }
+        // ++ 인증 요청을 한 회원인지 확인
+
+        member.setRole(MemberRole.ROLE_USER);
+        member.setIsAuthorized(true);
     }
 }

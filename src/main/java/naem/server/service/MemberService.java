@@ -24,4 +24,6 @@ public interface MemberService {
     Slice<ProfileResDto> getMemberList(Long cursor, MemberReadCondition condition, Pageable pageRequest);
 
     DisabledMemberInfoDto getDisabledMemberInfoDto(Long id);
+
+    void grantDisabledReq(Long disabledMemberInfoId);
 }
