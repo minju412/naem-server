@@ -112,7 +112,7 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     @Transactional
-    public void grantDisabledReq(Long disabledMemberInfoId) {
+    public DisabledMemberInfo grantDisabledReq(Long disabledMemberInfoId) {
 
         DisabledMemberInfo disabledMemberInfo = disabledMemberInfoRepository.findById(disabledMemberInfoId)
             .orElseThrow(() -> new CustomException(DISABLED_MEMBER_INFO_NOT_FOUND));
@@ -131,5 +131,7 @@ public class MemberServiceImpl implements MemberService {
 
         member.setRole(MemberRole.ROLE_USER);
         member.setIsAuthorized(true);
+
+        return disabledMemberInfo;
     }
 }

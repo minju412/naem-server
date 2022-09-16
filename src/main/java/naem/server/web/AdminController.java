@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import naem.server.domain.Response;
+import naem.server.domain.member.DisabledMemberInfo;
 import naem.server.domain.member.MemberRole;
 import naem.server.domain.member.dto.DisabledMemberInfoDto;
 import naem.server.domain.member.dto.MemberReadCondition;
@@ -28,6 +29,7 @@ import naem.server.service.S3Service;
 public class AdminController {
 
     private final MemberService memberService;
+    private final S3Service s3Service;
 
     @ApiOperation(value = "인증된 회원 목록 조회", notes = "인증된 회원 목록 조회")
     @GetMapping("/members/auth")
@@ -50,7 +52,9 @@ public class AdminController {
     @ApiOperation(value = "장애인 인증 요청 수락", notes = "장애인 인증 요청 수락")
     @PostMapping("/disabled/approval/{id}")
     public Response grantDisabledReq(@PathVariable("id") long disabledMemberInfoId) {
-        memberService.grantDisabledReq(disabledMemberInfoId);
+
+        DisabledMemberInfo disabledMemberInfo = memberService.grantDisabledReq(disabledMemberInfoId);
+        s3Service.deleteDisabledAuthImages(disabledMemberInfo.getImg()); // S3 이미지 제거
         return new Response("OK", "장애인 인증 요청 수락에 성공했습니다");
     }
 

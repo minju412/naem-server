@@ -4,6 +4,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import naem.server.domain.member.DisabledMemberInfo;
 import naem.server.domain.member.Member;
 import naem.server.domain.member.dto.DisabledMemberInfoDto;
 import naem.server.domain.member.dto.MemberReadCondition;
@@ -25,5 +26,5 @@ public interface MemberService {
 
     DisabledMemberInfoDto getDisabledMemberInfoDto(Long id);
 
-    void grantDisabledReq(Long disabledMemberInfoId);
+    DisabledMemberInfo grantDisabledReq(Long disabledMemberInfoId);
 }
