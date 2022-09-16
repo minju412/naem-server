@@ -116,7 +116,6 @@ public class MemberServiceImpl implements MemberService {
 
         DisabledMemberInfo disabledMemberInfo = disabledMemberInfoRepository.findById(disabledMemberInfoId)
             .orElseThrow(() -> new CustomException(DISABLED_MEMBER_INFO_NOT_FOUND));
-
         Member member = memberRepository.findByUsername(disabledMemberInfo.getUsername())
             .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
         // 멤버 타입 확인
@@ -127,8 +126,6 @@ public class MemberServiceImpl implements MemberService {
         if (member.getIsAuthorized() == true) {
             throw new CustomException(ALREADY_AUTHORIZED_MEMBER);
         }
-        // ++ 인증 요청을 한 회원인지 확인
-
         member.setRole(MemberRole.ROLE_USER);
         member.setIsAuthorized(true);
 

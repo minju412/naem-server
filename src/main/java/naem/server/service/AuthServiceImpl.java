@@ -173,6 +173,9 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
+    /**
+     * 장애인 인증 요청 로직
+     */
     @Override
     @Transactional
     public DisabledMemberInfo disabledMemberAuth(DisabledMemberAuthReq disabledAuthReq) {
@@ -184,9 +187,13 @@ public class AuthServiceImpl implements AuthService {
         if (!member.getMemberType().toString().equals("IN_PERSON")) {
             throw new CustomException(INVALID_MEMBER_TYPE);
         }
-        // 인증되지 않은 회원인지 확인
+        // 이미 인증된 회원인지 확인
         if (member.getIsAuthorized() == true) {
             throw new CustomException(ALREADY_AUTHORIZED_MEMBER);
+        }
+        // 비밀번호 확인
+        if (!member.matchPassword(bCryptPasswordEncoder, disabledAuthReq.getCheckPassword())) {
+            throw new CustomException(WRONG_PASSWORD);
         }
 
         // 장애인 인증 정보 생성
