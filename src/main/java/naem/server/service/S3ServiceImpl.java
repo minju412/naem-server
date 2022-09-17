@@ -152,10 +152,17 @@ public class S3ServiceImpl implements S3Service {
 
     // 이미지 리스트 삭제
     @Override
-    public void deleteImageList(List<PostImage> images) {
+    public void deletePostImages(List<PostImage> images) {
         for (PostImage postImage : images) {
             amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, postImage.getFileName()));
         }
     }
 
+    // 장애인 인증 이미지 리스트 삭제
+    @Override
+    public void deleteDisabledAuthImages(List<DisabledAuthImage> images) {
+        for (DisabledAuthImage disabledAuthImage : images) {
+            amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, disabledAuthImage.getFileName()));
+        }
+    }
 }

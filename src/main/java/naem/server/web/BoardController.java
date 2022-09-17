@@ -81,7 +81,7 @@ public class BoardController {
         Post post = postService.getPost(postId);
         List<PostImage> images = post.getImg();
         if (!images.isEmpty()) {
-            s3Service.deleteImageList(images);
+            s3Service.deletePostImages(images);
         }
         PostImage.deleteImages(images);
 
@@ -104,7 +104,7 @@ public class BoardController {
         Post deletedPost = postService.deletePost(postId);
         List<PostImage> images = deletedPost.getImg();
         if (!images.isEmpty()) {
-            s3Service.deleteImageList(images);
+            s3Service.deletePostImages(images);
         }
         deletedPost.deletePost();
         postService.save(deletedPost);
