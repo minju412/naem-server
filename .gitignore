@@ -48,4 +48,4 @@ out/
 application.yml
 
 ## firebase service key ##
-/resources/firebase/**
+**/resources/firebase/**
