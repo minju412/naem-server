@@ -23,7 +23,6 @@ import naem.server.config.JwtTokenProvider;
 import naem.server.domain.member.DisabledMemberInfo;
 import naem.server.domain.member.Member;
 import naem.server.domain.member.dto.DisabledMemberAuthReq;
-import naem.server.domain.member.dto.MemberConflictCheckDto;
 import naem.server.domain.member.dto.RegenerateTokenDto;
 import naem.server.domain.member.dto.SignInReq;
 import naem.server.domain.member.dto.SignUpReq;
@@ -82,8 +81,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public void isConflict(MemberConflictCheckDto memberConflictCheckDto) {
-        if (userRepository.existsByUsername(memberConflictCheckDto.getUsername())) {
+    public void isConflict(String username) {
+        if (userRepository.existsByUsername(username)) {
             throw new CustomException(CONFLICT_ID);
         }
     }
