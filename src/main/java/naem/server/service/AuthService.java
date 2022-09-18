@@ -4,7 +4,6 @@ import org.springframework.http.ResponseEntity;
 
 import naem.server.domain.member.DisabledMemberInfo;
 import naem.server.domain.member.dto.DisabledMemberAuthReq;
-import naem.server.domain.member.dto.MemberConflictCheckDto;
 import naem.server.domain.member.dto.RegenerateTokenDto;
 import naem.server.domain.member.dto.SignInReq;
 import naem.server.domain.member.dto.SignUpReq;
@@ -14,7 +13,7 @@ public interface AuthService {
 
     void signUp(SignUpReq signUpReq);
 
-    void isConflict(MemberConflictCheckDto memberConflictCheckDto);
+    void isConflict(String username);
 
     ResponseEntity<TokenDto> signIn(SignInReq signInReq);
 
