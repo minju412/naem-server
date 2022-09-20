@@ -92,7 +92,9 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
     // 특정 기준 정렬
     private OrderSpecifier<?> sortPostList(Pageable page) {
         // 서비스에서 보내준 Pageable 객체에 정렬조건 null 값 체크
-        if (!page.getSort().isEmpty()) {
+        if (page.getSort().isEmpty()) {
+            return new OrderSpecifier(Order.DESC, post.createAt);
+        } else {
             // 정렬값이 들어 있으면 for 사용하여 값을 가져오기
             for (Sort.Order order : page.getSort()) {
                 // 서비스에서 넣어준 DESC or ASC 를 가져오기
