@@ -8,8 +8,11 @@ import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -42,6 +45,7 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
                 eqCursorId(cursorId)
             )
             .limit(pageable.getPageSize() + 1) // limit 보다 데이터를 1개 더 들고와서, 해당 데이터가 있다면 hasNext 변수에 true 를 넣어 알림
+            .orderBy(sortPostList(pageable)) // 최신순, 조회순 정렬
             .fetch();
 
         List<BriefPostInfoDto> briefPostInfos = new ArrayList<>();
@@ -83,6 +87,28 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
             hasNext = true;
         }
         return new SliceImpl<>(briefPostInfoDtos, pageable, hasNext);
+    }
+
+    // 특정 기준 정렬
+    private OrderSpecifier<?> sortPostList(Pageable page) {
+        // 서비스에서 보내준 Pageable 객체에 정렬조건 null 값 체크
+        if (page.getSort().isEmpty()) {
+            return new OrderSpecifier(Order.DESC, post.createAt);
+        } else {
+            // 정렬값이 들어 있으면 for 사용하여 값을 가져오기
+            for (Sort.Order order : page.getSort()) {
+                // 서비스에서 넣어준 DESC or ASC 를 가져오기
+                Order direction = order.getDirection().isAscending() ? Order.ASC : Order.DESC;
+                // 서비스에서 넣어준 정렬 조건을 스위치 케이스 문을 활용하여 세팅
+                switch (order.getProperty()) {
+                    case "updatedTime":
+                        return new OrderSpecifier(direction, post.createAt);
+                    case "viewCnt":
+                        return new OrderSpecifier(direction, post.viewCnt);
+                }
+            }
+        }
+        return new OrderSpecifier(Order.DESC, post.createAt);
     }
 
     //동적 쿼리를 위한 BooleanExpression
