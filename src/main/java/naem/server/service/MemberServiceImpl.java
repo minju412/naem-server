@@ -129,7 +129,11 @@ public class MemberServiceImpl implements MemberService {
             throw new CustomException(ALREADY_AUTHORIZED_MEMBER);
         }
 
-        String recommenderCode = createRecommenderCode();
+        String recommenderCode;
+        do {
+            recommenderCode = createRecommenderCode();
+        } while (memberRepository.existsByRecommenderCode(recommenderCode)); // 추천인 코드 중복 방지
+
         member.grantDisabledAuthReq(recommenderCode);
 
         return disabledMemberInfo;
