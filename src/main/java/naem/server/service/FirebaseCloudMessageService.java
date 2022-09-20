@@ -26,7 +26,7 @@ import okhttp3.Response;
 public class FirebaseCloudMessageService {
 
     @Value("${fcm.api-url}")
-    private final String API_URL;
+    private String API_URL;
     private final ObjectMapper objectMapper;
 
     public void sendMessageTo(String targetToken, String title, String body) throws IOException {
