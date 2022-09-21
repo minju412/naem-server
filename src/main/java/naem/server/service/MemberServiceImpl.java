@@ -2,6 +2,8 @@ package naem.server.service;
 
 import static naem.server.exception.ErrorCode.*;
 
+import java.util.Random;
+
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -126,9 +128,27 @@ public class MemberServiceImpl implements MemberService {
         if (member.getIsAuthorized() == true) {
             throw new CustomException(ALREADY_AUTHORIZED_MEMBER);
         }
-        member.setRole(MemberRole.ROLE_USER);
-        member.setIsAuthorized(true);
+
+        String recommenderCode;
+        do {
+            recommenderCode = createRecommenderCode();
+        } while (memberRepository.existsByRecommenderCode(recommenderCode)); // 추천인 코드 중복 방지
+
+        member.grantDisabledAuthReq(recommenderCode);
 
         return disabledMemberInfo;
+    }
+
+    public String createRecommenderCode() {
+        int leftLimit = 48; // numeral '0'
+        int rightLimit = 122; // letter 'z'
+        int targetStringLength = 10;
+        Random random = new Random();
+        String generatedString = random.ints(leftLimit, rightLimit + 1)
+            .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+            .limit(targetStringLength)
+            .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+            .toString();
+        return generatedString;
     }
 }

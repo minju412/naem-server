@@ -117,4 +117,11 @@ public class Member {
         this.role = MemberRole.ROLE_USER;
     }
 
+    // 장애인 인증 완료
+    public void grantDisabledAuthReq(String recommenderCode) {
+        this.role = MemberRole.ROLE_USER;
+        this.isAuthorized = true;
+        this.recommenderCode = recommenderCode;
+    }
+
 }
