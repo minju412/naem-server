@@ -47,6 +47,7 @@ public class Like {
     private Date createAt;
 
     private int clickCnt = 0; // 좋아요 클릭 횟수 (홀수 -> like / 짝수 -> dislike)
+    private Boolean isLike; // like(1) 인지 dislike(0) 인지
 
     //==생성 메서드==//
     public static Like createLike(Member member, Post post) {
@@ -54,7 +55,6 @@ public class Like {
         Like like = new Like();
         like.setMember(member);
         like.setPost(post);
-        // post.setLikeCnt(post.getLikeCnt() + 1);
         return like;
     }
 }

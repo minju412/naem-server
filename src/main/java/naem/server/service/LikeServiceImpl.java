@@ -58,22 +58,26 @@ public class LikeServiceImpl implements LikeService {
                 .orElseThrow(() -> new CustomException(LIKE_ERROR));
 
             if (like.getClickCnt() % 2 == 0) {
-                dislikeLogic(member, post, like);
-            } else {
                 likeLogic(member, post, like);
+            } else {
+                dislikeLogic(member, post, like);
             }
         }
     }
 
     private void likeLogic(Member member, Post post, Like like) {
+        System.out.println("=================> likeLogic");
         member.getLikes().add(like); // 해당 멤버가 좋아요 한 게시글에 추가
         like.setClickCnt(like.getClickCnt() + 1); // 좋아요를 클릭한 횟수 += 1
         post.setLikeCnt(post.getLikeCnt() + 1); // 해당 게시글의 좋아요 갯수 += 1
+        like.setIsLike(true); // like
     }
 
     private void dislikeLogic(Member member, Post post, Like like) {
+        System.out.println("=================> dislikeLogic");
         member.getLikes().remove(like); // 해당 멤버가 좋아요 한 게시글에서 삭제
         like.setClickCnt(like.getClickCnt() + 1); // 좋아요를 클릭한 횟수 += 1
         post.setLikeCnt(post.getLikeCnt() - 1); // 해당 게시글의 좋아요 갯수 -= 1
+        like.setIsLike(false); // dislike
     }
 }
