@@ -47,16 +47,14 @@ public class LikeServiceImpl implements LikeService {
                 break;
             }
         }
-        System.out.println("============> flag = " + flag);
+
         // 해당 게시글에 처음 좋아요 누름 -> like 로직
         if (flag == 0) {
             Like like = Like.createLike(member, post);
             likeRepository.save(like);
-            System.out.println("============> like.getClickCnt() = " + like.getClickCnt());
             likeLogic(member, post, like);
-            // member.getLikes().add(like); // 해당 멤버가 좋아요 한 게시글에 추가
         } else { // 해당 게시글에 한번이라도 좋아요 누른 적 있음 -> like 혹은 dislike 로직
-            Like like = likeRepository.findByPost(postId)
+            Like like = likeRepository.findByPostId(postId)
                 .orElseThrow(() -> new CustomException(LIKE_ERROR));
 
             if (like.getClickCnt() % 2 == 0) {

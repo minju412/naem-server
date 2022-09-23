@@ -8,5 +8,5 @@ import naem.server.domain.Like;
 
 public interface LikeRepository extends JpaRepository<Like, Long> {
 
-    Optional<Like> findByPost(long postId);
+    Optional<Like> findByPostId(long postId);
 }
