@@ -25,6 +25,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import naem.server.domain.Like;
 import naem.server.domain.comment.Comment;
 import naem.server.domain.post.Post;
 
@@ -68,6 +69,9 @@ public class Member {
 
     @OneToMany(mappedBy = "member")
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<Like> likes = new ArrayList<>(); // 사용자가 좋아요한 게시글
 
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
