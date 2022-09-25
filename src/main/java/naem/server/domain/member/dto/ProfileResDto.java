@@ -18,11 +18,13 @@ public class ProfileResDto {
     private String username;
     private String nickname;
     private String introduction;
+    private String recommenderCode;
 
     public ProfileResDto(Member entity) {
         this.memberId = entity.getId();
         this.username = entity.getUsername();
         this.nickname = entity.getNickname();
         this.introduction = entity.getIntroduction();
+        this.recommenderCode = entity.getRecommenderCode();
     }
 }

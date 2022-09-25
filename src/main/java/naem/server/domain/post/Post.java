@@ -55,8 +55,8 @@ public class Post {
 
     private String title;
     private String content;
-    private Integer likeCnt;
-    private Integer viewCnt;
+    private int likeCnt = 0;
+    private int viewCnt = 0;
 
     // @JsonIgnore
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)

@@ -22,6 +22,7 @@ public enum ErrorCode {
     INVALID_RECOMMENDER_CODE(HttpStatus.BAD_REQUEST, "잘못된 추천인 코드입니다"),
     INVALID_MEMBER_TYPE(HttpStatus.BAD_REQUEST, "장애인 본인만 이용할 수 있는 서비스입니다"),
     ALREADY_AUTHORIZED_MEMBER(HttpStatus.BAD_REQUEST, "이미 인증된 회원입니다"),
+    LIKE_ERROR(HttpStatus.BAD_REQUEST, "좋아요 오류입니다"),
 
     /* 401 UNAUTHORIZED : 인증되지 않음 */
     WRONG_PASSWORD(HttpStatus.UNAUTHORIZED, "잘못된 비밀번호입니다"),
