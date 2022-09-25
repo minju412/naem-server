@@ -28,7 +28,7 @@ public class LikeServiceImpl implements LikeService {
 
     @Override
     @Transactional
-    public void postLike(long postId) {
+    public void postsLike(long postId) {
 
         String loginUsername = SecurityUtil.getLoginUsername();
         Member member = memberRepository.findByUsername(loginUsername)
