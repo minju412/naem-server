@@ -14,7 +14,8 @@ public class WebConfig implements WebMvcConfigurer {
             .allowedOrigins(
                 "http://localhost:3000",
                 "http://localhost:8080",
-                "https://main.d3dkvptyooc3y2.amplifyapp.com/"
+                "https://main.d3dkvptyooc3y2.amplifyapp.com/",
+                "http://192.168.0.108:8080"
             )
             .allowedMethods("*")
             .allowedHeaders("*");
