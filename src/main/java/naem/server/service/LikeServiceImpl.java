@@ -4,6 +4,8 @@ import static naem.server.exception.ErrorCode.*;
 
 import javax.transaction.Transactional;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -11,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import naem.server.domain.Like;
 import naem.server.domain.member.Member;
 import naem.server.domain.post.Post;
+import naem.server.domain.post.dto.BriefPostInfoDto;
+import naem.server.domain.post.dto.PostReadCondition;
 import naem.server.exception.CustomException;
 import naem.server.repository.LikeRepository;
 import naem.server.repository.MemberRepository;
@@ -63,6 +67,12 @@ public class LikeServiceImpl implements LikeService {
                 dislikeLogic(member, post, like);
             }
         }
+    }
+
+    @Override
+    @Transactional
+    public Slice<BriefPostInfoDto> getMyLikedPostList(Long cursor, PostReadCondition condition, Pageable pageRequest) {
+        return likeRepository.getMyLikedPostScroll(cursor, condition, pageRequest);
     }
 
     private void likeLogic(Member member, Post post, Like like) {

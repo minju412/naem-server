@@ -29,6 +29,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import naem.server.domain.Board;
+import naem.server.domain.Like;
 import naem.server.domain.comment.Comment;
 import naem.server.domain.member.Member;
 
@@ -67,6 +68,9 @@ public class Post {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostImage> img = new ArrayList<>();
+
+    // @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    // private List<Like> likes = new ArrayList<>();
 
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
