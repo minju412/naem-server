@@ -1,4 +1,4 @@
-package naem.server.service;
+package naem.server.repository.custom;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -6,9 +6,7 @@ import org.springframework.data.domain.Slice;
 import naem.server.domain.post.dto.BriefPostInfoDto;
 import naem.server.domain.post.dto.PostReadCondition;
 
-public interface LikeService {
+public interface CustomLikeRepository {
 
-    void postsLike(long postId);
-
-    Slice<BriefPostInfoDto> getMyLikedPostList(Long cursor, PostReadCondition condition, Pageable pageRequest);
+    Slice<BriefPostInfoDto> getMyLikedPostScroll(Long cursorId, PostReadCondition condition, Pageable pageable);
 }
