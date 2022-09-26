@@ -69,9 +69,6 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostImage> img = new ArrayList<>();
 
-    // @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    // private List<Like> likes = new ArrayList<>();
-
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
     private Date createAt;
