@@ -58,7 +58,7 @@ public class LikeServiceImpl implements LikeService {
             likeRepository.save(like);
             likeLogic(member, post, like);
         } else { // 해당 게시글에 한번이라도 좋아요 누른 적 있음 -> like 혹은 dislike 로직
-            Like like = likeRepository.findByPostId(postId)
+            Like like = likeRepository.findByMemberIdAndPostId(member.getId(), postId) // postId와 memberId 둘 다 일치하는 like 를 반환
                 .orElseThrow(() -> new CustomException(LIKE_ERROR));
 
             if (like.getClickCnt() % 2 == 0) {
