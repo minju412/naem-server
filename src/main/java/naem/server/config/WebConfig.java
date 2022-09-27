@@ -20,6 +20,7 @@ public class WebConfig implements WebMvcConfigurer {
                 "http://192.168.0.108:8080"
             )
             .allowedMethods("*")
-            .allowedHeaders("*");
+            .allowedHeaders("*")
+            .maxAge(3600);
     }
 }
