@@ -2,6 +2,8 @@ package naem.server.service;
 
 import static naem.server.exception.ErrorCode.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import javax.transaction.Transactional;
@@ -15,9 +17,10 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import naem.server.domain.Tag;
 import naem.server.domain.member.DisabledMemberInfo;
 import naem.server.domain.member.Member;
-import naem.server.domain.member.MemberRole;
+import naem.server.domain.member.MemberTag;
 import naem.server.domain.member.dto.DisabledMemberInfoDto;
 import naem.server.domain.member.dto.MemberReadCondition;
 import naem.server.domain.member.dto.MemberWithdrawDto;
@@ -26,6 +29,7 @@ import naem.server.domain.member.dto.ProfileResDto;
 import naem.server.exception.CustomException;
 import naem.server.repository.DisabledMemberInfoRepository;
 import naem.server.repository.MemberRepository;
+import naem.server.repository.MemberTagRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +38,7 @@ public class MemberServiceImpl implements MemberService {
 
     private final DisabledMemberInfoRepository disabledMemberInfoRepository;
     private final MemberRepository memberRepository;
+    private final MemberTagRepository memberTagRepository;
     private final PasswordEncoder passwordEncoder;
 
     /**
@@ -71,7 +76,34 @@ public class MemberServiceImpl implements MemberService {
         if (StringUtils.isNotBlank(patchMemberDto.getIntroduction())) {
             member.setIntroduction(patchMemberDto.getIntroduction());
         }
-        memberRepository.save(member);
+
+        List<MemberTag> newMemberTags = null;
+        List<MemberTag> memberTags = member.getMemberTags();
+
+        if (!patchMemberDto.getTag().isEmpty()) {
+            newMemberTags = new ArrayList<>();
+            // 기존 멤버 태그 제거
+            if (!memberTags.isEmpty()) {
+                MemberTag.removeMemberTag(memberTags); // 해당 게시글의 MemberTag 목록에서 memberTag 삭제
+                // memberTagRepository.deleteAll(memberTags); // 관계가 끊어졌고, 해당 멤버의 memberTags를 삭제한다
+            }
+
+            List<Tag> tags = new ArrayList<>(patchMemberDto.getTag());
+            MemberTag memberTag = null;
+            int tagListSize = 3;
+
+            if (tags.size() > tagListSize) {
+                throw new CustomException(TAG_LIST_SIZE_ERROR);
+            }
+
+            for (Tag tag : tags) {
+                // 멤버태그 생성
+                memberTag = MemberTag.createMemberTag(tag);
+                newMemberTags.add(memberTag);
+            }
+        }
+
+        member.updateMemberInfo(patchMemberDto.getNickname(), patchMemberDto.getIntroduction(), newMemberTags);
     }
 
     /**
