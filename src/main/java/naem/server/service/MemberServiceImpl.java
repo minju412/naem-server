@@ -80,13 +80,14 @@ public class MemberServiceImpl implements MemberService {
         List<MemberTag> newMemberTags = null;
         List<MemberTag> memberTags = member.getMemberTags();
 
-        if (!patchMemberDto.getTag().isEmpty()) {
+        // 기존 멤버 태그 제거
+        if (!memberTags.isEmpty()) {
+            MemberTag.removeMemberTag(memberTags); // 해당 게시글의 MemberTag 목록에서 memberTag 삭제
+        }
+
+        // 새로운 멤버 태그 추가
+        if (patchMemberDto.getTag() != null) {
             newMemberTags = new ArrayList<>();
-            // 기존 멤버 태그 제거
-            if (!memberTags.isEmpty()) {
-                MemberTag.removeMemberTag(memberTags); // 해당 게시글의 MemberTag 목록에서 memberTag 삭제
-                // memberTagRepository.deleteAll(memberTags); // 관계가 끊어졌고, 해당 멤버의 memberTags를 삭제한다
-            }
 
             List<Tag> tags = new ArrayList<>(patchMemberDto.getTag());
             MemberTag memberTag = null;
@@ -97,12 +98,10 @@ public class MemberServiceImpl implements MemberService {
             }
 
             for (Tag tag : tags) {
-                // 멤버태그 생성
                 memberTag = MemberTag.createMemberTag(tag);
                 newMemberTags.add(memberTag);
             }
         }
-
         member.updateMemberInfo(patchMemberDto.getNickname(), patchMemberDto.getIntroduction(), newMemberTags);
     }
 
