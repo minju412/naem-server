@@ -13,12 +13,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import naem.server.domain.Tag;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class MemberTag {
 
     @Id
@@ -34,12 +36,13 @@ public class MemberTag {
     @JoinColumn(name = "tag_id")
     private Tag tag;
 
+    public MemberTag(Tag tag) {
+        this.tag = tag;
+    }
+
     //==생성 메서드==//
     public static MemberTag createMemberTag(Tag tag) {
-        MemberTag memberTag = new MemberTag();
-        memberTag.setTag(tag);
-
-        return memberTag;
+        return new MemberTag(tag);
     }
 
     //==삭제 메서드==//
