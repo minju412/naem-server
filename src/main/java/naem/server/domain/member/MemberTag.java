@@ -1,5 +1,8 @@
 package naem.server.domain.member;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,12 +13,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import naem.server.domain.Tag;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class MemberTag {
 
     @Id
@@ -23,11 +28,29 @@ public class MemberTag {
     @Column(name = "member_tag_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "tag_id")
     private Tag tag;
+
+    public MemberTag(Tag tag) {
+        this.tag = tag;
+    }
+
+    //==생성 메서드==//
+    public static MemberTag createMemberTag(Tag tag) {
+        return new MemberTag(tag);
+    }
+
+    //==삭제 메서드==//
+    public static void removeMemberTag(List<MemberTag> memberTags) {
+        // member_id와 tag_id의 매핑 제거
+        for (MemberTag memberTag : memberTags) {
+            memberTag.setMember(null);
+            memberTag.setTag(null);
+        }
+    }
 }

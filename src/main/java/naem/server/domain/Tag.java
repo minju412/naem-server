@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import naem.server.domain.member.MemberTag;
 import naem.server.domain.post.PostTag;
 
 @Entity
@@ -39,5 +40,10 @@ public class Tag {
     // 포스트 태그로부터 태그 받아오기
     public static Tag getTagFromPostTag(PostTag postTag) {
         return postTag.getTag();
+    }
+
+    // 멤버 태그로부터 태그 받아오기
+    public static Tag getTagFromMemberTag(MemberTag memberTag) {
+        return memberTag.getTag();
     }
 }

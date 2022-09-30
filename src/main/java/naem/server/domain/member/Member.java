@@ -17,6 +17,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -115,10 +116,32 @@ public class Member {
         return passwordEncoder.matches(checkPassword, getPassword());
     }
 
+    //==연관관계 메서드==//
+    public void addMemberTag(MemberTag memberTag) {
+        memberTags.add(memberTag);
+        memberTag.setMember(this);
+    }
+
     //==수정 메서드==//
     public void updateAuthorization() {
         this.isAuthorized = true;
         this.role = MemberRole.ROLE_USER;
+    }
+
+    //==수정 메서드==//
+    public void updateMemberInfo(String nickname, String introduction, List<MemberTag> memberTags) {
+
+        if (StringUtils.isNotBlank(nickname)) {
+            this.nickname = nickname;
+        }
+        if (StringUtils.isNotBlank(introduction)) {
+            this.introduction = introduction;
+        }
+        if (memberTags != null) {
+            for (MemberTag memberTag : memberTags) {
+                this.addMemberTag(memberTag);
+            }
+        }
     }
 
     // 장애인 인증 완료
