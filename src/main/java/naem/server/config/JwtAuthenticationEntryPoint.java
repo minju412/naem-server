@@ -21,7 +21,8 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         AuthenticationException ex
     ) throws IOException {
         log.error("UnAuthorized -- message : " + ex.getMessage());
-        response.sendRedirect("/auth/signIn"); // 로그인 페이지로 리다이렉트
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "UnAuthorized");
+        // response.sendRedirect("/auth/signIn"); // 로그인 페이지로 리다이렉트
     }
 
 }
