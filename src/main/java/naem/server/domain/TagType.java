@@ -35,6 +35,9 @@ public enum TagType {
             case "AUT":
                 res = "AUTISTIC";
                 break;
+            case "SPE":
+                res = "SPEECH";
+                break;
             case "BRA":
                 res = "BRAIN_LESION";
                 break;
