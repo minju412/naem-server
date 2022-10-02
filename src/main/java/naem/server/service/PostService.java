@@ -34,4 +34,6 @@ public interface PostService {
     Long getAuthorId(Long id);
 
     Post deletePost(Long id);
+
+    void updateViewCnt(long postId);
 }

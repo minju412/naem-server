@@ -66,6 +66,9 @@ public class BoardController {
     @ApiOperation(value = "게시글 단건 조회", notes = "게시글 단건 조회")
     @GetMapping("/detail/{id}")
     public DetailedPostInfoDto getPost(@PathVariable("id") long postId) {
+
+        postService.updateViewCnt(postId);
+
         return postService.getDetailedPostInfo(postId);
     }
 

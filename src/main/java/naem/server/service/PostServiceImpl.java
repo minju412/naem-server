@@ -240,4 +240,10 @@ public class PostServiceImpl implements PostService {
         return postRepository.getMyPostScroll(cursor, condition, pageRequest);
     }
 
+    @Override
+    @Transactional
+    public void updateViewCnt(long postId) {
+        Post post = getPost(postId);
+        post.setViewCnt(post.getViewCnt() + 1);
+    }
 }
