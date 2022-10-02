@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
 import org.springframework.data.domain.Pageable;
@@ -115,16 +118,43 @@ public class PostServiceImpl implements PostService {
     // 게시글 단건 조회
     @Override
     @Transactional
-    public DetailedPostInfoDto getDetailedPostInfo(Long id) {
+    public DetailedPostInfoDto getDetailedPostInfo(Long postId, HttpServletRequest request,
+        HttpServletResponse response) {
 
-        Post post = postRepository.findById(id)
-            .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        Post post = getPost(postId);
 
-        if (post.getIsDeleted()) {
-            throw new CustomException(POST_NOT_FOUND);
+        // 조회 수 중복 방지
+        Cookie oldCookie = null;
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("postView")) {
+                    oldCookie = cookie;
+                }
+            }
+        }
+        if (oldCookie != null) {
+            if (!oldCookie.getValue().contains("[" + postId.toString() + "]")) {
+                updateViewCnt(post);
+                oldCookie.setValue(oldCookie.getValue() + "_[" + postId + "]");
+                oldCookie.setPath("/");
+                oldCookie.setMaxAge(60 * 60 * 24);
+                response.addCookie(oldCookie);
+            }
+        } else {
+            updateViewCnt(post);
+            Cookie newCookie = new Cookie("postView", "[" + postId + "]");
+            newCookie.setPath("/");
+            newCookie.setMaxAge(60 * 60 * 24);
+            response.addCookie(newCookie);
+            System.out.println(newCookie);
         }
 
         return new DetailedPostInfoDto(post);
+    }
+
+    private void updateViewCnt(Post post) {
+        post.setViewCnt(post.getViewCnt() + 1);
     }
 
     @Override
@@ -133,7 +163,6 @@ public class PostServiceImpl implements PostService {
 
         Post post = postRepository.findById(id)
             .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-
         if (post.getIsDeleted()) {
             throw new CustomException(POST_NOT_FOUND);
         }
@@ -238,12 +267,5 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public Slice<BriefPostInfoDto> getMyPostList(Long cursor, PostReadCondition condition, Pageable pageRequest) {
         return postRepository.getMyPostScroll(cursor, condition, pageRequest);
-    }
-
-    @Override
-    @Transactional
-    public void updateViewCnt(long postId) {
-        Post post = getPost(postId);
-        post.setViewCnt(post.getViewCnt() + 1);
     }
 }
