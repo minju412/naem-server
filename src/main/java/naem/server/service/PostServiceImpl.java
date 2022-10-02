@@ -147,7 +147,6 @@ public class PostServiceImpl implements PostService {
             newCookie.setPath("/");
             newCookie.setMaxAge(60 * 60 * 24);
             response.addCookie(newCookie);
-            System.out.println(newCookie);
         }
 
         return new DetailedPostInfoDto(post);
