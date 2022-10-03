@@ -24,7 +24,7 @@ public interface PostService {
 
     Post save(PostSaveReqDto requestDto);
 
-    DetailedPostInfoDto getDetailedPostInfo(Long postId, HttpServletRequest request, HttpServletResponse response);
+    DetailedPostInfoDto getDetailedPostInfo(Long postId);
 
     Post getPost(Long id);
 

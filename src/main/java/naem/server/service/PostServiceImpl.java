@@ -118,42 +118,12 @@ public class PostServiceImpl implements PostService {
     // 게시글 단건 조회
     @Override
     @Transactional
-    public DetailedPostInfoDto getDetailedPostInfo(Long postId, HttpServletRequest request,
-        HttpServletResponse response) {
+    public DetailedPostInfoDto getDetailedPostInfo(Long postId) {
 
         Post post = getPost(postId);
-
-        // 조회 수 중복 방지
-        Cookie oldCookie = null;
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("postView")) {
-                    oldCookie = cookie;
-                }
-            }
-        }
-        if (oldCookie != null) {
-            if (!oldCookie.getValue().contains("[" + postId.toString() + "]")) {
-                updateViewCnt(post);
-                oldCookie.setValue(oldCookie.getValue() + "_[" + postId + "]");
-                oldCookie.setPath("/");
-                oldCookie.setMaxAge(60 * 60 * 24);
-                response.addCookie(oldCookie);
-            }
-        } else {
-            updateViewCnt(post);
-            Cookie newCookie = new Cookie("postView", "[" + postId + "]");
-            newCookie.setPath("/");
-            newCookie.setMaxAge(60 * 60 * 24);
-            response.addCookie(newCookie);
-        }
+        post.setViewCnt(post.getViewCnt() + 1);
 
         return new DetailedPostInfoDto(post);
-    }
-
-    private void updateViewCnt(Post post) {
-        post.setViewCnt(post.getViewCnt() + 1);
     }
 
     @Override
