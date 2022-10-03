@@ -88,6 +88,14 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
+    public void isConflictNickname(String nickname) {
+        if (userRepository.existsByNickname(nickname)) {
+            throw new CustomException(CONFLICT_NICKNAME);
+        }
+    }
+
+    @Override
     public ResponseEntity<TokenDto> signIn(SignInReq signInReq) {
         try {
 

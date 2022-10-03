@@ -15,6 +15,8 @@ public interface AuthService {
 
     void isConflict(String username);
 
+    void isConflictNickname(String nickname);
+
     ResponseEntity<TokenDto> signIn(SignInReq signInReq);
 
     ResponseEntity<TokenDto> regenerateToken(RegenerateTokenDto refreshTokenDto);
