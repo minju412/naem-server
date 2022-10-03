@@ -2,6 +2,8 @@ package naem.server.web;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.data.domain.Pageable;
@@ -66,6 +68,7 @@ public class BoardController {
     @ApiOperation(value = "게시글 단건 조회", notes = "게시글 단건 조회")
     @GetMapping("/detail/{id}")
     public DetailedPostInfoDto getPost(@PathVariable("id") long postId) {
+
         return postService.getDetailedPostInfo(postId);
     }
 
@@ -121,7 +124,8 @@ public class BoardController {
             if (boardType == null) {
                 return postService.getPostList(cursor, new PostReadCondition(keyword), pageRequest); // 전체 게시글 검색
             } else {
-                return postService.getPostList(cursor, new PostReadCondition(boardType, keyword), pageRequest); // 게시판 타입별 검색
+                return postService.getPostList(cursor, new PostReadCondition(boardType, keyword),
+                    pageRequest); // 게시판 타입별 검색
             }
         } else { // 조회
             if (boardType == null) {

@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
 import org.springframework.data.domain.Pageable;
@@ -115,14 +118,10 @@ public class PostServiceImpl implements PostService {
     // 게시글 단건 조회
     @Override
     @Transactional
-    public DetailedPostInfoDto getDetailedPostInfo(Long id) {
+    public DetailedPostInfoDto getDetailedPostInfo(Long postId) {
 
-        Post post = postRepository.findById(id)
-            .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-
-        if (post.getIsDeleted()) {
-            throw new CustomException(POST_NOT_FOUND);
-        }
+        Post post = getPost(postId);
+        post.setViewCnt(post.getViewCnt() + 1);
 
         return new DetailedPostInfoDto(post);
     }
@@ -133,7 +132,6 @@ public class PostServiceImpl implements PostService {
 
         Post post = postRepository.findById(id)
             .orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-
         if (post.getIsDeleted()) {
             throw new CustomException(POST_NOT_FOUND);
         }
@@ -239,5 +237,4 @@ public class PostServiceImpl implements PostService {
     public Slice<BriefPostInfoDto> getMyPostList(Long cursor, PostReadCondition condition, Pageable pageRequest) {
         return postRepository.getMyPostScroll(cursor, condition, pageRequest);
     }
-
 }

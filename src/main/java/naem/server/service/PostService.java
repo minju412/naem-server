@@ -1,5 +1,8 @@
 package naem.server.service;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,7 +24,7 @@ public interface PostService {
 
     Post save(PostSaveReqDto requestDto);
 
-    DetailedPostInfoDto getDetailedPostInfo(Long id);
+    DetailedPostInfoDto getDetailedPostInfo(Long postId);
 
     Post getPost(Long id);
 
