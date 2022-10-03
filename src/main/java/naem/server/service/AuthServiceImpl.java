@@ -2,6 +2,7 @@ package naem.server.service;
 
 import static naem.server.exception.ErrorCode.*;
 
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
@@ -88,6 +89,14 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
+    public void isConflictNickname(String nickname) {
+        if (userRepository.existsByNickname(nickname)) {
+            throw new CustomException(CONFLICT_NICKNAME);
+        }
+    }
+
+    @Override
     public ResponseEntity<TokenDto> signIn(SignInReq signInReq) {
         try {
 
@@ -104,11 +113,14 @@ public class AuthServiceImpl implements AuthService {
                 )
             );
 
+            String accessToken = jwtTokenProvider.generateAccessToken(authentication);
             String refreshToken = jwtTokenProvider.generateRefreshToken(authentication);
+            Date accessTokenExp = jwtTokenProvider.getAccessTokenExp(accessToken);
 
             TokenDto tokenDto = new TokenDto(
-                jwtTokenProvider.generateAccessToken(authentication),
-                refreshToken
+                accessToken,
+                refreshToken,
+                accessTokenExp
             );
 
             // Redis에 저장 - 만료 시간 설정을 통해 자동 삭제 처리
@@ -149,10 +161,14 @@ public class AuthServiceImpl implements AuthService {
             }
 
             // 토큰 재발행
+            String accessToken = jwtTokenProvider.generateAccessToken(authentication);
             String newRefreshToken = jwtTokenProvider.generateRefreshToken(authentication);
+            Date accessTokenExp = jwtTokenProvider.getAccessTokenExp(accessToken);
+
             TokenDto tokenDto = new TokenDto(
-                jwtTokenProvider.generateAccessToken(authentication),
-                newRefreshToken
+                accessToken,
+                newRefreshToken,
+                accessTokenExp
             );
 
             // RefreshToken Redis에 업데이트
@@ -189,10 +205,6 @@ public class AuthServiceImpl implements AuthService {
         // 이미 인증된 회원인지 확인
         if (member.getIsAuthorized() == true) {
             throw new CustomException(ALREADY_AUTHORIZED_MEMBER);
-        }
-        // 비밀번호 확인
-        if (!member.matchPassword(bCryptPasswordEncoder, disabledAuthReq.getCheckPassword())) {
-            throw new CustomException(WRONG_PASSWORD);
         }
 
         // 장애인 인증 정보 생성

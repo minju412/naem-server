@@ -47,10 +47,17 @@ public class AuthController {
     }
 
     @ApiOperation(value = "아이디 중복 체크", notes = "아이디 중복 체크")
-    @GetMapping("/checkid")
+    @GetMapping("/check/username")
     public Response isConflict(@RequestParam(value = "username")String username) {
         authService.isConflict(username);
         return new Response("OK", "사용할 수 있는 아이디입니다");
+    }
+
+    @ApiOperation(value = "닉네임 중복 체크", notes = "닉네임 중복 체크")
+    @GetMapping("/check/nickname")
+    public Response isConflictNickname(@RequestParam(value = "nickname")String nickname) {
+        authService.isConflictNickname(nickname);
+        return new Response("OK", "사용할 수 있는 닉네임입니다");
     }
 
     @ApiOperation(value = "로그인", notes = "로그인")
