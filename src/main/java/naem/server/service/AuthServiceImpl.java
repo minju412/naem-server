@@ -2,6 +2,7 @@ package naem.server.service;
 
 import static naem.server.exception.ErrorCode.*;
 
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
@@ -112,11 +113,14 @@ public class AuthServiceImpl implements AuthService {
                 )
             );
 
+            String accessToken = jwtTokenProvider.generateAccessToken(authentication);
             String refreshToken = jwtTokenProvider.generateRefreshToken(authentication);
+            Date accessTokenExp = jwtTokenProvider.getAccessTokenExp(accessToken);
 
             TokenDto tokenDto = new TokenDto(
-                jwtTokenProvider.generateAccessToken(authentication),
-                refreshToken
+                accessToken,
+                refreshToken,
+                accessTokenExp
             );
 
             // Redis에 저장 - 만료 시간 설정을 통해 자동 삭제 처리
@@ -157,10 +161,14 @@ public class AuthServiceImpl implements AuthService {
             }
 
             // 토큰 재발행
+            String accessToken = jwtTokenProvider.generateAccessToken(authentication);
             String newRefreshToken = jwtTokenProvider.generateRefreshToken(authentication);
+            Date accessTokenExp = jwtTokenProvider.getAccessTokenExp(accessToken);
+
             TokenDto tokenDto = new TokenDto(
-                jwtTokenProvider.generateAccessToken(authentication),
-                newRefreshToken
+                accessToken,
+                newRefreshToken,
+                accessTokenExp
             );
 
             // RefreshToken Redis에 업데이트

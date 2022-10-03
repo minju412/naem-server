@@ -105,4 +105,22 @@ public class JwtTokenProvider {
             throw new CustomException(errorCode);
         }
     }
+
+    public Date getAccessTokenExp(String accessToken) {
+
+        Claims body = getClaims(accessToken);
+        return body.getExpiration();
+    }
+
+    /**
+     * 토큰정보 해석
+     */
+    private Claims getClaims(String token) {
+        Claims body = Jwts.parserBuilder()
+            .setSigningKey(SECRET_KEY)
+            .build()
+            .parseClaimsJws(token)
+            .getBody();
+        return body;
+    }
 }
