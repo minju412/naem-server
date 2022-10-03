@@ -11,32 +11,10 @@ public enum BoardType {
 
     @JsonCreator
     public static BoardType from(String str) {
-        String res = "";
-        switch (str.toUpperCase()) {
-            case "HOT":
-                res = "HOT";
-                break;
-            case "FRE":
-                res = "FREE";
-                break;
-            case "PRO":
-                res = "PROTECTOR";
-                break;
-            case "JOB":
-                res = "JOB";
-                break;
-            case "REH":
-                res = "REHABILITATION";
-                break;
-            case "BEN":
-                res = "BENEFIT";
-                break;
-            case "TOG":
-                res = "TOGETHER";
-                break;
-            default:
-                throw new CustomException(NO_MATCHING_ENUM_TYPE);
+        try {
+            return BoardType.valueOf(str.toUpperCase());
+        } catch (Exception ex) {
+            throw new CustomException(NO_MATCHING_ENUM_TYPE);
         }
-        return BoardType.valueOf(res.toUpperCase());
     }
 }
