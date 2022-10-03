@@ -198,10 +198,6 @@ public class AuthServiceImpl implements AuthService {
         if (member.getIsAuthorized() == true) {
             throw new CustomException(ALREADY_AUTHORIZED_MEMBER);
         }
-        // 비밀번호 확인
-        if (!member.matchPassword(bCryptPasswordEncoder, disabledAuthReq.getCheckPassword())) {
-            throw new CustomException(WRONG_PASSWORD);
-        }
 
         // 장애인 인증 정보 생성
         DisabledMemberInfo disabledMemberInfo = DisabledMemberInfo.createDisabledMemberInfo(
