@@ -45,7 +45,6 @@ out/
 .env.test.local
 .env.production.local
 .env.local
-application.yml
 
 ## firebase service key ##
 **/resources/firebase/**
