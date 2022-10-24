@@ -1,0 +1,68 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_IP}:${MYSQL_PORT}/${MYSQL_NAME}?${MYSQL_OPT}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+  cache:
+    type: redis
+  redis:
+    host: ${REDIS_IP}
+    port: ${REDIS_PORT}
+
+  devtools:
+    livereload:
+      enabled: false
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  #    log-resolved-exception: false
+
+  # ==== 페이징 할 때 기본값, 20개씩 조회 ==== #
+  data:
+    web:
+      pageable:
+        default-page-size: 20
+
+  # ==== S3 파일 업로드 용량 설정 ==== #
+  servlet:
+    multipart:
+      max-file-size: 3MB #업로드 파일 크기 제한
+      max-request-size: 5MB #업로드 파일 크기 총량 제한
+
+# ==== JWT ==== #
+jwt:
+  token:
+    jwt-secret-key: ${JWT_SECRET}
+
+# === AWS S3 === #
+cloud:
+  aws:
+    credentials:
+      access-key: ${S3_ACCESS_KEY}
+      secret-key: ${S3_SECRET_KEY}
+    s3:
+      bucket: posts-image-bucket
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+
+# === Firebase === #
+fcm:
+  api-url: ${FIREBASE_URL}
+
+logging.level:
+  org.hibernate.SQL: debug
+#  org.hibernate.type: trace
