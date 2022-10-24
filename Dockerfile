@@ -1,7 +1,13 @@
-FROM openjdk:11
+FROM openjdk:17-ea-11-jdk-slim
 
-COPY build/libs/server-0.0.1-SNAPSHOT.jar Server.jar
+VOLUME /tmp
 
-ENTRYPOINT ["java","-jar","Server.jar"]
+ARG JAR_FILE=build/libs/server-0.0.1-SNAPSHOT.jar
+
+COPY ${JAR_FILE} Server.jar
+
+#COPY build/libs/server-0.0.1-SNAPSHOT.jar Server.jar
+
+ENTRYPOINT ["java","-jar","/Server.jar"]
 
 EXPOSE 8080

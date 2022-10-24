@@ -45,7 +45,7 @@ public class Member {
     private MemberType memberType;
 
     @Enumerated(EnumType.STRING)
-    private MemberRole role = MemberRole.ROLE_NOT_PERMITTED;
+    private MemberRole role = MemberRole.ROLE_ADMIN;
 
     @Column(unique = true)
     private String username;
